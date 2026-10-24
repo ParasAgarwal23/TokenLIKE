@@ -1,0 +1,15 @@
+# (a || b) LIKE p, evaluated over two columns with two different symbol tables
+# and one shared automaton. Row-aligned by construction (same canonical parquet
+# row_id), which the ground-truth query enforces with a JOIN USING (row_id).
+
+c_irr	clickbench/URL_1m	http://irr.ru%	clickbench/Referer_1m
+c_yandex	clickbench/URL_1m	%yandex%	clickbench/Referer_1m
+c_html	clickbench/URL_1m	%.html%	clickbench/Referer_1m
+c_double_http	clickbench/URL_1m	%http://%http://%	clickbench/Referer_1m
+c_suffix_html	clickbench/URL_1m	%.html	clickbench/Referer_1m
+c_under	clickbench/URL_1m	%/v_/%	clickbench/Referer_1m
+t_regular	tpch/l_comment_1m	%regular%	tpch/o_comment_1m
+t_final	tpch/l_comment_1m	%final%	tpch/o_comment_1m
+t_quickly	tpch/l_comment_1m	%quickly%	tpch/o_comment_1m
+t_cprefix_r	tpch/l_comment_1m	r%	tpch/o_comment_1m
+t_csuffix_s	tpch/l_comment_1m	%s	tpch/o_comment_1m

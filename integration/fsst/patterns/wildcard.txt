@@ -1,0 +1,31 @@
+# The cases the published FSST-LIKE work does not cover: '_' (one Unicode
+# character) and interior '%' mixed with '_'. Same 1M-row columns.
+
+# ---- '_' is one CHARACTER, not one byte, and not one FSST symbol
+w_lead_under	clickbench/URL_1m	_ttp://%
+w_first_char	clickbench/URL_1m	http://_rr.ru%
+w_slash_under	clickbench/URL_1m	http://irr.ru/_%
+w_four_under	clickbench/URL_1m	http://irr.ru/____%
+w_htm_under	clickbench/URL_1m	%.htm_
+w_v_under	clickbench/URL_1m	%/v_/%
+w_only_under	clickbench/URL_1m	_
+w_three_under	clickbench/URL_1m	___
+w_mid	clickbench/URL_1m	h_t%p%
+
+# ---- interior '%' segments
+i_ru_slash	clickbench/URL_1m	%.ru/%
+i_amp	clickbench/URL_1m	%&%
+i_question	clickbench/URL_1m	%?%
+i_search	clickbench/URL_1m	%/search%
+i_yandex	clickbench/URL_1m	%yandex%
+i_catalog	clickbench/URL_1m	%/catalog/%
+i_multi	clickbench/URL_1m	http%irr%php%
+i_two_http	clickbench/URL_1m	%http://%http://%
+
+# ---- multi-byte UTF-8 literals and Cyrillic case sensitivity
+u8_sezon	clickbench/URL_1m	%сезон%
+u8_moskva	clickbench/URL_1m	%Москва%
+u8_moskva_lower	clickbench/URL_1m	%москва%
+u8_ru_cyr	clickbench/URL_1m	%ру%
+u8_under_cyr	clickbench/URL_1m	%се_он%
+lit_pct25	clickbench/URL_1m	http://%25%

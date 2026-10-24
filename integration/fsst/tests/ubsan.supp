@@ -1,0 +1,11 @@
+# Upstream FSST's fsst_decompress() writes symbols with
+#   #define FSST_UNALIGNED_STORE(dst,src) memcpy((unsigned long long*)(dst), &(src), 8)
+# The memcpy itself is byte-wise and safe, but the cast of an unaligned
+# destination to unsigned long long* is formally undefined, and UBSan reports it
+# ten times (once per expansion in the little-endian fast path and its Duff's
+# device). It is upstream code, deliberately unaligned -- FSST even ships
+# -DFSST_MUST_ALIGN for platforms that cannot take it -- so this experiment
+# suppresses the check for third_party rather than patching the snapshot.
+# Verified: with these suppressions the sanitizer run is completely clean, so
+# every remaining report would belong to this experiment's own code.
+alignment:*third_party/fsst/*
