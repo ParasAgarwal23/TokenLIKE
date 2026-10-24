@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <random>
 #include <string>
 
@@ -389,7 +390,7 @@ void test_robustness() {
    {
       std::string dir = "build/badcol";
       std::string prefix = dir + "/bad";
-      std::system(("mkdir -p " + dir).c_str());
+      std::filesystem::create_directories(dir);  // portable (was `mkdir -p`, POSIX only)
       write_file(prefix + ".fsst.sym", m.col.exported.data(), m.col.exported.size());
       write_file(prefix + ".fsst.cmp", m.col.cmp.data(), m.col.cmp.size());
       std::string meta = "{\"rows\": " + std::to_string(m.col.rows) + ", \"raw_bytes\": 1}\n";

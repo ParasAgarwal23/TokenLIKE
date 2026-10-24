@@ -1,5 +1,7 @@
 #include "fsstlike/common.h"
 
+#include <filesystem>
+#include <system_error>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
@@ -36,7 +38,11 @@ void write_file(const std::string& path, const void* data, size_t n) {
    if (n > 0 && std::fwrite(data, 1, n, f) != n) { std::fclose(f); fail(tmp + ": short write"); }
    if (std::fflush(f) != 0) { std::fclose(f); fail(tmp + ": flush failed"); }
    std::fclose(f);
-   if (std::rename(tmp.c_str(), path.c_str()) != 0) fail(path + ": rename failed");
+   // std::filesystem::rename replaces an existing destination on every platform;
+   // std::rename does not on Windows.
+   std::error_code ec;
+   std::filesystem::rename(tmp, path, ec);
+   if (ec) fail(path + ": rename failed (" + ec.message() + ")");
 }
 
 RawColumn load_raw(const std::string& prefix, u64 max_rows) {
