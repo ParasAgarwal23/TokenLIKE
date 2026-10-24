@@ -3,9 +3,11 @@
     streamlit run demo/app.py                                  # live mode
     streamlit run demo/app.py -- --replay results/final.json   # saved results
 
-Live mode runs the CLI for each mode and (if available) Person B's DuckDB
-checker. A query is shown as verified ONLY when the checker passed for those
-exact row ids. Replay mode shows saved measurements and says so.
+Live mode runs the CLI for each mode and compares every mode's row ids with
+Person B's DuckDB ground truth (data/truth/...). A query is shown as verified
+ONLY when those exact row ids equal the truth. Custom patterns have no truth
+file and are shown as not verified. Replay mode shows saved measurements and
+says so.
 """
 from __future__ import annotations
 
@@ -34,12 +36,10 @@ def cli_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser()
     ap.add_argument("--replay", type=Path, default=None)
     ap.add_argument("--patterns", type=Path, default=ROOT / "patterns/core.txt")
-    ap.add_argument("--col", default="data/clickbench/url")
+    ap.add_argument("--col", default="data/clickbench/URL", help="column for custom patterns")
     ap.add_argument("--vocab", default="data/vocab.bin")
     ap.add_argument("--build", type=Path, default=ROOT / "build")
     ap.add_argument("--runs", type=int, default=5)
-    ap.add_argument("--checker", default=None,
-                    help="checker command template (same as run_bench.py --checker)")
     return ap.parse_args(sys.argv[1:])
 
 
@@ -53,44 +53,28 @@ def load_replay(path: str) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def live_run(pattern: str, runs: int) -> dict:
+def live_run(pat: "rb.Pattern", runs: int) -> dict:
     cli = rb.find_cli(ARGS.build)
-    opts = SimpleNamespace(col=ARGS.col, col2=None, vocab=ARGS.vocab, runs=runs, warmup=1,
-                           pin_cpu=0, timeout=300)
+    opts = SimpleNamespace(vocab=ARGS.vocab, runs=runs, warmup=1, pin_cpu=0, timeout=300)
     tmp = Path(tempfile.mkdtemp(prefix="tokenlike_demo_"))
-    res = {"pattern": pattern, "modes": {}}
-    for mode in MODES:
-        res["modes"][mode] = rb.run_cli(cli, opts, mode, pattern, tmp / f"{mode}.bin")
-    ok = {m: r for m, r in res["modes"].items() if r["status"] == "ok"}
-    res["agree"] = (len({r["matches"] for r in ok.values()}) <= 1 and
-                    len({r["rowids_sha256"] for r in ok.values()}) <= 1)
-    checker = ARGS.checker
-    if checker is None and (ROOT / rb.DEFAULT_CHECKER).exists():
-        checker = (f'"{sys.executable}" {rb.DEFAULT_CHECKER} '
-                   "--col {col} --pattern {pattern} --rowids {rowids}")
-    target = "token" if "token" in ok else (sorted(ok)[0] if ok else None)
-    if not res["agree"]:
-        res["verified"], res["check"] = "fail", {"detail": "modes disagree"}
-    elif target and checker:
-        res["check"] = rb.run_checker(checker, opts, pattern, tmp / f"{target}.bin")
-        res["check"]["mode_checked"] = target
-        res["verified"] = res["check"]["verified"]
-    else:
-        res["verified"] = "not_run"
-    return res
+    return rb.run_pattern(cli, opts, MODES, pat, 0, tmp)
 
 
 # ---------------------------------------------------------------- rendering
 
 def badge(res: dict) -> None:
     v = res.get("verified")
-    checked = res.get("check", {}).get("mode_checked")
+    check = res.get("check", {})
+    per_mode = check.get("modes", {})
     if v == "pass":
-        st.success(f"✅ Verified against DuckDB: row ids from **{checked}** mode match exactly.")
-    elif v in ("fail", "error"):
-        st.error(f"❌ Verification FAILED: {res.get('check', {}).get('detail', '')}")
+        st.success(f"✅ Verified against DuckDB ground truth ({check.get('truth_matches', 0):,} "
+                   f"rows): row ids from **{', '.join(sorted(per_mode))}** match exactly.")
+    elif v == "fail":
+        wrong = [m for m, good in per_mode.items() if not good]
+        st.error(f"❌ Verification FAILED for {', '.join(wrong) or 'some mode'} "
+                 f"(DuckDB expects {check.get('truth_matches', '?'):,} rows).")
     else:
-        st.info("⚪ Not verified: DuckDB checker did not run for this result.")
+        st.info(f"⚪ Not verified: {check.get('detail', 'no DuckDB ground truth for this pattern')}.")
     if not res.get("agree", True):
         st.error("❌ The modes returned different results.")
 
@@ -153,6 +137,13 @@ def show_result(res: dict) -> None:
                "shows the speed if no compression were used, not a like-for-like competitor.")
 
 
+def sql_for(column: str, column2: str | None, pattern: str) -> str:
+    def name(c: str) -> str:
+        return Path(c).name
+    expr = f"{name(column)} || {name(column2)}" if column2 else name(column)
+    return f"WHERE {expr} LIKE '{pattern}'"
+
+
 # ---------------------------------------------------------------- page
 
 st.set_page_config(page_title="TokenLIKE", layout="wide")
@@ -178,32 +169,37 @@ if mode == "Replay":
     if not results:
         st.error("Replay file has no results.")
         st.stop()
-    labels = [r["pattern"] for r in results]
+    labels = [f"{r.get('name', '')}: {r['pattern']}" for r in results]
     pick = st.sidebar.selectbox("LIKE pattern", range(len(labels)), format_func=lambda i: labels[i])
-    st.code(f"WHERE {meta.get('col', 'col')} LIKE '{labels[pick]}'", language="sql")
-    show_result(results[pick])
+    r = results[pick]
+    st.code(sql_for(r.get("column", "col"), r.get("column2"), r["pattern"]), language="sql")
+    show_result(r)
 else:
     try:
-        patterns = rb.read_patterns(ARGS.patterns)
-    except OSError:
+        patterns = rb.read_patterns(ARGS.patterns, ARGS.col)
+    except (OSError, SystemExit):
         patterns = []
     if not patterns:
-        st.sidebar.warning(f"No patterns file at {ARGS.patterns}")
-    pattern = st.sidebar.selectbox("LIKE pattern", patterns) if patterns else None
-    custom = st.sidebar.text_input("…or a custom pattern", "")
-    pattern = custom or pattern
+        st.sidebar.warning(f"No patterns in {ARGS.patterns}")
+    pick = (st.sidebar.selectbox("LIKE pattern", range(len(patterns)),
+                                 format_func=lambda i: f"{patterns[i].name}: {patterns[i].pattern}")
+            if patterns else None)
+    custom = st.sidebar.text_input("…or a custom pattern (not verified)", "")
+    pat = (rb.Pattern("custom", ARGS.col, custom) if custom
+           else patterns[pick] if pick is not None else None)
     runs = st.sidebar.number_input("Runs (median)", 1, 50, ARGS.runs)
-    st.caption(f"Live · column `{ARGS.col}`")
-    if pattern:
-        st.code(f"WHERE url LIKE '{pattern}'", language="sql")
-    if pattern and st.sidebar.button("Run", type="primary"):
+    st.caption("Live run on this machine")
+    if pat:
+        st.code(sql_for(pat.column, pat.column2, pat.pattern), language="sql")
+    if pat and st.sidebar.button("Run", type="primary"):
         with st.spinner("Running token, decode and raw modes…"):
             try:
-                st.session_state["live"] = live_run(pattern, int(runs))
+                st.session_state["live"] = live_run(pat, int(runs))
             except SystemExit as e:  # find_cli exits when the binary is missing
                 st.error(f"Live run failed: {e}. Use Replay mode.")
             except Exception as e:  # keep the demo alive
                 st.error(f"Live run failed: {e}. Use Replay mode.")
     res = st.session_state.get("live")
-    if res and res["pattern"] == pattern:
+    if res and pat and (res["name"], res["pattern"], res["column"]) == (pat.name, pat.pattern,
+                                                                          pat.column):
         show_result(res)

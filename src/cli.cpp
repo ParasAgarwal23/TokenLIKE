@@ -45,7 +45,8 @@ constexpr int kExitOk = 0, kExitError = 1, kExitUnavailable = 2;
 const char* kUsage =
     "usage: tokenlike --mode token|decode|raw (--pattern LIKE | --pattern-file FILE)\n"
     "                 --col PREFIX [--col2 PREFIX] [--vocab data/vocab.bin]\n"
-    "                 [--runs 5] [--warmup 1] [--rowids FILE] [--pin-cpu N]\n";
+    "                 [--runs 5] [--warmup 1] [--rowids FILE] [--stats FILE] [--pin-cpu N]\n"
+    "       aliases:  --column = --col, --column2 = --col2, --out = --rowids\n";
 
 struct Args {
     std::string mode;
@@ -56,6 +57,7 @@ struct Args {
     int runs = 5;
     int warmup = 1;
     std::optional<std::string> rowids;
+    std::optional<std::string> stats;
     std::optional<int> pin_cpu;
 };
 
@@ -131,15 +133,17 @@ Args parse_args(const std::vector<std::string>& av) {
             if (i + 1 >= av.size()) throw UsageError("missing value for " + key);
             val = av[++i];
         }
+        // --column / --column2 / --out are the names Person B's check.py uses.
         if (key == "--mode") a.mode = val;
         else if (key == "--pattern") a.pattern = val;
         else if (key == "--pattern-file") a.pattern = read_pattern_file(val);
-        else if (key == "--col") a.col = val;
-        else if (key == "--col2") a.col2 = val;
+        else if (key == "--col" || key == "--column") a.col = val;
+        else if (key == "--col2" || key == "--column2") a.col2 = val;
         else if (key == "--vocab") a.vocab = val;
         else if (key == "--runs") a.runs = to_int(key, val);
         else if (key == "--warmup") a.warmup = to_int(key, val);
-        else if (key == "--rowids") a.rowids = val;
+        else if (key == "--rowids" || key == "--out") a.rowids = val;
+        else if (key == "--stats") a.stats = val;
         else if (key == "--pin-cpu") a.pin_cpu = to_int(key, val);
         else throw UsageError("unknown option " + key);
     }
@@ -348,6 +352,12 @@ int run(const Args& a) {
     j += "}";
     std::fprintf(stdout, "%s\n", j.c_str());
     std::fflush(stdout);
+    if (a.stats) {
+        FILE* f = std::fopen(a.stats->c_str(), "wb");
+        if (!f) throw std::runtime_error("cannot write " + *a.stats);
+        std::fprintf(f, "%s\n", j.c_str());
+        std::fclose(f);
+    }
     return kExitOk;
 }
 
