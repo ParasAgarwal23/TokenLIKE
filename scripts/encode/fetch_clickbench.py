@@ -111,10 +111,49 @@ def validate_columns(con, source: str, columns: list[str]) -> None:
         raise ValueError(f"column(s) {missing} not present in {source}")
 
 
+def assert_bytes_preserved(con, source: str, canonical: str, columns: list[str], rows: int | None) -> None:
+    """Assert the canonical parquet holds the source bytes unchanged.
+
+    ClickBench stores URL and Referer as bare BYTE_ARRAY with no UTF8 logical
+    type, so DuckDB types them BLOB, while the frozen format calls for
+    `value VARCHAR` and LIKE is not defined on BLOB. The conversion therefore
+    has to be exact, and the obvious spelling is not:
+
+        CAST(blob AS VARCHAR)   renders the blob's escaped representation, so
+                                'сезон' becomes the 24-character text
+                                '\\xD1\\x81\\xD0\\xB5...'. It inflated the URL
+                                column from 88,562,192 to 100,529,987 bytes and
+                                corrupted every non-ASCII URL. TRY_CAST does not
+                                reject it either, because escaping never fails.
+
+        decode(blob)            reinterprets the bytes as UTF-8, byte-exact,
+                                and raises on genuinely invalid UTF-8.
+
+    So the build uses decode(), and this check compares total byte length
+    column by column against the source. strlen() counts bytes; length() counts
+    characters, which would hide exactly this bug.
+    """
+    limit = f"LIMIT {int(rows)}" if rows else ""
+    for column in columns:
+        (src,) = con.execute(
+            f'SELECT sum(octet_length("{column}")) FROM (SELECT "{column}" FROM read_parquet(?) {limit})',
+            [source],
+        ).fetchone()
+        (got,) = con.execute(
+            f'SELECT sum(strlen("{column}")) FROM read_parquet(?)', [canonical]
+        ).fetchone()
+        if (src or 0) != (got or 0):
+            raise AssertionError(
+                f"column {column!r}: source holds {src:,} bytes but the canonical "
+                f"parquet holds {got:,}; the BLOB to VARCHAR conversion is not byte-exact"
+            )
+
+
 def build_canonical(con, source: str, out: str, columns: list[str], rows: int | None) -> int:
     """Materialize the canonical parquet with explicit row ids."""
+    # decode(), not CAST: see assert_bytes_preserved().
     select = ",\n                   ".join(
-        f'COALESCE("{c}", \'\') AS "{c}"' for c in columns
+        f'COALESCE(decode("{c}"), \'\') AS "{c}"' for c in columns
     )
     limit = f"LIMIT {int(rows)}" if rows else ""
     print(f"building {out}")
@@ -162,9 +201,17 @@ def export_column(con, canonical: str, prefix: str, column: str) -> dict:
     cur = con.execute("SELECT value FROM read_parquet(?) ORDER BY row_id", [parquet])
 
     def values():
+        # The canonical parquet stores VARCHAR, so values arrive as str; the
+        # bytes branch stays as a guard in case a column is ever exported
+        # without the cast, since .raw must hold the original bytes unmodified.
         while batch := cur.fetchmany(FETCH_BATCH):
             for (value,) in batch:
-                yield (value or "").encode("utf-8")
+                if value is None:
+                    yield b""
+                elif isinstance(value, bytes):
+                    yield value
+                else:
+                    yield value.encode("utf-8")
 
     stats = write_raw(prefix, values())
     stats["parquet"] = parquet
@@ -173,7 +220,7 @@ def export_column(con, canonical: str, prefix: str, column: str) -> dict:
     # The oracle reads the parquet and the matcher reads the binaries; if those
     # two views ever disagree, every mismatch report downstream is noise.
     (parquet_rows, parquet_bytes) = con.execute(
-        "SELECT count(*), sum(octet_length(value)) FROM read_parquet(?)", [parquet]
+        "SELECT count(*), sum(strlen(value)) FROM read_parquet(?)", [parquet]
     ).fetchone()
     if parquet_rows != stats["rows"]:
         raise AssertionError(
@@ -206,6 +253,7 @@ def main() -> int:
     os.makedirs(args.out_dir, exist_ok=True)
     canonical = os.path.join(args.out_dir, "canonical.parquet")
     n = build_canonical(con, source, canonical, columns, rows)
+    assert_bytes_preserved(con, source, canonical, columns, rows)
 
     summary = {}
     for column in columns:

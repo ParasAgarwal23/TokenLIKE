@@ -1,0 +1,39 @@
+# TokenLIKE core patterns -- the mandatory correctness gate.
+# Format: name<TAB>column_prefix<TAB>pattern[<TAB>column2_prefix]
+#
+# Anchored prefix and suffix matching only; these are the cases TokenLIKE
+# optimizes, where the matcher can stop after a few tokens. Counts were
+# measured with DuckDB on the 1,000,000-row ClickBench URL/Referer columns
+# (scripts/verify/ground_truth.py regenerates and re-verifies them).
+# Selectivities deliberately span 0.02% to 81%; none match zero rows.
+
+# ---- anchored prefixes (forward scan) ----
+p_http	data/clickbench/URL	http://%
+p_https	data/clickbench/URL	https://%
+p_irr	data/clickbench/URL	http://irr.ru%
+p_b	data/clickbench/URL	http://b%
+p_bonprix	data/clickbench/URL	http://bonprix%
+p_video	data/clickbench/URL	http://video%
+p_auto	data/clickbench/URL	http://auto%
+p_diary	data/clickbench/URL	http://diary%
+
+# ---- anchored suffixes (backward scan) ----
+s_zero	data/clickbench/URL	%0
+s_ru	data/clickbench/URL	%ru
+s_php	data/clickbench/URL	%.php
+s_html_nodot	data/clickbench/URL	%html
+s_slash	data/clickbench/URL	%/
+s_html	data/clickbench/URL	%.html
+s_eq1	data/clickbench/URL	%=1
+s_jpg	data/clickbench/URL	%.jpg
+s_xml	data/clickbench/URL	%.xml
+
+# ---- exact literal, no wildcard (anchored both ends) ----
+e_top_url	data/clickbench/URL	http://irr.ru/index.php?showalbum/login-leniya7777294,938303130
+
+# ---- second column, so the matcher is exercised on more than one dataset ----
+p_ref_http	data/clickbench/Referer	http://%
+s_ref_html	data/clickbench/Referer	%.html
+p_ref_irr	data/clickbench/Referer	http://irr.ru%
+# empty pattern matches only the empty string: 78,775 Referer rows are empty
+e_ref_empty	data/clickbench/Referer	

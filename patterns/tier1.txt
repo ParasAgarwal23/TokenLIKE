@@ -1,0 +1,29 @@
+# TokenLIKE tier-1 patterns -- token-boundary and UTF-8 cases on real data.
+# Format: name<TAB>column_prefix<TAB>pattern[<TAB>column2_prefix]
+#
+# These are still prefix/suffix patterns, so they are in mandatory scope, but
+# each one is chosen to break a plausible token-level shortcut. Counts measured
+# with DuckDB on the 1,000,000-row ClickBench columns.
+
+# ---- the pattern boundary falls INSIDE a token ----
+# The vocabulary tokenizes "http://irr.ru" as  http | :// | ir | r | .ru  so a
+# prefix ending mid-token cannot be decided by comparing whole token ids.
+tb_htt	data/clickbench/URL	htt%
+tb_http_colon	data/clickbench/URL	http:%
+tb_http_slash	data/clickbench/URL	http:/%
+tb_irr_i	data/clickbench/URL	http://i%
+tb_irr_ir	data/clickbench/URL	http://ir%
+tb_irr_dot	data/clickbench/URL	http://irr.%
+tb_irr_r	data/clickbench/URL	http://irr.r%
+
+# ---- multi-byte UTF-8 literals, including case sensitivity in Cyrillic ----
+u8_sezon	data/clickbench/URL	%сезон%
+u8_moskva	data/clickbench/URL	%Москва%
+u8_moskva_lower	data/clickbench/URL	%москва%
+u8_ru_cyr	data/clickbench/URL	%ру%
+
+# ---- percent-encoded data, i.e. a literal '%25' in the value ----
+lit_pct25	data/clickbench/URL	http://%25%
+
+# ---- suffix whose last character is a single-character wildcard ----
+s_htm_underscore	data/clickbench/URL	%.htm_

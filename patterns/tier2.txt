@@ -1,0 +1,35 @@
+# TokenLIKE tier-2 patterns -- optional scope. Only include these in the demo
+# once they pass; they are not part of the mandatory prefix/suffix gate.
+# Format: name<TAB>column_prefix<TAB>pattern[<TAB>column2_prefix]
+#
+# Counts measured with DuckDB on the 1,000,000-row ClickBench columns.
+# NOTE: '_' matches one CHARACTER, not one byte (measured; see
+# scripts/verify/ground_truth.py --semantics). Backslash is NOT an escape
+# character unless a query says ESCAPE, and we never do.
+
+# ---- '_' single-character wildcard ----
+w_lead_under	data/clickbench/URL	_ttp://%
+w_first_char	data/clickbench/URL	http://_rr.ru%
+w_slash_under	data/clickbench/URL	http://irr.ru/_%
+w_four_under	data/clickbench/URL	http://irr.ru/____%
+
+# ---- interior '%' segments ----
+i_ru_slash	data/clickbench/URL	%.ru/%
+i_amp	data/clickbench/URL	%&%
+i_question	data/clickbench/URL	%?%
+i_search	data/clickbench/URL	%/search%
+i_yandex	data/clickbench/URL	%yandex%
+i_catalog	data/clickbench/URL	%/catalog/%
+i_v_under	data/clickbench/URL	%/v_/%
+
+# ---- deliberate zero-match correctness controls ----
+# A matcher that returns rows here is wrong; a matcher that crashes is wrong.
+z_zzz_prefix	data/clickbench/URL	zzz%
+z_zzz_suffix	data/clickbench/URL	%zzzzzz
+z_ftp	data/clickbench/URL	ftp://%
+
+# ---- concatenated columns: (URL || Referer) LIKE pattern ----
+c_irr	data/clickbench/URL	http://irr.ru%	data/clickbench/Referer
+c_yandex	data/clickbench/URL	%yandex%	data/clickbench/Referer
+c_html	data/clickbench/URL	%.html%	data/clickbench/Referer
+c_double_http	data/clickbench/URL	%http://%http://%	data/clickbench/Referer
