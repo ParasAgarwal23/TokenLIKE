@@ -86,8 +86,8 @@ build/tokenlike --mode token|decode|raw --pattern '%.m3u8' --col data/clickbench
 ```
 
 `--column`, `--column2` and `--out` are aliases for `--col`, `--col2` and `--rowids`
-(the names Person B's `scripts/verify/check.py` uses). `--col2` (concatenation) is
-supported in token mode only for now; decode/raw exit with code 2.
+(the names Person B's `scripts/verify/check.py` uses). `--col2` matches the row-wise
+concatenation `col[r] || col2[r]` in all three modes (row counts must be equal).
 
 - Loading is not timed. Matcher construction is timed separately (`build_us`). Each of
   `--runs` scans is timed on its own after `--warmup` untimed scans; `ns_per_row` and

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <stdexcept>
 
 namespace {
 
@@ -128,6 +129,88 @@ void DecodeMatcher::match(const Column& c, Bitmap& out, Stats& s) const {
     s.bytes_compared += decoded;
 }
 
+namespace {
+
+void check_aligned(const Column& a, const Column& b) {
+    if (a.rows != b.rows)
+        throw std::invalid_argument("match_concat: columns have different row counts");
+}
+
+// Grows `buf` to at least `need` bytes; returns its data pointer.
+inline char* reserve(std::vector<char>& buf, size_t need) {
+    if (need > buf.size()) buf.resize(std::max(need, 2 * buf.size()));
+    return buf.data();
+}
+
+}  // namespace
+
+void RawMatcher::match_concat(const Column& a, const Column& b, Bitmap& out, Stats& s) const {
+    check_aligned(a, b);
+    const uint64_t rows = a.rows;
+    const char* ra = reinterpret_cast<const char*>(a.raw.data());
+    const char* rb = reinterpret_cast<const char*>(b.raw.data());
+    const uint64_t* oa = a.rawoff.data();
+    const uint64_t* ob = b.rawoff.data();
+    if (buf_.empty()) buf_.resize(4096);
+    uint64_t matches = 0;
+
+    dispatch(plan_, [&](auto f) {
+        matches = fill_bitmap(rows, out, [&](uint64_t i) {
+            const size_t la = oa[i + 1] - oa[i], lb = ob[i + 1] - ob[i];
+            char* buf = reserve(buf_, la + lb);
+            std::memcpy(buf, ra + oa[i], la);
+            std::memcpy(buf + la, rb + ob[i], lb);
+            return f(std::string_view(buf, la + lb));
+        });
+    });
+
+    const uint64_t bytes = rows ? (oa[rows] - oa[0]) + (ob[rows] - ob[0]) : 0;
+    s.rows += rows;
+    s.matches += matches;
+    s.bytes_compared += bytes;
+}
+
+void DecodeMatcher::match_concat(const Column& a, const Column& b, Bitmap& out,
+                                 Stats& s) const {
+    check_aligned(a, b);
+    const uint64_t rows = a.rows;
+    const uint8_t* vb = padded_.data();
+    const uint32_t* to = toff_.data();
+    const size_t max_tok = max_tok_;
+    uint64_t matches = 0, decoded = 0;
+
+    // Appends the decoded tokens [tb, te) of `tok` at buf + len; returns the new length.
+    auto decode = [&](char* buf, size_t len, const uint16_t* tok, uint64_t tb, uint64_t te) {
+        for (uint64_t j = tb; j < te; ++j) {
+            const uint32_t o = to[tok[j]];
+            const uint32_t l = to[tok[j] + 1] - o;
+            if (l <= 16)
+                std::memcpy(buf + len, vb + o, 16);  // padded: safe over-copy
+            else
+                std::memcpy(buf + len, vb + o, l);
+            len += l;
+        }
+        return len;
+    };
+
+    dispatch(plan_, [&](auto f) {
+        matches = fill_bitmap(rows, out, [&](uint64_t i) {
+            const uint64_t a0 = a.off[i], a1 = a.off[i + 1], b0 = b.off[i], b1 = b.off[i + 1];
+            char* buf = reserve(buf_, static_cast<size_t>((a1 - a0) + (b1 - b0)) * max_tok + 16);
+            size_t len = decode(buf, 0, a.tok.data(), a0, a1);
+            len = decode(buf, len, b.tok.data(), b0, b1);
+            decoded += len;
+            return f(std::string_view(buf, len));
+        });
+    });
+
+    s.rows += rows;
+    s.matches += matches;
+    s.tokens_read += rows ? (a.off[rows] - a.off[0]) + (b.off[rows] - b.off[0]) : 0;
+    s.bytes_decoded += decoded;
+    s.bytes_compared += decoded;
+}
+
 void raw_match(std::string_view pattern, const Column& c, Bitmap& out, Stats& s) {
     const auto t0 = std::chrono::steady_clock::now();
     const RawMatcher m = RawMatcher::build(pattern);
@@ -141,4 +224,20 @@ void decode_match(std::string_view pattern, const Vocab& v, const Column& c, Bit
     const DecodeMatcher m = DecodeMatcher::build(pattern, v);
     s.build_us = elapsed_us(t0);
     m.match(c, out, s);
+}
+
+void raw_match_concat(std::string_view pattern, const Column& a, const Column& b, Bitmap& out,
+                      Stats& s) {
+    const auto t0 = std::chrono::steady_clock::now();
+    const RawMatcher m = RawMatcher::build(pattern);
+    s.build_us = elapsed_us(t0);
+    m.match_concat(a, b, out, s);
+}
+
+void decode_match_concat(std::string_view pattern, const Vocab& v, const Column& a,
+                         const Column& b, Bitmap& out, Stats& s) {
+    const auto t0 = std::chrono::steady_clock::now();
+    const DecodeMatcher m = DecodeMatcher::build(pattern, v);
+    s.build_us = elapsed_us(t0);
+    m.match_concat(a, b, out, s);
 }

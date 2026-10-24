@@ -143,10 +143,14 @@ class RawMatcher {
 public:
     static RawMatcher build(std::string_view pattern);
     void match(const Column& c, Bitmap& out, Stats& s) const;
+    // Matches a[r] || b[r] (byte concatenation, as Matcher::match_concat).
+    // Throws std::invalid_argument if the row counts differ.
+    void match_concat(const Column& a, const Column& b, Bitmap& out, Stats& s) const;
     const LikePlan& plan() const { return plan_; }
 
 private:
     LikePlan plan_;
+    mutable std::vector<char> buf_;  // concatenation buffer, reused across rows
 };
 
 // Fused decode-then-match baseline: decode each row's tokens into a reusable
@@ -155,6 +159,9 @@ class DecodeMatcher {
 public:
     static DecodeMatcher build(std::string_view pattern, const Vocab& v);
     void match(const Column& c, Bitmap& out, Stats& s) const;
+    // Decodes a[r] then b[r] into one buffer and matches the concatenation.
+    // Throws std::invalid_argument if the row counts differ.
+    void match_concat(const Column& a, const Column& b, Bitmap& out, Stats& s) const;
     const LikePlan& plan() const { return plan_; }
 
 private:
@@ -169,3 +176,7 @@ private:
 void raw_match(std::string_view pattern, const Column& c, Bitmap& out, Stats& s);
 void decode_match(std::string_view pattern, const Vocab& v, const Column& c, Bitmap& out,
                   Stats& s);
+void raw_match_concat(std::string_view pattern, const Column& a, const Column& b, Bitmap& out,
+                      Stats& s);
+void decode_match_concat(std::string_view pattern, const Vocab& v, const Column& a,
+                         const Column& b, Bitmap& out, Stats& s);

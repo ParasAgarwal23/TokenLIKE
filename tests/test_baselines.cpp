@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <random>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -251,6 +252,43 @@ void test_column() {
         CHECK(sdec.tokens_read == c.tok.size(), "decode tokens_read '%s'", p);
         CHECK(sdec.bytes_decoded == c.raw.size(), "decode bytes_decoded '%s'", p);
         std::printf("  %-20s matches=%llu\n", p, static_cast<unsigned long long>(want_matches));
+    }
+
+    // Concatenation: a[r] || b[r]. The second column is the first one shifted
+    // by one row, so matches that span the boundary (e.g. '%.com/%') occur.
+    {
+        std::vector<std::string> other(urls.begin() + 1, urls.end());
+        other.push_back("/static/x.m3u8");
+        const Column c2 = fixture_column(v, other);
+        const char* const concat_patterns[] = {"%.m3u8", "http%://%.com/%", "%htmlhttp%",
+                                               "%.comhttps%", "/static/%",  "%",
+                                               "",          "%_%_%",       "%caf_.com%"};
+        for (const char* p : concat_patterns) {
+            Bitmap br, bd;
+            Stats sr, sd;
+            raw_match_concat(p, c, c2, br, sr);
+            decode_match_concat(p, v, c, c2, bd, sd);
+            uint64_t want_matches = 0;
+            for (size_t i = 0; i < urls.size(); ++i) {
+                const bool want = like_ref(p, urls[i] + other[i]);
+                want_matches += want;
+                CHECK(bitmap_bit(br, i) == want, "raw concat '%s' row %zu", p, i);
+                CHECK(bitmap_bit(bd, i) == want, "decode concat '%s' row %zu", p, i);
+            }
+            CHECK(sr.matches == want_matches && sd.matches == want_matches,
+                  "concat match count '%s'", p);
+            CHECK(sd.tokens_read == c.tok.size() + c2.tok.size(), "concat tokens_read '%s'", p);
+            CHECK(sd.bytes_decoded == c.raw.size() + c2.raw.size(), "concat bytes '%s'", p);
+            std::printf("  concat %-16s matches=%llu\n", p,
+                        static_cast<unsigned long long>(want_matches));
+        }
+        const Column short_col = fixture_column(v, {"a"});
+        bool threw_raw = false, threw_dec = false;
+        Bitmap bx;
+        Stats sx;
+        try { raw_match_concat("%", c, short_col, bx, sx); } catch (const std::invalid_argument&) { threw_raw = true; }
+        try { decode_match_concat("%", v, c, short_col, bx, sx); } catch (const std::invalid_argument&) { threw_dec = true; }
+        CHECK(threw_raw && threw_dec, "concat row-count mismatch must throw");
     }
 
     // A decoder reused across calls must give identical results.

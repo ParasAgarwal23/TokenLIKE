@@ -227,11 +227,6 @@ int run(const Args& a) {
         return kExitUnavailable;
     }
 #endif
-    if (a.col2 && a.mode != "token") {
-        std::fprintf(stderr, "[tokenlike] --col2 is not yet supported for mode %s\n",
-                     a.mode.c_str());
-        return kExitUnavailable;
-    }
 
     if (a.pin_cpu && !pin_to_cpu(*a.pin_cpu))
         std::fprintf(stderr, "[tokenlike] WARNING: could not pin to CPU %d\n", *a.pin_cpu);
@@ -263,10 +258,16 @@ int run(const Args& a) {
 #endif
     if (a.mode == "raw") {
         raw = RawMatcher::build(pattern);
-        scan = [&](Bitmap& bm, Stats& st) { raw->match(col, bm, st); };
+        if (a.col2)
+            scan = [&](Bitmap& bm, Stats& st) { raw->match_concat(col, col2, bm, st); };
+        else
+            scan = [&](Bitmap& bm, Stats& st) { raw->match(col, bm, st); };
     } else if (a.mode == "decode") {
         dec = DecodeMatcher::build(pattern, vocab);
-        scan = [&](Bitmap& bm, Stats& st) { dec->match(col, bm, st); };
+        if (a.col2)
+            scan = [&](Bitmap& bm, Stats& st) { dec->match_concat(col, col2, bm, st); };
+        else
+            scan = [&](Bitmap& bm, Stats& st) { dec->match(col, bm, st); };
     } else {
 #if defined(TOKENLIKE_HAVE_MATCHER)
         tok = Matcher::build(pattern, vocab);
