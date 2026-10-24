@@ -15,6 +15,7 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -37,35 +38,63 @@ VALID_MODES = ("token", "decode", "raw")
 MAX_REPORTED = 5
 
 
-def run_cli(cli: str, pat: Pattern, mode: str, vocab: str, out_path: str, timeout: int):
-    """Invoke the CLI for one (pattern, mode). Returns (ok, detail)."""
+# Person C's CLI exit codes (src/cli.cpp): 0 ok, 1 error, 2 feature unavailable
+# in this build (e.g. token mode without the matcher, or --col2 outside token
+# mode). Code 2 is a legitimate "not supported", not a wrong answer, so it is
+# reported as SKIP; code 1 is a hard failure.
+EXIT_OK, EXIT_ERROR, EXIT_UNAVAILABLE = 0, 1, 2
+
+
+def run_cli(cli: str, pat: Pattern, mode: str, vocab: str, out_path: str, timeout: int, runs: int):
+    """Invoke the CLI for one (pattern, mode).
+
+    Returns (status, detail, info) where status is "ok", "skip" or "fail" and
+    info carries the CLI's JSON report (so the caller can record whether the
+    binary used the official loaders or the test fixtures).
+
+    Flag names follow src/cli.cpp, which is the authority: --col / --col2 /
+    --rowids, not the --column / --out spelling originally proposed.
+    """
     argv = [
         cli,
         "--mode", mode,
-        "--column", pat.column,
+        "--col", pat.column,
         "--vocab", vocab,
         "--pattern", pat.pattern,
-        "--out", out_path,
+        "--rowids", out_path,
+        # Correctness only needs one scan; the benchmark harness owns timing.
+        "--runs", str(runs),
+        "--warmup", "0",
     ]
     if pat.is_concat:
-        argv += ["--column2", pat.column2]
+        argv += ["--col2", pat.column2]
 
     try:
-        proc = subprocess.run(
-            argv, capture_output=True, text=True, timeout=timeout
-        )
+        proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:
-        return False, f"CLI timed out after {timeout}s"
+        return "fail", f"CLI timed out after {timeout}s", {}
     except OSError as e:
-        return False, f"cannot execute {cli}: {e}"
+        return "skip", f"cannot execute {cli}: {e}", {}
 
-    if proc.returncode != 0:
-        detail = (proc.stderr or proc.stdout or "").strip().splitlines()
-        tail = detail[-1] if detail else "no output"
-        return False, f"CLI exited {proc.returncode}: {tail}"
+    stderr_tail = (proc.stderr or "").strip().splitlines()
+    tail = stderr_tail[-1] if stderr_tail else "no stderr output"
+
+    if proc.returncode == EXIT_UNAVAILABLE:
+        return "skip", f"unsupported in this build: {tail}", {}
+    if proc.returncode != EXIT_OK:
+        return "fail", f"CLI exited {proc.returncode}: {tail}", {}
+
+    info = {}
+    for line in (proc.stdout or "").splitlines():
+        line = line.strip()
+        if line.startswith("{"):
+            try:
+                info = json.loads(line)
+            except json.JSONDecodeError:
+                pass
     if not os.path.exists(out_path):
-        return False, f"CLI exited 0 but wrote no output file ({out_path})"
-    return True, ""
+        return "fail", f"CLI exited 0 but wrote no row-id file ({out_path})", info
+    return "ok", "", info
 
 
 def describe_rows(pat: Pattern, row_ids, vocab_tokens, label: str) -> None:
@@ -96,7 +125,7 @@ def describe_rows(pat: Pattern, row_ids, vocab_tokens, label: str) -> None:
         )
 
 
-def check_pattern(con, pat: Pattern, modes, cli: str, vocab: str, force: bool, timeout: int, tmpdir: str, vocab_tokens):
+def check_pattern(con, pat: Pattern, modes, cli: str, vocab: str, force: bool, timeout: int, tmpdir: str, vocab_tokens, runs: int, seen_loaders: set):
     """Verify one pattern across all requested modes.
 
     Returns a dict of mode -> ('pass' | 'fail' | 'skip', detail).
@@ -107,9 +136,13 @@ def check_pattern(con, pat: Pattern, modes, cli: str, vocab: str, force: bool, t
 
     for mode in modes:
         out_path = os.path.join(tmpdir, f"{pat.name}.{mode}.ids")
-        ok, detail = run_cli(cli, pat, mode, vocab, out_path, timeout)
-        if not ok:
-            results[mode] = ("skip", detail)
+        status, detail, info = run_cli(cli, pat, mode, vocab, out_path, timeout, runs)
+        if info.get("loaders"):
+            seen_loaders.add(info["loaders"])
+        if status != "ok":
+            results[mode] = (status, detail)
+            if status == "fail":
+                print(f"  CLI FAILED {pat.name} mode={mode}: {detail}")
             continue
 
         actual = set(read_ids(out_path))
@@ -139,7 +172,8 @@ def main() -> int:
     ap.add_argument("--cli", default=os.environ.get("TOKENLIKE_CLI", "build/tokenlike"))
     ap.add_argument("--vocab", default="data/vocab.bin")
     ap.add_argument("--force", action="store_true", help="regenerate ground truth")
-    ap.add_argument("--timeout", type=int, default=300, help="per-invocation CLI timeout")
+    ap.add_argument("--timeout", type=int, default=600, help="per-invocation CLI timeout")
+    ap.add_argument("--runs", type=int, default=1, help="CLI --runs (correctness needs 1)")
     args = ap.parse_args()
 
     modes = [m.strip() for m in args.modes.split(",") if m.strip()]
@@ -162,13 +196,14 @@ def main() -> int:
     tally = {"pass": 0, "fail": 0, "skip": 0}
     failed_patterns = []
     skip_reasons = {}
+    seen_loaders: set[str] = set()
     started = time.monotonic()
 
     with tempfile.TemporaryDirectory(prefix="tokenlike-check-") as tmpdir:
         for pat in patterns:
             expected_count, results = check_pattern(
                 con, pat, modes, args.cli, args.vocab, args.force,
-                args.timeout, tmpdir, vocab_tokens,
+                args.timeout, tmpdir, vocab_tokens, args.runs, seen_loaders,
             )
             cells = []
             for mode in modes:
@@ -186,6 +221,14 @@ def main() -> int:
     elapsed = time.monotonic() - started
 
     print()
+    if seen_loaders:
+        print(f"CLI data loaders: {', '.join(sorted(seen_loaders))}")
+        if "fixture" in seen_loaders:
+            print(
+                "WARNING: the CLI was built with TEST FIXTURE loaders, so this run "
+                "does NOT verify Person B's official loaders or the real datasets.",
+                file=sys.stderr,
+            )
     print(f"{tally['pass']} passed, {tally['fail']} failed, {tally['skip']} skipped "
           f"in {elapsed:.1f}s")
     for reason, count in skip_reasons.items():
