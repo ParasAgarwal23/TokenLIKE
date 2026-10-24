@@ -17,6 +17,7 @@ Usage:
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -43,6 +44,30 @@ MAX_REPORTED = 5
 # mode). Code 2 is a legitimate "not supported", not a wrong answer, so it is
 # reported as SKIP; code 1 is a hard failure.
 EXIT_OK, EXIT_ERROR, EXIT_UNAVAILABLE = 0, 1, 2
+
+
+def resolve_cli(cli: str) -> str:
+    """Turn a CLI path into something subprocess can launch on any platform.
+
+    Two Windows problems with a relative default like "build/tokenlike":
+    the executable is actually "build/tokenlike.exe", and CreateProcess does
+    not apply PATHEXT to a path that contains a separator, so the bare name
+    never resolves. On POSIX the path works as given.
+
+    Returns an absolute path when the file exists, otherwise a PATH lookup,
+    otherwise the original string so the failure message names what was asked
+    for rather than something rewritten.
+    """
+    candidates = [cli]
+    if os.name == "nt":
+        exts = [e for e in os.environ.get("PATHEXT", ".EXE").split(os.pathsep) if e]
+        if not os.path.splitext(cli)[1]:
+            candidates += [cli + ext.lower() for ext in exts]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return os.path.abspath(candidate)
+    found = shutil.which(cli)
+    return found or cli
 
 
 def run_cli(cli: str, pat: Pattern, mode: str, vocab: str, out_path: str, timeout: int, runs: int):
@@ -188,8 +213,13 @@ def main() -> int:
     vocab_tokens = load_vocab(args.vocab)
     con = connect()
 
+    cli = resolve_cli(args.cli)
     print(f"checking {len(patterns)} pattern(s) x {len(modes)} mode(s) from {args.pattern_file}")
-    print(f"  cli    : {args.cli}" + ("" if os.path.exists(args.cli) else "   (NOT FOUND)"))
+    if os.path.isfile(cli):
+        shown = cli if cli == args.cli else f"{args.cli} -> {cli}"
+        print(f"  cli    : {shown}")
+    else:
+        print(f"  cli    : {args.cli}   (NOT FOUND)")
     print(f"  oracle : duckdb against the canonical parquet")
     print()
 
@@ -202,7 +232,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="tokenlike-check-") as tmpdir:
         for pat in patterns:
             expected_count, results = check_pattern(
-                con, pat, modes, args.cli, args.vocab, args.force,
+                con, pat, modes, cli, args.vocab, args.force,
                 args.timeout, tmpdir, vocab_tokens, args.runs, seen_loaders,
             )
             cells = []

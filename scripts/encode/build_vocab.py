@@ -36,6 +36,10 @@ UPSTREAM_COMMIT = "e202e36e2b33a4768d1122f96880b64416234175"
 UPSTREAM_PATH = "tokens/claude_patched.csv"
 UPSTREAM_URL = f"https://raw.githubusercontent.com/{UPSTREAM_REPO}/{UPSTREAM_COMMIT}/{UPSTREAM_PATH}"
 
+# Some CDNs reject the default "Python-urllib/3.x" agent outright (ClickBench
+# answers 403). raw.githubusercontent currently does not, but do not rely on it.
+USER_AGENT = "TokenLIKE/1.0 (+https://github.com/ParasAgarwal23/TokenLIKE)"
+
 VOCAB_ID = "claude_patched"
 MAX_TOKENS = 65536
 
@@ -52,7 +56,8 @@ def fetch_csv(cache_path: str) -> bytes:
 
     os.makedirs(os.path.dirname(cache_path) or ".", exist_ok=True)
     print(f"fetching {UPSTREAM_URL}")
-    with urllib.request.urlopen(UPSTREAM_URL, timeout=120) as resp:
+    request = urllib.request.Request(UPSTREAM_URL, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(request, timeout=120) as resp:
         if resp.status != 200:
             raise RuntimeError(f"upstream returned HTTP {resp.status}")
         blob = resp.read()

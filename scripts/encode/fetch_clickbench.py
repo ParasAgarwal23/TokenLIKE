@@ -34,6 +34,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +45,12 @@ PARTITION_URL = (
 )
 # Observed Content-Length of partition 0, used as a download completeness check.
 PART0_BYTES = 122446530
+
+# datasets.clickhouse.com rejects the default "Python-urllib/3.x" agent with
+# HTTP 403, so every request has to carry an explicit User-Agent. This was
+# invisible for a while because a manually curl-ed copy was already cached in
+# data/download, and the cache hit skipped the request entirely.
+USER_AGENT = "TokenLIKE/1.0 (+https://github.com/ParasAgarwal23/TokenLIKE)"
 COLUMN_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 FETCH_BATCH = 50_000
 
@@ -80,7 +87,15 @@ def download(part: int, dest_dir: str) -> str:
     print(f"downloading {url}")
     started = time.monotonic()
     tmp = path + ".part"
-    with urllib.request.urlopen(url, timeout=120) as resp, open(tmp, "wb") as out:
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    try:
+        resp_cm = urllib.request.urlopen(request, timeout=120)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(
+            f"{url} returned HTTP {e.code} {e.reason}. If this is 403, the host is "
+            f"rejecting the User-Agent; see USER_AGENT in this file."
+        ) from e
+    with resp_cm as resp, open(tmp, "wb") as out:
         total = int(resp.headers.get("Content-Length") or 0)
         done = 0
         while chunk := resp.read(1 << 20):

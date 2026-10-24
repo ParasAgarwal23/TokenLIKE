@@ -6,74 +6,48 @@
 
 ## Person B — Data and Correctness (branch `b/data`)
 
-**State: data pipeline and correctness tooling complete. Verified against the
-real integrated TokenLIKE matcher — 1,163 of 1,164 integrated checks pass, with
-one Person A capacity limit documented below.**
+**State: data pipeline and correctness tooling complete and stable. Verified
+against the real integrated TokenLIKE matcher at `main` `183d947`
+(`v1-core-demo`) — 1,164 of 1,164 executed checks pass, zero mismatches. The
+DFA state-limit blocker reported earlier is resolved by Person A's `b2bfecc`.**
 
 See `HANDOFF_B.md` for the executable handoff (formats, commands, CLI contract).
 
 ### Integrated verification vs the real matcher
 
-Binary: `origin/main` @ `ec189f8` + the four Person B loader files from
-`b/data` @ `a74b435`. CMake reported `loaders (Person B) = ON, matcher
-(Person A) = ON`, and every CLI invocation reported `"loaders": "official"`,
-so these results exercise the real loaders and the real datasets, not fixtures.
+Binary: `main` @ `183d947`, tag `v1-core-demo`, built as-is (my loaders are
+merged into main as of `39de2b1`). CMake reported
+`loaders (Person B) = ON, matcher (Person A) = ON`, and every CLI invocation
+reported `"loaders": "official"`, so these results exercise the real loaders,
+the real matcher and the real datasets — not fixtures.
 
-| Stage | Dataset | Patterns | Modes | Checks | Pass | Fail | Skip |
-|---|---|---|---|---|---|---|---|
-| 1 edge | `data/edge/values` (51 rows) | 36 | token, decode, raw | 108 | 108 | 0 | 0 |
-| 2 core | ClickBench 1,000,000 rows | 22 | token, decode, raw | 66 | 66 | 0 | 0 |
-| 3 tier1 | ClickBench 1,000,000 rows | 13 | token, decode, raw | 39 | 39 | 0 | 0 |
-| 4 tier2 | ClickBench + TPC-H, 1,000,000 rows | 23 | token, decode, raw | 69 | 51 | 0 | 18 |
-| 5 fuzz | `data/fuzz/values` (20,016 rows) | 300 | token, decode, raw | 900 | 899 | 1 | 0 |
-| **Total** | | **394** | | **1,182** | **1,163** | **1** | **18** |
+| Stage | Dataset | Rows | Patterns | Modes | Checks | Pass | Fail | Skip |
+|---|---|---|---|---|---|---|---|---|
+| 1 edge | `data/edge/values` | 51 | 36 | token, decode, raw | 108 | 108 | 0 | 0 |
+| 2 core | ClickBench URL/Referer | 1,000,000 | 22 | token, decode, raw | 66 | 66 | 0 | 0 |
+| 3 tier1 | ClickBench URL | 1,000,000 | 13 | token, decode, raw | 39 | 39 | 0 | 0 |
+| 4 tier2 | ClickBench + TPC-H | 1,000,000 | 23 | token, decode, raw | 69 | 51 | 0 | 18 |
+| 5 fuzz | `data/fuzz/values` | 20,016 | 300 | token, decode, raw | 900 | 900 | 0 | 0 |
+| **Total** | | | **394** | | **1,182** | **1,164** | **0** | **18** |
 
 The 18 skips are legitimate and self-reported by the CLI with exit code 2:
-`--col2` is only implemented for `token` mode, so the 9 concatenation patterns
+`--col2` is implemented only for `token` mode, so the 9 concatenation patterns
 cannot run in `decode` or `raw`. Concatenation **is** verified in `token` mode,
 which is the mode that matters for TokenLIKE.
+
+Round-trip is 0 mismatches on all eight columns (4,123,118 rows), and
+`test_io` passes 32/32 against each of them.
 
 Anchored-prefix early exit is working: `http://%` over 1,000,000 rows reads
 **1.52 tokens per row** at 3.0 ns/row.
 
-### Open item for Person A: 512-state DFA cap (1 fuzz pattern)
+### Resolved: the 512-state DFA cap
 
-`fuzz_0082` fails in `token` mode only, with
-`error: pattern needs more than 512 DFA states` (exit code 1). `decode` and
-`raw` return the correct answer for the same pattern on the same data, and
-round-trip on that column is 0 mismatches, so **this is not a data, encoding,
-loader or alignment problem** — it is a capacity limit in token-mode DFA
-construction.
-
-Measured cost model, from controlled probes against the integrated binary:
-
-| Pattern shape | Result |
-|---|---|
-| plain literal + `%`, 500 bytes | ok |
-| plain literal + `%`, 600 bytes | over the cap |
-| Cyrillic literal, 250 chars / 500 bytes | ok |
-| `_` repeated 120× | ok |
-| `_` repeated 150× | over the cap |
-| 300 literal bytes + 40 `_` | ok |
-| 300 literal bytes + 60 `_` | over the cap |
-
-So roughly **1 state per literal byte, ~4 states per `_`** (one per UTF-8 length
-class), against a hard cap of 512. But cost grows faster once several interior
-`%` segments and `_` are combined: `fuzz_0082` has 6 `%` and 9 `_` and hits the
-cap at only ~300 literal bytes. Bisecting its prefix, 302 characters is accepted
-and 303 is rejected — the character that tips it over is a single 2-byte
-Cyrillic `с`.
-
-Suggested resolution, Person A's and C's call:
-1. raise the cap, or
-2. fall back to the decode path when construction would exceed it, or
-3. return exit code 2 (unavailable) instead of 1, so it is classified as an
-   unsupported pattern rather than a wrong answer.
-
-Option 3 alone would make this a documented limitation rather than a failure in
-the final numbers. **No pattern in mandatory scope reaches this**: it is only
-reachable because the fuzzer synthesizes a 353-character pattern out of a real
-1,991-byte URL, and real analytics patterns are short.
+Previously `fuzz_0082` failed in `token` mode with
+`pattern needs more than 512 DFA states` (a 353-character pattern with 6 `%`
+and 9 `_`, synthesized by the fuzzer from a real 1,991-byte URL). Person A's
+`b2bfecc` applies the limit to the **minimized** DFA rather than to subset
+construction, and the pattern now passes in all three modes. Fuzz is 900/900.
 
 ### Person B change required by integration
 
@@ -88,7 +62,43 @@ against the real frozen `common.h`.
 
 The bit-packed `Bitmap` decision (commit `092fc58`) does not affect my
 components: the CLI converts the bitmap to row ids, and my tooling only reads
-those row-id files.
+those row-id files. The settled interface is documented above and in
+`HANDOFF_B.md` §4a.
+
+### Stabilization fixes (this round)
+
+1. **ClickBench download returned HTTP 403.** `datasets.clickhouse.com` rejects
+   the default `Python-urllib/3.x` User-Agent. `fetch_clickbench.py` now sends
+   an explicit one and reports a 403 with the cause named. This was invisible
+   for a long time because a manually `curl`-ed copy was already cached in
+   `data/download`, so the cache hit skipped the request entirely. Verified by
+   deleting the cache: the script downloaded all 122,446,530 bytes unattended.
+   The same User-Agent was added to `build_vocab.py` defensively;
+   `raw.githubusercontent.com` currently accepts the default agent, so that one
+   was not actually failing.
+2. **Windows relative executable paths in `check.py`.** `build/tokenlike` never
+   resolved on Windows: the file is `tokenlike.exe`, and `CreateProcess` does
+   not apply `PATHEXT` to a path containing a separator. `check.py` now
+   resolves the CLI (trying `PATHEXT` extensions, then `PATH`) to an absolute
+   path and prints the resolution it used. `check_all.sh` accepts either
+   spelling.
+3. **TPC-H token counts in this file were wrong** — 6,584,993 and 11,135,756
+   had been back-computed from a rounded bytes/token figure. Corrected to the
+   encoder's actual output, 6,583,689 and 11,137,450, read from `*.meta.json`.
+   Ratios and byte counts were already right.
+4. **`test_io` read out of bounds on an unexpected vocabulary.** It probed
+   token id 23638 unconditionally; against a smaller vocabulary that is a read
+   past the end of `Vocab::off`, which AddressSanitizer reports as a
+   heap-buffer-overflow. It now range-checks the probe, reports a clean failure
+   naming the problem, skips the checks that only make sense against the frozen
+   vocabulary, still runs every corruption fixture, and exits non-zero. A
+   loader rejection of a command-line input is now reported as a clean error
+   rather than an "unexpected exception". Confirmed clean under
+   `-fsanitize=address,undefined`.
+
+   This is the root cause of the workaround in Person C's `bfdc5ee` ("run
+   Person B's test_io only on the real data"). That CMake guard is still
+   sensible, but it is no longer protecting against a crash.
 
 ### What A and C can use right now
 
@@ -123,8 +133,13 @@ bash scripts/check_all.sh
 |---|---|---|---|---|---|---|
 | ClickBench URL | 1,000,000 | 88,562,192 | 36,136,053 | 2.4508 | 1.2254× | 0 mismatches |
 | ClickBench Referer | 1,000,000 | 79,583,339 | 32,975,876 | 2.4134 | 1.2067× | 0 mismatches |
-| TPC-H l_comment | 1,000,000 | 26,511,095 | 6,584,993 | 4.0268 | 2.0134× | 0 mismatches |
-| TPC-H o_comment | 1,000,000 | 48,529,673 | 11,135,756 | 4.3573 | 2.1787× | 0 mismatches |
+| TPC-H l_comment | 1,000,000 | 26,511,095 | 6,583,689 | 4.0268 | 2.0134× | 0 mismatches |
+| TPC-H o_comment | 1,000,000 | 48,529,673 | 11,137,450 | 4.3573 | 2.1787× | 0 mismatches |
+
+All figures are read from the generated `*.meta.json`. The two TPC-H token
+counts previously shown here (6,584,993 and 11,135,756) were wrong: they had
+been back-computed from the rounded bytes/token figure instead of taken from
+the encoder's output. Everything else in the table was already correct.
 
 Encoding runs at ~215k rows/s, so the full column encodes in under 5 seconds.
 
@@ -150,10 +165,31 @@ get it; if we want a headline *speed* number, URLs are the right dataset.
 
 ### Interface decisions — PLEASE CONFIRM
 
-**1. `Bitmap` layout — needs A and C to agree.** `std::vector<uint8_t>` is
-ambiguous. Proposed and assumed by my tooling: **one byte per row, `size() ==
-rows`, values 0 or 1.** Bit-packing changes A's `match()` and C's
-bitmap→row-id conversion, so decide once, now.
+**1. `Bitmap` layout — SETTLED, bit-packed.** I had proposed one byte per row;
+the team chose bit-packing (commit `092fc58`) and `include/tokenlike/common.h`
+is now authoritative:
+
+```cpp
+using Bitmap = std::vector<uint8_t>;          // BIT-PACKED, LSB-first
+
+// row r matches  <=>  (b[r >> 3] >> (r & 7)) & 1
+inline size_t bitmap_bytes(uint64_t rows) { return (rows + 7) / 8; }
+inline bool   bitmap_bit(const Bitmap& b, uint64_t r) { return (b[r >> 3] >> (r & 7)) & 1; }
+```
+
+- `size() == bitmap_bytes(rows) == ceil(rows / 8)`.
+- **Lowest bit first**: within byte `i`, bit 0 is row `8i`, bit 7 is row `8i+7`.
+- Padding bits above `rows` are zero; the CLI treats a set padding bit as an
+  error.
+- The callee of a match function resizes and overwrites the bitmap.
+
+This does not affect any Person B component: the CLI converts the bitmap to row
+ids and my tooling only ever reads those row-id files (sorted `uint32` LE).
+Decoding one in Python, for reference:
+
+```python
+ids = [8 * i + b for i, byte in enumerate(bitmap) for b in range(8) if byte >> b & 1]
+```
 
 **2. CLI contract — `check.py` is built against this.** Replace the reference
 stub with the real binary and the correctness gate runs unchanged:
