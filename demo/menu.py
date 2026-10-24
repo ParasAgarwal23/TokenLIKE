@@ -65,6 +65,8 @@ def main() -> int:
     gone = missing(need)
     if gone:
         sys.exit(f"cannot run '{title}': missing {', '.join(gone)} (see README 'Demonstrations')")
+    if not Path(cmd[0]).is_absolute():  # Windows cannot launch a relative path with '/'
+        cmd = [str(ROOT / cmd[0])] + cmd[1:]
     env = dict(os.environ, MSYS_NO_PATHCONV="1", TOKENLIKE_DIR=str(ROOT),
                FSSTLIKE_BUILD=os.environ.get("FSSTLIKE_BUILD", str(ROOT / "build-fsst")))
     return subprocess.call(cmd, cwd=ROOT, env=env)
