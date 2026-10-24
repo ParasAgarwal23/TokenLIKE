@@ -115,6 +115,11 @@ option(TOKENLIKE_WITH_FSST "Build the optional FSST-compressed LIKE module" OFF)
 if(TOKENLIKE_WITH_FSST)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/integration/fsst/CMakeLists.txt)
     add_subdirectory(integration/fsst)
+    # Upstream FSST's _WIN32 branch calls __cpuidex without including <intrin.h>
+    # (MSVC declares it implicitly). MinGW needs the header; upstream stays unmodified.
+    if(MINGW AND TARGET fsst_upstream)
+      target_compile_options(fsst_upstream PRIVATE -include intrin.h)
+    endif()
   else()
     message(FATAL_ERROR "TOKENLIKE_WITH_FSST=ON but integration/fsst/ is not in this tree")
   endif()
