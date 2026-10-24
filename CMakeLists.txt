@@ -96,6 +96,21 @@ if(HAVE_MATCHER AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_matcher.cpp)
   add_test(NAME matcher COMMAND test_matcher)
 endif()
 
+# Person B's loader tests: on the synthetic fixture always, and on the real
+# ClickBench column when the data has been generated locally.
+if(HAVE_LOADERS AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_io.cpp)
+  add_executable(test_io tests/test_io.cpp)
+  target_link_libraries(test_io PRIVATE tokenlike ${TL_EXE_LINK})
+  add_test(NAME io_fixture COMMAND test_io ${CMAKE_BINARY_DIR}/fixture/vocab.bin
+           ${CMAKE_BINARY_DIR}/fixture/synth/url ${CMAKE_BINARY_DIR}/io_tmp)
+  set_tests_properties(io_fixture PROPERTIES FIXTURES_REQUIRED synth)
+  set(DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/data)
+  if(EXISTS ${DATA_DIR}/vocab.bin AND EXISTS ${DATA_DIR}/clickbench/URL.tok)
+    add_test(NAME io_clickbench_url COMMAND test_io ${DATA_DIR}/vocab.bin
+             ${DATA_DIR}/clickbench/URL ${CMAKE_BINARY_DIR}/io_tmp)
+  endif()
+endif()
+
 # End-to-end CLI smoke test on a synthetic fixture.
 set(FIXTURE_DIR ${CMAKE_BINARY_DIR}/fixture)
 add_test(NAME fixture_write COMMAND test_baselines --write-fixture ${FIXTURE_DIR})
