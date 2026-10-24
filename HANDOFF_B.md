@@ -40,6 +40,13 @@ unzip -o tools/duckdb.zip -d tools/ && chmod +x tools/duckdb
 Do **not** `brew install duckdb`: it installs a 2.0.0-dev build whose output
 format differs. `cmake` is also needed (`brew install cmake`).
 
+### Note on the ClickBench download
+
+`datasets.clickhouse.com` answers **HTTP 403** to the default
+`Python-urllib/3.x` User-Agent. `fetch_clickbench.py` now sends an explicit
+one, so the download works unattended; if you see a 403 from a script of your
+own, that is the cause.
+
 ---
 
 ## 2. Regenerating all data (~4 minutes, no Git involvement)
@@ -84,8 +91,8 @@ bash scripts/check_all.sh                                          # whole gate
 |---|---|---|---|---|
 | `data/clickbench/URL` | 1,000,000 | 88,562,192 | 36,136,053 | ~241 MB |
 | `data/clickbench/Referer` | 1,000,000 | 79,583,339 | 32,975,876 | ~224 MB |
-| `data/tpch/l_comment` | 1,000,000 | 26,511,095 | 6,584,993 | ~56 MB |
-| `data/tpch/o_comment` | 1,000,000 | 48,529,673 | 11,135,756 | ~90 MB |
+| `data/tpch/l_comment` | 1,000,000 | 26,511,095 | 6,583,689 | ~56 MB |
+| `data/tpch/o_comment` | 1,000,000 | 48,529,673 | 11,137,450 | ~90 MB |
 | `data/dbtext/urls` | 100,000 | 6,227,875 | 2,425,704 | ~12 MB |
 | `data/sample/urls` | 1,000 | 62,455 | 24,349 | ~132 KB |
 | `data/edge/values` | 51 | 669 | 217 | ~24 KB |
@@ -122,6 +129,34 @@ once at that point.
 
 Vocabulary: 65,536 tokens (ids fill `uint16` exactly), all 256 single-byte
 tokens present, max token length 12.
+
+---
+
+## 4a. Bitmap interface (settled: bit-packed, lowest bit first)
+
+`include/tokenlike/common.h` is authoritative; restated here because the row-id
+files my tooling consumes are derived from it.
+
+```cpp
+using Bitmap = std::vector<uint8_t>;          // BIT-PACKED, LSB-first
+
+// row r matches  <=>  (b[r >> 3] >> (r & 7)) & 1
+inline size_t bitmap_bytes(uint64_t rows) { return (rows + 7) / 8; }
+inline bool   bitmap_bit(const Bitmap& b, uint64_t r) { return (b[r >> 3] >> (r & 7)) & 1; }
+```
+
+* `size() == ceil(rows / 8)`.
+* **Lowest bit first**: in byte `i`, bit 0 is row `8i` and bit 7 is row `8i+7`.
+* Padding bits above `rows` must be zero; the CLI rejects a set padding bit.
+* The callee of a match function resizes and overwrites the bitmap.
+
+Person B components never read a bitmap: the CLI converts it to row ids
+(`--rowids`, sorted `uint32` little-endian) and that file is what `check.py`
+compares against DuckDB. Equivalent decode in Python:
+
+```python
+ids = [8 * i + b for i, byte in enumerate(bitmap) for b in range(8) if byte >> b & 1]
+```
 
 ---
 

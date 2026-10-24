@@ -28,6 +28,9 @@ namespace {
 //---------------------------------------------------------------------------
 unsigned failures = 0;
 unsigned checks = 0;
+/// The frozen vocabulary produced by scripts/encode/build_vocab.py.
+constexpr uint32_t frozenTokens = 65536;
+constexpr size_t frozenPayload = 367981;
 //---------------------------------------------------------------------------
 void check(bool ok, const std::string& what)
 // Assert a condition, recording rather than aborting so one run reports all
@@ -103,16 +106,18 @@ struct ColumnFixture {
    }
 };
 //---------------------------------------------------------------------------
-void testRealVocab(const std::string& path)
-// Happy path: the frozen vocabulary produced by build_vocab.py
+bool testRealVocab(const std::string& path)
+// Happy path: the frozen vocabulary produced by build_vocab.py.
+// Returns whether `path` really is the frozen vocabulary, so that callers can
+// skip the checks that are only meaningful against it.
 {
    std::cout << "== load_vocab(" << path << ")\n";
    const Vocab v = load_vocab(path);
-   check(v.n == 65536, "frozen vocabulary holds 65536 tokens, got " + std::to_string(v.n));
+   check(v.n == frozenTokens, "frozen vocabulary holds 65536 tokens, got " + std::to_string(v.n));
    check(v.off.size() == v.n + 1u, "offset array holds n + 1 entries");
    check(v.off.front() == 0, "offsets start at 0");
    check(v.off.back() == v.bytes.size(), "terminal offset matches the payload length");
-   check(v.bytes.size() == 367981, "payload is 367981 bytes, got " + std::to_string(v.bytes.size()));
+   check(v.bytes.size() == frozenPayload, "payload is 367981 bytes, got " + std::to_string(v.bytes.size()));
 
    // Every id must be addressable, and all 256 single-byte tokens must exist,
    // which is what lets greedy longest-match encoding never dead-end.
@@ -122,8 +127,16 @@ void testRealVocab(const std::string& path)
    check(singles == 256, "vocabulary holds 256 single-byte tokens, got " + std::to_string(singles));
 
    // Spot-check a known id against the segmentation observed from the encoder.
-   check(v.token(23638) == "http", "token 23638 is \"http\", got \"" + std::string(v.token(23638)) + "\"");
+   // Vocab::token() does no bounds checking, so the id must be in range first:
+   // probing it against a smaller vocabulary is a heap read past the end of
+   // Vocab::off, which AddressSanitizer reports as a heap-buffer-overflow.
+   constexpr uint16_t probeId = 23638;
+   if (v.n > probeId)
+      check(v.token(probeId) == "http", "token 23638 is \"http\", got \"" + std::string(v.token(probeId)) + "\"");
+   else
+      check(false, "vocabulary has only " + std::to_string(v.n) + " tokens, too few to hold id " + std::to_string(probeId));
    std::cout << "  n=" << v.n << " payload=" << v.bytes.size() << " bytes\n";
+   return v.n == frozenTokens && v.bytes.size() == frozenPayload;
 }
 //---------------------------------------------------------------------------
 void testRealColumn(const std::string& prefix, const std::string& vocabPath)
@@ -139,7 +152,13 @@ void testRealColumn(const std::string& prefix, const std::string& vocabPath)
    check(c.off.back() == c.tok.size(), "terminal token offset matches the token count");
    check(c.rawoff.back() == c.raw.size(), "terminal raw offset matches the raw byte count");
 
-   validate_column(c, v);
+   try {
+      validate_column(c, v);
+   } catch (const std::exception& e) {
+      check(false, std::string("validate_column rejected the column: ") + e.what());
+      std::cout << "  skipping the round-trip: the column does not match this vocabulary\n";
+      return;
+   }
 
    // This is the same guarantee roundtrip.py checks in Python; doing it here
    // too means a format bug cannot hide behind agreement between one writer
@@ -276,12 +295,23 @@ int main(int argc, char** argv)
 
    try {
       std::filesystem::create_directories(tmp);
-      testRealVocab(vocabPath);
-      testRealColumn(columnPrefix, vocabPath);
+      // A vocabulary that loads but is not the frozen one cannot validate the
+      // real column, so say so and carry on with the fixture-driven checks
+      // rather than aborting the whole run.
+      if (testRealVocab(vocabPath)) {
+         testRealColumn(columnPrefix, vocabPath);
+      } else {
+         std::cout << "== skipping " << columnPrefix
+                   << ": " << vocabPath << " is not the frozen vocabulary\n";
+      }
       testVocabCorruption(tmp);
       testColumnCorruption(tmp);
    } catch (const std::exception& e) {
-      std::cerr << "FATAL: unexpected exception: " << e.what() << "\n";
+      // Reaching here means a loader rejected one of the inputs named on the
+      // command line (a missing or malformed vocab.bin or column). That is a
+      // clean rejection, not a crash, so report it as such and fail.
+      std::cerr << "ERROR: " << e.what() << "\n";
+      std::cerr << "test_io: FAILED (could not run against the given inputs)\n";
       return 1;
    }
 
