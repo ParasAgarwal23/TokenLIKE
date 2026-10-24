@@ -738,6 +738,81 @@ static void t10_limits() {
     CHECK_THROWS(Matcher::build("%a__________b%", v), std::runtime_error);
 }
 
+// ---------------------------------------------------------------- T10b long patterns
+
+// Person B's generated_fuzz.txt pattern fuzz_0082 (365 bytes, 9 '%', 9 '_', Cyrillic literal).
+// Its subset construction needs 582 (forward) / 1041 (backward) states but only 394 / 395 after
+// minimization; it used to be rejected because the state limit was applied before minimization.
+static const std::string kFuzz0082 =
+    "http://irr.ru/index.php?showalbum/login-legal.ua/search=0&user_id=907826232230&op_style=0&view/"
+    "vie_topic.php?attal.ru/cine/give_type=city&custom%3D%26custom%3D%26xpid%3D1216/00001216/0000"
+    "&currency=RUR/page=0&s_yers=0&po_yers=200&lo=http://love.ru/katerinburg.irr.ru/mymail.ru"
+    "%2Fkategory_name=\xD0\x94\xD0\xBB\xD0\xB8\xD0\xBD\xD0\xBD\xD1\x8B \xD0\xBC\xD0\xB8\xD0\xBD\xD1\x81\xD0\xBA\xD0\xB5"
+    "&yn=1&input_who1=2&input_bdsmpeople.ru/view/1033";
+
+// A random string matching p: wildcards replaced by random characters.
+static std::string instantiate(const Pattern& p, std::mt19937& rng) {
+    static const std::vector<std::string> chars = {"a", "/", "_", "%", "3", E2, EU, EM, "\xD0\x94"};
+    std::string s;
+    for (const Elem& e : p.elems) {
+        if (e.kind == ElemKind::Lit) s += e.bytes;
+        else if (e.kind == ElemKind::Any1) s += chars[rng() % chars.size()];
+        else for (int k = static_cast<int>(rng() % 4); k > 0; --k) s += chars[rng() % chars.size()];
+    }
+    return s;
+}
+
+// Deletes, duplicates or replaces one code point (the oracle decides whether it still matches).
+static std::string mutate(const std::string& s, std::mt19937& rng) {
+    std::vector<std::string> cs = chars_of(s);
+    if (cs.empty()) return "a";
+    size_t i = rng() % cs.size();
+    switch (rng() % 3) {
+        case 0: cs.erase(cs.begin() + i); break;
+        case 1: cs.insert(cs.begin() + i, cs[i]); break;
+        default: cs[i] = (cs[i] == "a") ? E2 : "a"; break;
+    }
+    std::string o;
+    for (const std::string& c : cs) o += c;
+    return o;
+}
+
+static void t10b_long_patterns() {
+    CHECK(kFuzz0082.size() == 365);
+    Vocab v = make_vocab(toy_tokens());
+    Segmenter seg(v);
+    std::mt19937 rng(82);
+    std::vector<std::string> pats = url_patterns();
+    pats.push_back(kFuzz0082);
+    pats.push_back("%" + kFuzz0082.substr(0, 200) + "%");
+    pats.push_back("%" + kFuzz0082.substr(166));
+    for (const std::string& pt : pats) {
+        Pattern p = parse_like(pt);
+        for (int fd = -1; fd <= 1; ++fd) {
+            BuildOptions opt;
+            opt.force_dir = fd;
+            DenseTable dense;
+            Matcher m = MatcherAccess::build(pt, v, opt, &dense);
+            CHECK(MatcherAccess::states(m) <= kMaxStates);
+            std::vector<std::string> strs;
+            for (int i = 0; i < 150; ++i) {
+                std::string s = instantiate(p, rng);
+                strs.push_back(s);
+                strs.push_back(mutate(s, rng));
+            }
+            std::vector<std::vector<uint16_t>> rows;
+            for (const std::string& s : strs) rows.push_back(seg.random(s, rng));
+            check_all_variants(m, dense, make_column(v, rows), strs, pt,
+                               "long pat=" + show(pt.substr(0, 40)) + " dir=" + std::to_string(fd));
+        }
+    }
+    CHECK(Matcher::build(kFuzz0082, v).kind() == ScanKind::Anchored);
+    // The limit still applies to the minimized automaton.
+    BuildOptions small;
+    small.max_states = 300;
+    CHECK_THROWS(MatcherAccess::build(kFuzz0082, v, small), TooComplex);
+}
+
 // ---------------------------------------------------------------- T11 synthetic scale
 
 static void t11_scale() {
@@ -786,7 +861,8 @@ int main() {
         {"T5 segmentation", t5_segmentation},     {"T6 kinds/early exit", t6_kinds_and_early_exit},
         {"T7 compact table", t7_compact},
         {"T8 edge cases", t8_edges},               {"T9 concatenation", t9_concat},
-        {"T10 state limit", t10_limits},           {"T11 synthetic scale", t11_scale}};
+        {"T10 state limit", t10_limits},           {"T10b long patterns", t10b_long_patterns},
+        {"T11 synthetic scale", t11_scale}};
     for (const Suite& s : suites) {
         long f0 = g_fail, c0 = g_checks;
         auto t0 = std::chrono::steady_clock::now();

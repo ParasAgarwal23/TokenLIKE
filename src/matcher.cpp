@@ -1,5 +1,6 @@
 #include "tokenlike/matcher.h"
 
+#include <algorithm>
 #include <chrono>
 #include <string>
 
@@ -12,8 +13,12 @@ namespace {
 Dfa build_dfa(const Pattern& p, Dir dir, const BuildOptions& opt) {
     Nfa n = build_nfa(p);
     if (dir == Dir::Backward) n = reverse_nfa(n);
-    Dfa d = determinize(n, opt.max_states);
-    return opt.minimize ? minimize(d) : d;
+    Dfa d = determinize(n, std::max(opt.max_subset_states, opt.max_states));
+    if (opt.minimize) d = minimize(d);
+    if (d.S > opt.max_states)
+        throw TooComplex("pattern needs " + std::to_string(d.S) + " DFA states (limit " +
+                         std::to_string(opt.max_states) + ")");
+    return d;
 }
 
 ScanKind kind_for(const Pattern& p, Dir dir) {
