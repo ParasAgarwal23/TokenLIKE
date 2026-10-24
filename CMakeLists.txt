@@ -108,6 +108,18 @@ if(HAVE_LOADERS AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_io.cpp)
   endif()
 endif()
 
+# --- Optional FSST module (Person B experiment; integration/fsst/).
+# Off by default: with TOKENLIKE_WITH_FSST=OFF this repository has no FSST
+# dependency at all and every target above builds exactly as it did before.
+option(TOKENLIKE_WITH_FSST "Build the optional FSST-compressed LIKE module" OFF)
+if(TOKENLIKE_WITH_FSST)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/integration/fsst/CMakeLists.txt)
+    add_subdirectory(integration/fsst)
+  else()
+    message(FATAL_ERROR "TOKENLIKE_WITH_FSST=ON but integration/fsst/ is not in this tree")
+  endif()
+endif()
+
 # End-to-end CLI smoke test on a synthetic fixture.
 set(FIXTURE_DIR ${CMAKE_BINARY_DIR}/fixture)
 add_test(NAME fixture_write COMMAND test_baselines --write-fixture ${FIXTURE_DIR})

@@ -1,0 +1,303 @@
+# 300 seeded patterns derived from real substrings of the fuzz fixture by the
+# original project's scripts/verify/fuzz.py, with the column remapped. Reused
+# rather than regenerated so the two experiments face the same adversary.
+fuzz_0000	fuzz/values	http://komme%2F27.0.1453._16 Safari%2F537.36 (KHTML, like Gecko
+fuzz_0001	fuzz/values	h%ttps:%
+fuzz_0002	fuzz/values	https://produkty%2F%pulove.ru/catalog=on&acce/8da24aa/frl-2/bage-42/catalog/80675.html%3Fhtml?1=1&cid=6&pv=20&%
+fuzz_0003	fuzz/values	https%
+fuzz_0004	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.r%u/otdam-soulmjj/628965/details/?c%
+fuzz_0005	fuzz/values	https://produkty%2Fproduct_name=1&gearbox
+fuzz_0006	fuzz/values	htt%ps://produkty%%
+fuzz_0007	fuzz/values	%op=0%
+fuzz_0008	fuzz/values	%/inde%
+fuzz_0009	fuzz/values	http://irr.ru/index.php?showalbum/login_leniya7777294,938303130
+fuzz_0010	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233/tags/price_do=&currency=USB Propetro=240&location%3D0%26ntype=0_vip=0&orderslist.html_params%3Drhost
+fuzz_0011	fuzz/values	%hche
+fuzz_0012	fuzz/values	h%
+fuzz_0013	fuzz/values	%#lo%
+fuzz_0014	fuzz/values	https://pro%dukty%2Fbon%
+fuzz_0015	fuzz/values	ht%
+fuzz_0016	fuzz/values	%t/2564653%
+fuzz_0017	fuzz/values	%ind%
+fuzz_0018	fuzz/values	%ollet
+fuzz_0019	fuzz/values	%en/ba%
+fuzz_0020	fuzz/values	%semenn%
+fuzz_0021	fuzz/values	http://irr.r%
+fuzz_0022	fuzz/values	%Xwe8gE%
+fuzz_0023	fuzz/values	https://produkty%2Fkategory_id=0_page/3179728.php?linkres.php
+fuzz_0024	fuzz/values	http://kurort/SINA, ADRIAN
+fuzz_0025	fuzz/values	https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/2c58.32638/dobropol/household
+fuzz_0026	fuzz/values	%http://irr.ru%
+fuzz_0027	fuzz/values	htt%
+fuzz_0028	fuzz/values	https://produkty%2Fpulove.ru/moscow
+fuzz_0029	fuzz/values	https://produkty/tructure-internet Explorer&aV=9.80 (Windows NT 5.1; WOW64) AppleWebKit%2F_34.30533&site_off=F&af=223&srch13
+fuzz_0030	fuzz/values	https://produkty%2Fpulove.ru/~lekai.diary.ru/_tary_fiat_duh_vrements/animals
+fuzz_0031	fuzz/values	https://produkty%2Fkategory_id=0&last_auto.ria.ua
+fuzz_0032	fuzz/values	https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/80315-v-ukrai/nissasis_102695
+fuzz_0033	fuzz/values	%htt%
+fuzz_0034	fuzz/values	http://irr.ru/index.php?showalbum/login-kapu%sta-advert23165336.html?q=390&Selectio%
+fuzz_0035	fuzz/values	%afari
+fuzz_0036	fuzz/values	ht%tps://produkty/placet%%
+fuzz_0037	fuzz/values	http://irr.ru/index.ph%p?showalbum/login-leniya7777294,93%
+fuzz_0038	fuzz/values	%ar=бо%
+fuzz_0039	fuzz/values	https://produkty/placet%3Dad.adriver
+fuzz_0040	fuzz/values	http://i%
+fuzz_0041	fuzz/values	%0; SLCC%
+fuzz_0042	fuzz/values	https://produkty%2Fpulove.ru/booklyattion-with
+fuzz_0043	fuzz/values	%=Плат%
+fuzz_0044	fuzz/values	%://%
+fuzz_0045	fuzz/values	http%s://pr%
+fuzz_0046	fuzz/values	%ndex.php?s%
+fuzz_0047	fuzz/values	https://produkty%2Fkategory&cated_country=
+fuzz_0048	fuzz/values	http://irr.ru/index.php?showalbum/login.html_/v12/?PAGEN_1=4413550895,92895&ch=UTF-8&sF=11,7,700&priceup&page=0&view
+fuzz_0049	fuzz/values	https://produktor-sinij%2F&sr=http://tienshchin
+fuzz_0050	fuzz/values	%e/prod%
+fuzz_0051	fuzz/values	https:/%
+fuzz_0052	fuzz/values	http://irr.ru/index.php?showalbum/login-32-kv-Leningredit=0&view_types=
+fuzz_0053	fuzz/values	%tp://irr%
+fuzz_0054	fuzz/values	%u%
+fuzz_0055	fuzz/values	http://gaw%
+fuzz_0056	fuzz/values	http://irr%
+fuzz_0057	fuzz/values	http:/%
+fuzz_0058	fuzz/values	%=category
+fuzz_0059	fuzz/values	http://ir%
+fuzz_0060	fuzz/values	http://%
+fuzz_0061	fuzz/values	http://k%omme%2%
+fuzz_0062	fuzz/values	https://produkty%2Fkategory_name=1&fuelRateTo=&powerFromArea=3&marke_ing
+fuzz_0063	fuzz/values	http:%
+fuzz_0064	fuzz/values	https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/frl-2/bage-recept-Ikra-iz-kurtki-i-zamenskaia
+fuzz_0065	fuzz/values	%s://%
+fuzz_0066	fuzz/values	https://pr%odukty%2Fkategory_name=Платья - %
+fuzz_0067	fuzz/values	http://ekburg.irr.ru%2Fpuloveplanet
+fuzz_0068	fuzz/values	http%s://produkty%2%
+fuzz_0069	fuzz/values	https://produkty%2Fpl%ata-pr-%
+fuzz_0070	fuzz/values	%.diary
+fuzz_0071	fuzz/values	%/18038124%
+fuzz_0072	fuzz/values	http://irr.ru/index.php?showalbum/login.html5/v12/?from]=&input_who1=3&input_countpage.aspx?from=&raceTo=&raceTo=&powerFrom=&fuelRateFrom=&powerTo=&powerFrom=&raceTo=&fuelRateTo=&raceFrom=&powers.yandex.ru/zoom_php?dom=100&onlyPhoto35509408_11640
+fuzz_0073	fuzz/values	https://%
+fuzz_0074	fuzz/values	https://produkty%2Fkategoriya/dlia-zhienskaia-moda-topic
+fuzz_0075	fuzz/values	http:_/edp2.adriver.ru/catalog/181
+fuzz_0076	fuzz/values	https://produkty%2Fplata-pr-advert279292%0488%
+fuzz_0077	fuzz/values	https://produkty/search?text=булочная
+fuzz_0078	fuzz/values	%html_%
+fuzz_0079	fuzz/values	https://produkty%2Fpulo_e.ru/good.com/iframe
+fuzz_0080	fuzz/values	%=20%
+fuzz_0081	fuzz/values	http://afisha.yandex.ua/offers/office-russin's Truck/motsaris
+fuzz_0082	fuzz/values	http://irr.ru/index.php?showalbum/login-legal.ua/search=0&user_id=907826232230&op_style=0&view/vie_topic.php?attal.ru/cine/give_type=city&custom%3D%26custom%3D%26xpid%3D1216/00001216/0000&currency=RUR/page=0&s_yers=0&po_yers=200&lo=http://love.ru/katerinburg.irr.ru/mymail.ru%2Fkategory_name=Длинны минске&yn=1&input_who1=2&input_bdsmpeople.ru/view/1033
+fuzz_0083	fuzz/values	http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONEICK, STEFANI, RITANIT][]=&selection Nessa.ru/real-e_tate/rent/25/women-bezopasn/angeTypeId=0
+fuzz_0084	fuzz/values	%https:/%
+fuzz_0085	fuzz/values	http://irr.ru/index.php?showalbum/login-kapusta-_dvert2726125413975d77cf&search=0&dom_source%3D0
+fuzz_0086	fuzz/values	%t_price
+fuzz_0087	fuzz/values	https://pro%
+fuzz_0088	fuzz/values	http://irr.ru/index.php?showalbum/login=aba875898&st=0&view_type=0&state_apartments-saledParams
+fuzz_0089	fuzz/values	http://kurort/SINA, A%DRIAN - Perepitsa-i-k%
+fuzz_0090	fuzz/values	http://irr.ru/index.php?showalbum/login=http://saint-petersburg/detail=
+fuzz_0091	fuzz/values	%nburg
+fuzz_0092	fuzz/values	%produk%
+fuzz_0093	fuzz/values	https://produkty%2Fparts.ru/moscow/offertyj-918039303492%26ni_
+fuzz_0094	fuzz/values	%ty%2Fbonp%
+fuzz_0095	fuzz/values	https:%//produkty%2Fpulove.ru/mosco%
+fuzz_0096	fuzz/values	%&k=M6y10
+fuzz_0097	fuzz/values	http://kom%me%2F27.0.1453%
+fuzz_0098	fuzz/values	%03130
+fuzz_0099	fuzz/values	https://produkty%2Fproduct_name=_осудар менения
+fuzz_0100	fuzz/values	http://irr.ru/index.php?showalbu_/login-leniya7777294,938303130
+fuzz_0101	fuzz/values	%gam%
+fuzz_0102	fuzz/values	http://kurort/SINA, ADRIAN _ The One
+fuzz_0103	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-souls for comandirov.ru/c_/myword
+fuzz_0104	fuzz/values	http://irr.ru/index.php?showalbum/login=DESC&search/tag/день коллица, 199248.msg31486&op_page4/#page/1962@mail.ru/action/vacancies/passekrenev/detail.aspx#location=1&bc=3&ct=1419/ATLAS BD30097722505/page.aspx#location/vacancies/yearTo=&power_name=Короткие платок&where=all&filter][725018331468466.18_8094,95894,9360&lo=http://tvidi.ru/document
+fuzz_0105	fuzz/values	%odukty%%
+fuzz_0106	fuzz/values	%l_param=0
+fuzz_0107	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul/touristika/1626RAVE
+fuzz_0108	fuzz/values	%_id
+fuzz_0109	fuzz/values	https://produkty/_ructure/view=Москва&filmId=G12
+fuzz_0110	fuzz/values	%ru
+fuzz_0111	fuzz/values	http://irr.ru/index.php?showalbum/login-us&cE%=t%
+fuzz_0112	fuzz/values	https://produkty%2Fplata-pr-%advert279292048836%
+fuzz_0113	fuzz/values	%t%
+fuzz_0114	fuzz/values	% Gecko
+fuzz_0115	fuzz/values	http://ir%r.ru/index.php?showalbum/login.pl?cmd=showCampStat&cid=594&ch=utf-8&sF=11,7,7,7,700&page=0&engineVolumeFro%
+fuzz_0116	fuzz/values	%-s%
+fuzz_0117	fuzz/values	http://irr.ru/index.php?showalbum/login-msvirskie_android=1373450/6/i-342295][to]=&input_age2/#overi/vacancies/Clients/?%cauth=0&confiscategory_id=1&bc=3&ct=1&pr=OsmN-tvKUXI&where=all&film/64393038395&check.xml?id=233&pvno=2&evlg=VC,3;VL,624;IC,747;c10157_40553998-g-v-pro-plus%252fe%%
+fuzz_0118	fuzz/values	https://produkty/tructure/char=2013/07/1/?supdate_credit=0&s_yers_2005&po_yers=2013/?page=10&cat
+fuzz_0119	fuzz/values	https://produkty%2%Fplata-pr-adver%
+fuzz_0120	fuzz/values	_ttp://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONEICK, JOE - OTTO_REPORT_rOIOCjIr_eBNArpasse.html?1=1&cid=577&oki=1&op_category_id=0&price=0&s_yers
+fuzz_0121	fuzz/values	http://irr.ru/img/catalog/53485785916376235313635653739333118964d89f8fd7d-0e5781,19744/?_h=search=0&driver.ru/filmId=bwAUJANHXCI&_here=all&filmId=bf1d207/2194,940307&po_yers=1&ru=1&exchangeTypeSearch?text=советские в унитарый - bonprix.ru/games.ru/building/index.ru/news.ru/krd/events/74162
+fuzz_0122	fuzz/values	%o
+fuzz_0123	fuzz/values	http://irr.%
+fuzz_0124	fuzz/values	%tps://pro%
+fuzz_0125	fuzz/values	https://produkty%2Fkategory_id=9251-etazhnaia-moda%2F9.80 (Windows
+fuzz_0126	fuzz/values	https://produktor-sinij%2F%2Fwww.bonprix.ru/ms%k.irr.ru/tortivnyye_14073719.php?input_who2=1&input_age1447%
+fuzz_0127	fuzz/values	https:%
+fuzz_0128	fuzz/values	http://irr.ru/index.php?showalbum/login=tovpod&elem=4#photo.ashx/376431653690.html?1=1&cid=Все Танцуютgroup_c_d_1s=1465][to]=&int[2352][to]=&chatles/88468018901&uuid=137331430182/?limi gun
+fuzz_0129	fuzz/values	https://produkty%2Fproduct_name=Шорты терянном ф_льм   танцы. Чумаков
+fuzz_0130	fuzz/values	http://vid%
+fuzz_0131	fuzz/values	%5713%
+fuzz_0132	fuzz/values	https://produkty%2Fpulove.ru/kiroverl_net.ru/otdam-soul/topic.aspx
+fuzz_0133	fuzz/values	http://irr.ru/index.p%hp?showalbum/login-kapusta-advert2631920&lo=https://smeshar%
+fuzz_0134	fuzz/values	http://irr.ru/index.php?showalbum/login-id-31945366-p414.html?page21/frl-4/trashbox.ru/a-p_oto=&isgrand
+fuzz_0135	fuzz/values	%http://irr.ru/index.php?showalbum/l%
+fuzz_0136	fuzz/values	http%
+fuzz_0137	fuzz/values	%ct_%
+fuzz_0138	fuzz/values	https://produkty%2Fproduct_name=Пуловек 2 серия&where=all&filmId=WvZb8nb0UXI&where=al_&filmId
+fuzz_0139	fuzz/values	https://pr%
+fuzz_0140	fuzz/values	http://kurort/SINA, ADRIAN - P%LAYERS-MIRACLE-REECT-THONY, BON JOVI, JONATHAN-PAUL STOUCK SAUCE-TUJA%
+fuzz_0141	fuzz/values	%0&order_by=0
+fuzz_0142	fuzz/values	%ad%
+fuzz_0143	fuzz/values	http://kurort/SINA, ADRIAN - Here Troublejzer-chast.co.ua/login-irkotik.ru/real-estate_id=&top=0&orderDone?cartview&categoriya%2FmyAccountpage5887341586489991634571027989/currency=1#count.php/topnews/ciklyuev2013-8-10-sotokondary/mobilejj
+fuzz_0144	fuzz/values	http://ku%
+fuzz_0145	fuzz/values	%ve.ru/goo%
+fuzz_0146	fuzz/values	htt_s://produkty/kurortmag
+fuzz_0147	fuzz/values	http://kurort/SINA, ADRIAN - Perepitsa-i-kun-aleksanatostavia
+fuzz_0148	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233-b7fa-d61f-fef3-013f9e3f81.30533&op_seo_entry=-1&from=adwolf.ru/real
+fuzz_0149	fuzz/values	http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BENJAMIE - Dance=3995,9292692464%26pz%3D0%26ar_ntype=0&state=0&view.php?t=8828044%26sll%3D%26xpid%3D0%26nid
+fuzz_0150	fuzz/values	http://irr.ru/index_php?showalbum/login-na-donu.irr.ru
+fuzz_0151	fuzz/values	https://produkty%2Fproduct
+fuzz_0152	fuzz/values	http://irr.ru/index.php?showalb%um/login-leniya7777294,93830%
+fuzz_0153	fuzz/values	http://md.mi%rkvartira-HriUw&where=all&film/2614.html?country=-1&type=prodam-3-3-0-07-09/06295205345f346537363%
+fuzz_0154	fuzz/values	%h
+fuzz_0155	fuzz/values	https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/c0130709_1_1195&choosOu_8gE&where=all&filmId
+fuzz_0156	fuzz/values	%=newly&tr%
+fuzz_0157	fuzz/values	%y%2Fka%
+fuzz_0158	fuzz/values	http_//komme%2F27.0
+fuzz_0159	fuzz/values	https://%produ%
+fuzz_0160	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/courses/Sluzhskaia-mogut_price=бо_ьше 15000000
+fuzz_0161	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/country=&op_seo_entry=-1&type=cated
+fuzz_0162	fuzz/values	%ru&pvid=120
+fuzz_0163	fuzz/values	http://kurort/SINA, ADRIAN - PLA%YERS-MIRACLE-REECT-THONEICK, EDDICTION_ID=3246275427613727/detail.ru%26bn%3D0%26ntype=category_id=1%
+fuzz_0164	fuzz/values	%ova.ru
+fuzz_0165	fuzz/values	http://g%
+fuzz_0166	fuzz/values	https://produkty%2F%p%
+fuzz_0167	fuzz/values	%ndex.php?%
+fuzz_0168	fuzz/values	http://irr.ru/index.php?showalbum/login_hLoP-Yr48U9tDu0Cw&where=all&filmId
+fuzz_0169	fuzz/values	% Gecko)
+fuzz_0170	fuzz/values	http://kuror%
+fuzz_0171	fuzz/values	https://produkty%2Fplata.ru/1.128965%/?instvo.ru/GameMain.aspx?trafkey=9a7e4ccf220f1ee5b%
+fuzz_0172	fuzz/values	http://irr.ru/index.php?showalbum/login_passenger/tul/event=li_tle&category_id=123313062-86785
+fuzz_0173	fuzz/values	http://irr.ru/index.php?showalbum/login-kupalnik.ru/catalog/85412421189575273743&custom%3D%26xpid%3D2%26bid%3DBYaQZi6Iyw
+fuzz_0174	fuzz/values	_ttps://produkty%2F
+fuzz_0175	fuzz/values	http://irr.ru/index.php?showalbum/login-kapusta-advert261616140-16-foton.ru/search
+fuzz_0176	fuzz/values	https://prod%uktor-sinij%
+fuzz_0177	fuzz/values	https://produkty%2Fpulove.ru/~lekai.diary.ru/stary_flatTy_eId
+fuzz_0178	fuzz/values	https://produkty/pla%cet%3Dad.adrive_tyothes%
+fuzz_0179	fuzz/values	https://produkty%2Fsc.chelyabinsk/detail
+fuzz_0180	fuzz/values	https://prod%
+fuzz_0181	fuzz/values	%16%
+fuzz_0182	fuzz/values	%er=B&group
+fuzz_0183	fuzz/values	http://irr.ru/index.php?showalbum/logi_-kupalnaya_oblast_auto_mazda,Merce/travel
+fuzz_0184	fuzz/values	%4,938303130
+fuzz_0185	fuzz/values	%dex.php?%
+fuzz_0186	fuzz/values	http://i_r.ru/index.php?showalbum/login-kupalnik.ru/catalog/20/women.aspx#location=search?text=поможет ли видео
+fuzz_0187	fuzz/values	http://irr.ru/index.php?showalbum_login-leniya7777294,938303130
+fuzz_0188	fuzz/values	http://irr.ru/inde%x.php?showalbum/login-leniya7777294,938303%
+fuzz_0189	fuzz/values	%tka
+fuzz_0190	fuzz/values	http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONEICK, YVES СЕЗОНА&ch=utf-8&sF=11,7,7,700&aN=Operatorii_krasnodar.irr.ru/read.php?city=18
+fuzz_0191	fuzz/values	https://produkty%2Fbonprix.ru/images/0001216629%26bid%3D1216/000121667,13143&op_ca_ed_country=&op_page=0
+fuzz_0192	fuzz/values	%e/52281%
+fuzz_0193	fuzz/values	h%ttps://produkty%2Fpulove.ru/kiro%
+fuzz_0194	fuzz/values	http://afish%
+fuzz_0195	fuzz/values	http://k%urort/SINA, ADRIAN - Dan Blytheno%
+fuzz_0196	fuzz/values	%wolf.ru
+fuzz_0197	fuzz/values	%earch%
+fuzz_0198	fuzz/values	http://gaw.ru/luboj-vanie-planet.ru/servierk-supiertsien-zhienskoe-korotkim-rukav-i-dlia-zhiensmed.ru/login
+fuzz_0199	fuzz/values	https%://produkty/truct%
+fuzz_0200	fuzz/values	http://irr.ru/index.php?showalbum/login-mir.ir%r.ru/real-estate_creditoriy%
+fuzz_0201	fuzz/values	http://kuro%
+fuzz_0202	fuzz/values	%ha.yande%
+fuzz_0203	fuzz/values	%puloveplanet
+fuzz_0204	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/currency=RUR/page.aspx?group_cod_1s=8258786/topic=6108&po_yers
+fuzz_0205	fuzz/values	%olnye
+fuzz_0206	fuzz/values	http://_rr.ru/index.php?showalbum/login-kapusta-advert25055085&numphoto.kurortmag.ru/users/saledParams
+fuzz_0207	fuzz/values	http://k%omme%2F27.0.1453.116 Safari%2F5.0 (compatible; MSIE 9.0%
+fuzz_0208	fuzz/values	http://irr.ru/index.php?showalbum/login-kurtki%2%F5.0 (Windows NT 6.1; rv:22.0&he%
+fuzz_0209	fuzz/values	http_://produkty/placetti-club/songs/sekcionnov.ru/socionat_zelena1282
+fuzz_0210	fuzz/values	https://produkty%2Fplata-pr-advert27929969&lb_id=0&with_video.yandex.ru/_ladimir.php?topicID=258cbfb9cb2cbe
+fuzz_0211	fuzz/values	http://irr.ru/index.php?%showalbum/%
+fuzz_0212	fuzz/values	http://irr.ru/index.php?showalbum/login-kapusta-advert26523.jpg._tml?p=123773340560_Beigeratorija
+fuzz_0213	fuzz/values	https://produkty%2Fpulove.ru/album/login
+fuzz_0214	fuzz/values	https://produkty%2Fprod%uct_name=Пуловерк %
+fuzz_0215	fuzz/values	https://produkty%2Fplata-pr-advert27929217742/4F2E
+fuzz_0216	fuzz/values	%%2F
+fuzz_0217	fuzz/values	%ail.r%
+fuzz_0218	fuzz/values	http://komme%2F2_.0.1453.116
+fuzz_0219	fuzz/values	https:_/produkty/kurortmag
+fuzz_0220	fuzz/values	%.ru%
+fuzz_0221	fuzz/values	https://produkty%2Fbonpr%ix.ru%2Fkurtka-a-p4787%
+fuzz_0222	fuzz/values	http://irr.ru/index.php?showalbum/log_n-vsem_state/compatible
+fuzz_0223	fuzz/values	%//pr%
+fuzz_0224	fuzz/values	http://md.mirkvartira-Ul-y%ar.%
+fuzz_0225	fuzz/values	https://produkt%y%2Fproduct_name=Карний - bonprix%
+fuzz_0226	fuzz/values	%a7e4ccf2
+fuzz_0227	fuzz/values	%аны%
+fuzz_0228	fuzz/values	https://produkty%2Fplata%-pr-advert27929969&lb_id=4&page=/vk.html?beg=0&view/10512/details-auto_travel.ru/GameMain.aspx%
+fuzz_0229	fuzz/values	https%://produkty%2Fplata.ru%
+fuzz_0230	fuzz/values	https://produkty%2Fbonprix.ru/showalbums/in_estate=yes&page=1024
+fuzz_0231	fuzz/values	http://komme%
+fuzz_0232	fuzz/values	https%://produkty%2Fpulove.ru/GameMain.a%
+fuzz_0233	fuzz/values	http://irr.ru/inde%x.php?showalbum/login-kapus%
+fuzz_0234	fuzz/values	%826293
+fuzz_0235	fuzz/values	%urortmag
+fuzz_0236	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233-b7f8-8baf-fef3-013fc7b3a4cca08d4dc256.php
+fuzz_0237	fuzz/values	http://irr.ru/index.php?showalbum/login
+fuzz_0238	fuzz/values	http://k%
+fuzz_0239	fuzz/values	https://produkty%2Fproduct_name=Топы в Рим&city=0&price_ot
+fuzz_0240	fuzz/values	%in%
+fuzz_0241	fuzz/values	http://ekbur%
+fuzz_0242	fuzz/values	https://produkty%2Fplata.ru/filmId=e308f57e53d8369702994&op_seo_entry
+fuzz_0243	fuzz/values	%g.php?%
+fuzz_0244	fuzz/values	h_tps://produkty/tructure/soft Internet Explorer&aV=5.0 (iPad
+fuzz_0245	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233/tags/price_do=&currency=USB в поле&film/5756/page=1080&with_exchangeType=0&door
+fuzz_0246	fuzz/values	http://irr.ru/index.php?s%howalbum/login=http://russinoozhidkie%2F22.1%
+fuzz_0247	fuzz/values	http://irr.ru/index.php?showalbum/login=AppleWebKi_%2F5.0 (Windows
+fuzz_0248	fuzz/values	%anet.info
+fuzz_0249	fuzz/values	%nskaia
+fuzz_0250	fuzz/values	%OW&op_%
+fuzz_0251	fuzz/values	http://irr.ru/index.php?showalbum/login-kapusta-advert2741395,907_0/detail.ru/Checked=0&exchange&location
+fuzz_0252	fuzz/values	https://produkty%2Fproduct_name=12&city&custom_Acc_jpg
+fuzz_0253	fuzz/values	https://produkty%/brju%
+fuzz_0254	fuzz/values	https://produkty%2Fpulove.ru/search_terms-vzyatosign&id=1&bodystyle=0&scroll_to_opel_kamnyayan
+fuzz_0255	fuzz/values	%303130
+fuzz_0256	fuzz/values	https://produkty%2Fbonpr%ix.ru%2Fkurtka-a-d%
+fuzz_0257	fuzz/values	%//produkty%
+fuzz_0258	fuzz/values	%ttp:%
+fuzz_0259	fuzz/values	%ategoriya
+fuzz_0260	fuzz/values	%kty%2Fp%
+fuzz_0261	fuzz/values	http%s://produkty/tructure/view_ty%
+fuzz_0262	fuzz/values	%rg.irr.r%
+fuzz_0263	fuzz/values	%116 Safari
+fuzz_0264	fuzz/values	http://irr.ru/index.php?showalbum/login=vladimir.irr
+fuzz_0265	fuzz/values	%ts/op%
+fuzz_0266	fuzz/values	%oduct
+fuzz_0267	fuzz/values	%m
+fuzz_0268	fuzz/values	http://irr.ru/index.php?sho%walbum/login-kapusta-advert2631%
+fuzz_0269	fuzz/values	https://produkty%2Fproduct_name=Куртки решки от
+fuzz_0270	fuzz/values	https%://produkty/placetti-club/songs/search?text=поиск&item=1#product_brand=4638633D-4126/47fb358d%
+fuzz_0271	fuzz/values	%tat%
+fuzz_0272	fuzz/values	https://produ_ty%2Fproduct
+fuzz_0273	fuzz/values	http://komme%2F27.0.1453.116 Safari%2F5.0 (compatible; MSIE 9.0;
+fuzz_0274	fuzz/values	http://irr.ru/index.php?showalbum/login-kapustic/product_name
+fuzz_0275	fuzz/values	% игры&where
+fuzz_0276	fuzz/values	https://p%rodukty%2%
+fuzz_0277	fuzz/values	%611
+fuzz_0278	fuzz/values	http://irr.ru/index.php?showalb%um/login-kapusta-advert2741395,90750/detail.ru/Checked=0&excha%
+fuzz_0279	fuzz/values	%kty%2%
+fuzz_0280	fuzz/values	http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB - Run Awake-predprofiles/3978/currency=1#country=&op_category_id=2013&m1=06&d1=15&m1=07&year_by=0&hide
+fuzz_0281	fuzz/values	http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY%, BOB - Run Away.turizm.ru/moskovsk.ru/sverhov.moikrug.ru/izhego_mosko%
+fuzz_0282	fuzz/values	%ame=Пулове%
+fuzz_0283	fuzz/values	%2740387993
+fuzz_0284	fuzz/values	%ct_name
+fuzz_0285	fuzz/values	http://irr.ru/index.php?showalbum/login-leniya777_294,938303130
+fuzz_0286	fuzz/values	http://irr.ru/index.php?sh_walbum/login/investirovka-sny-chasti.html?cc=mv
+fuzz_0287	fuzz/values	http://irr.ru/index.php?showalbum/login-2250905Gm.26098-1.13795,93729079&p=1&pr=82805498%26height%3Dad.adrivery
+fuzz_0288	fuzz/values	%vert27927304
+fuzz_0289	fuzz/values	%to%
+fuzz_0290	fuzz/values	%showalbum/%
+fuzz_0291	fuzz/values	%ttp://video
+fuzz_0292	fuzz/values	%x
+fuzz_0293	fuzz/values	http://irr.ru/index.php?showa_bum/login-kapusta-advert27360359.html_param=0&under
+fuzz_0294	fuzz/values	https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soulmjj/628965/detail/series.ru/catalog/101617671,55.8128/A254vTt0Cw&where
+fuzz_0295	fuzz/values	https://produktor-sinij_2F%2Fwwww.bonprix
+fuzz_0296	fuzz/values	htt%p://irr.ru/index.php?showalbum/logan/de/#lingvo/#!%
+fuzz_0297	fuzz/values	%https://p%
+fuzz_0298	fuzz/values	http://komme%2F27.0.1453.116
+fuzz_0299	fuzz/values	%nQ

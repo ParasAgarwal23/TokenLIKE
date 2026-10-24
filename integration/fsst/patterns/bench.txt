@@ -1,0 +1,16 @@
+# The representative benchmark set: one pattern per shape, all on URL_1m.
+b_prefix_http	clickbench/URL_1m	http://%
+b_prefix_static	clickbench/URL_1m	/static/%
+b_prefix_irr	clickbench/URL_1m	http://irr.ru%
+b_suffix_php	clickbench/URL_1m	%.php
+b_suffix_m3u8	clickbench/URL_1m	%.m3u8
+b_suffix_html	clickbench/URL_1m	%.html
+b_exact	clickbench/URL_1m	http://irr.ru/index.php?showalbum/login-leniya7777294,938303130
+b_contains_yandex	clickbench/URL_1m	%yandex%
+b_contains_catalog	clickbench/URL_1m	%/catalog/%
+b_underscore	clickbench/URL_1m	%/v_/%
+b_unicode	clickbench/URL_1m	%сезон%
+b_complex	clickbench/URL_1m	http%irr%php%
+b_complex_under	clickbench/URL_1m	http://_rr.ru/%php%
+b_tpch_contains	tpch/o_comment_1m	%regular%
+b_tpch_suffix	tpch/l_comment_1m	%s

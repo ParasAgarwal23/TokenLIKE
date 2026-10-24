@@ -1,0 +1,50 @@
+# Adversarial patterns against the 51-row edge fixture. The first block is
+# the list the original TokenLIKE project generated and DuckDB-verified; the
+# second adds cases that only matter once FSST is in the picture.
+edge_empty_pattern	edge/values	
+edge_pct	edge/values	%
+edge_pct_pct	edge/values	%%
+edge_underscore	edge/values	_
+edge_underscore2	edge/values	__
+edge_underscore3	edge/values	___
+edge_prefix_h	edge/values	h%
+edge_prefix_htt	edge/values	htt%
+edge_prefix_http	edge/values	http%
+edge_prefix_http_colon	edge/values	http://%
+edge_prefix_https	edge/values	https://%
+edge_prefix_upper	edge/values	HTTP%
+edge_suffix_html	edge/values	%.html
+edge_suffix_l	edge/values	%l
+edge_suffix_slash	edge/values	%/
+edge_suffix_backslash_pct	edge/values	%\%
+edge_exact_http	edge/values	http
+edge_exact_empty_value	edge/values	
+edge_interior_www	edge/values	%www%
+edge_interior_dot	edge/values	%.%
+edge_interior_token_split	edge/values	%ttp://%
+edge_literal_backslash_pct	edge/values	a\%b
+edge_literal_backslash_underscore	edge/values	a\_b
+edge_literal_underscore_wild	edge/values	a_b
+edge_utf8_one_char	edge/values	_
+edge_utf8_three_char	edge/values	___
+edge_utf8_prefix_jp	edge/values	日%
+edge_utf8_suffix_jp	edge/values	%テスト.html
+edge_utf8_mid_underscore	edge/values	_本_
+edge_utf8_cyrillic_prefix	edge/values	https://с%
+edge_multi_segment	edge/values	http%www%html
+edge_multi_underscore_pct	edge/values	h_t%p%
+edge_long_prefix	edge/values	http://a/bb%
+edge_whitespace_prefix	edge/values	 %
+edge_whitespace_suffix	edge/values	% 
+edge_backslash	edge/values	%slash
+
+# ---- FSST-specific: symbol boundaries, escapes, repeated symbols
+fe_rare_byte	edge/values	%%
+fe_control	edge/values	%%
+fe_repeat	edge/values	%aaaaaaaa%
+fe_long_run	edge/values	%xxxxxxxxxxxxxxxx%
+fe_tab	edge/values	%\t%
+fe_emoji_any	edge/values	%_%
+fe_two_char	edge/values	__
+fe_four_char	edge/values	____
+fe_quote	edge/values	%"%

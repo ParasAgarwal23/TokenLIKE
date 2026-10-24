@@ -1,0 +1,18 @@
+# The same shapes at four scales, to show how the measurements move with
+# row count. Each scale is a separately calibrated FSST column.
+s_1k_prefix_http	clickbench/URL_1k	http://%
+s_1k_suffix_php	clickbench/URL_1k	%.php
+s_1k_contains_yandex	clickbench/URL_1k	%yandex%
+s_1k_underscore	clickbench/URL_1k	%/v_/%
+s_10k_prefix_http	clickbench/URL_10k	http://%
+s_10k_suffix_php	clickbench/URL_10k	%.php
+s_10k_contains_yandex	clickbench/URL_10k	%yandex%
+s_10k_underscore	clickbench/URL_10k	%/v_/%
+s_100k_prefix_http	clickbench/URL_100k	http://%
+s_100k_suffix_php	clickbench/URL_100k	%.php
+s_100k_contains_yandex	clickbench/URL_100k	%yandex%
+s_100k_underscore	clickbench/URL_100k	%/v_/%
+s_1m_prefix_http	clickbench/URL_1m	http://%
+s_1m_suffix_php	clickbench/URL_1m	%.php
+s_1m_contains_yandex	clickbench/URL_1m	%yandex%
+s_1m_underscore	clickbench/URL_1m	%/v_/%
