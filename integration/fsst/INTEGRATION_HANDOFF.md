@@ -1,12 +1,27 @@
 # FSST module — handoff to Person C
 
 **Branch** `feature/fsst-like`
-**Code commit** `b013fb90ed44834ef3cef19c64856b33d5606aa0`
 **Base** `main` at `c58d066ccaa2cf96a7f96efeab9e4d5773994b94` = `v3-freeze`
-**Not merged.** Only you merge into `main`. Nothing was force-pushed, rebased
-or rewritten, and the frozen tag is untouched (verified below).
 
-The branch head is the commit that adds this file; `git log -2` shows both.
+**Merge the branch as pushed.** Its commits, oldest first:
+
+| commit | what |
+|---|---|
+| `b013fb9d` | the module: code, tests, scripts, patterns, benchmarks, `FINAL_REPORT.md` |
+| `697e1728` | this handoff |
+| `fd6e44da` | build fix — stop running upstream FSST's own CMakeLists (see §9.9) |
+
+A fourth commit carries only this corrected SHA table, so that no commit has to
+claim its own hash. The authoritative list is always:
+
+```bash
+git log --oneline origin/main..origin/feature/fsst-like
+git rev-parse origin/feature/fsst-like          # the head to merge
+```
+
+**Not merged.** Only you merge into `main`. Nothing was force-pushed, rebased or
+rewritten — `git reflog` has zero rewrite entries — and the frozen tag is
+untouched (verified in §11).
 
 ---
 
