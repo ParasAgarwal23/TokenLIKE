@@ -23,6 +23,27 @@ void dispatch(const LikePlan& p, Fn&& fn) {
     }
 }
 
+// Fills a bit-packed bitmap with row(i) for every row; returns the match count.
+template <class RowFn>
+uint64_t fill_bitmap(uint64_t rows, Bitmap& out, RowFn&& row) {
+    out.assign(bitmap_bytes(rows), 0);
+    uint8_t* o = out.data();
+    uint64_t matches = 0, i = 0;
+    for (uint64_t blk = 0; blk < rows / 8; ++blk) {
+        unsigned byte = 0;
+        for (unsigned k = 0; k < 8; ++k, ++i) byte |= static_cast<unsigned>(row(i)) << k;
+        o[blk] = static_cast<uint8_t>(byte);
+        matches += static_cast<uint64_t>(__builtin_popcount(byte));
+    }
+    if (i < rows) {
+        unsigned byte = 0;
+        for (unsigned k = 0; i < rows; ++k, ++i) byte |= static_cast<unsigned>(row(i)) << k;
+        o[rows / 8] = static_cast<uint8_t>(byte);
+        matches += static_cast<uint64_t>(__builtin_popcount(byte));
+    }
+    return matches;
+}
+
 double elapsed_us(std::chrono::steady_clock::time_point t0) {
     return std::chrono::duration<double, std::micro>(std::chrono::steady_clock::now() - t0)
         .count();
@@ -38,17 +59,14 @@ RawMatcher RawMatcher::build(std::string_view pattern) {
 
 void RawMatcher::match(const Column& c, Bitmap& out, Stats& s) const {
     const uint64_t rows = c.rows;
-    out.assign(rows, 0);
     const char* raw = reinterpret_cast<const char*>(c.raw.data());
     const uint64_t* ro = c.rawoff.data();
     uint64_t matches = 0;
 
     dispatch(plan_, [&](auto f) {
-        for (uint64_t i = 0; i < rows; ++i) {
-            const uint8_t m = f(std::string_view(raw + ro[i], ro[i + 1] - ro[i])) ? 1 : 0;
-            out[i] = m;
-            matches += m;
-        }
+        matches = fill_bitmap(rows, out, [&](uint64_t i) {
+            return f(std::string_view(raw + ro[i], ro[i + 1] - ro[i]));
+        });
     });
 
     s.rows += rows;
@@ -70,7 +88,6 @@ DecodeMatcher DecodeMatcher::build(std::string_view pattern, const Vocab& v) {
 
 void DecodeMatcher::match(const Column& c, Bitmap& out, Stats& s) const {
     const uint64_t rows = c.rows;
-    out.assign(rows, 0);
     const uint16_t* tok = c.tok.data();
     const uint64_t* off = c.off.data();
     const uint8_t* vb = padded_.data();
@@ -81,7 +98,7 @@ void DecodeMatcher::match(const Column& c, Bitmap& out, Stats& s) const {
     dispatch(plan_, [&](auto f) {
         char* buf = buf_.data();
         size_t cap = buf_.size();
-        for (uint64_t i = 0; i < rows; ++i) {
+        matches = fill_bitmap(rows, out, [&](uint64_t i) {
             const uint64_t b = off[i], e = off[i + 1];
             const size_t need = static_cast<size_t>(e - b) * max_tok + 16;
             if (need > cap) {
@@ -100,10 +117,8 @@ void DecodeMatcher::match(const Column& c, Bitmap& out, Stats& s) const {
                 len += l;
             }
             decoded += len;
-            const uint8_t m = f(std::string_view(buf, len)) ? 1 : 0;
-            out[i] = m;
-            matches += m;
-        }
+            return f(std::string_view(buf, len));
+        });
     });
 
     s.rows += rows;

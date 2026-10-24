@@ -202,8 +202,9 @@ void write_rowids(const std::string& path, const Bitmap& bm) {
     const std::filesystem::path p(path);
     if (p.has_parent_path()) std::filesystem::create_directories(p.parent_path());
     std::vector<uint32_t> ids;
-    for (size_t i = 0; i < bm.size(); ++i)
-        if (bm[i]) ids.push_back(static_cast<uint32_t>(i));  // x86/ARM: little-endian
+    for (size_t byte = 0; byte < bm.size(); ++byte)
+        for (unsigned bits = bm[byte]; bits; bits &= bits - 1)  // x86/ARM: little-endian
+            ids.push_back(static_cast<uint32_t>(8 * byte + __builtin_ctz(bits)));
     FILE* f = std::fopen(path.c_str(), "wb");
     if (!f) throw std::runtime_error("cannot write " + path);
     const size_t w = ids.empty() ? 0 : std::fwrite(ids.data(), sizeof(uint32_t), ids.size(), f);
@@ -280,7 +281,7 @@ int run(const Args& a) {
 #endif
 
     // ---- Scan: warmup, then timed runs. Only the match call is timed.
-    Bitmap bm(col.rows), first;
+    Bitmap bm(bitmap_bytes(col.rows)), first;
     Stats st;
     for (int i = 0; i < a.warmup; ++i) {
         st = Stats{};
@@ -296,10 +297,13 @@ int run(const Args& a) {
         if (r == 0) first = bm;
         else if (bm != first) throw std::runtime_error("result differs between runs");
     }
-    if (bm.size() != col.rows) throw std::runtime_error("matcher returned a bitmap of wrong size");
+    if (bm.size() != bitmap_bytes(col.rows))
+        throw std::runtime_error("matcher returned a bitmap of wrong size");
+    for (uint64_t r = col.rows; r < 8 * bm.size(); ++r)
+        if (bitmap_bit(bm, r)) throw std::runtime_error("matcher set a padding bit");
 
     uint64_t matches = 0;
-    for (uint8_t b : bm) matches += b != 0;
+    for (uint8_t b : bm) matches += static_cast<uint64_t>(__builtin_popcount(b));
     if (st.matches != matches)
         std::fprintf(stderr, "[tokenlike] WARNING: Stats.matches=%llu but bitmap has %llu\n",
                      static_cast<unsigned long long>(st.matches),

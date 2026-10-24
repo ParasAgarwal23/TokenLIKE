@@ -217,7 +217,7 @@ const char* const kColumnPatterns[] = {
 
 void test_column() {
     const Vocab v = fixture_vocab(kExtraTokens);
-    const auto urls = synth_urls(20000, 7);
+    const auto urls = synth_urls(20003, 7);  // not a multiple of 8: exercises padding
     const Column c = fixture_column(v, urls);
 
     // The tokenization must round-trip.
@@ -232,14 +232,19 @@ void test_column() {
         Stats sraw, sdec;
         raw_match(p, c, braw, sraw);
         decode_match(p, v, c, bdec, sdec);
-        CHECK(braw.size() == c.rows && bdec.size() == c.rows, "bitmap size for '%s'", p);
+        CHECK(braw.size() == bitmap_bytes(c.rows) && bdec.size() == bitmap_bytes(c.rows),
+              "bitmap size for '%s'", p);
         uint64_t want_matches = 0;
         for (size_t i = 0; i < urls.size(); ++i) {
             const bool want = like_ref(p, urls[i]);
             want_matches += want;
-            CHECK(braw[i] == want, "raw '%s' row %zu ('%s')", p, i, urls[i].c_str());
-            CHECK(bdec[i] == want, "decode '%s' row %zu ('%s')", p, i, urls[i].c_str());
+            CHECK(bitmap_bit(braw, i) == want, "raw '%s' row %zu ('%s')", p, i, urls[i].c_str());
+            CHECK(bitmap_bit(bdec, i) == want, "decode '%s' row %zu ('%s')", p, i, urls[i].c_str());
         }
+        // Padding bits past the last row must be zero.
+        for (uint64_t r = c.rows; r < 8 * braw.size(); ++r)
+            CHECK(!bitmap_bit(braw, r) && !bitmap_bit(bdec, r), "padding bit %llu set for '%s'",
+                  static_cast<unsigned long long>(r), p);
         CHECK(sraw.matches == want_matches && sdec.matches == want_matches, "match count '%s'", p);
         CHECK(sraw.rows == c.rows && sdec.rows == c.rows, "stats rows '%s'", p);
         CHECK(sraw.tokens_read == 0 && sraw.bytes_decoded == 0, "raw stats '%s'", p);
@@ -270,7 +275,7 @@ int write_fixture(const std::string& dir) {
     std::filesystem::create_directories(dir + "/synth");
     const Vocab v = fixture_vocab(kExtraTokens);
     write_vocab(dir + "/vocab.bin", v);
-    write_column(dir + "/synth/url", fixture_column(v, synth_urls(200000, 11)));
+    write_column(dir + "/synth/url", fixture_column(v, synth_urls(200003, 11)));
     FILE* f = std::fopen((dir + "/patterns.txt").c_str(), "wb");
     if (!f) return 1;
     std::fprintf(f, "# synthetic fixture patterns (test only)\n");
