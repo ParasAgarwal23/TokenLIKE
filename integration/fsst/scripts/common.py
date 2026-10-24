@@ -13,6 +13,13 @@ import os
 import re
 import struct
 import subprocess
+import sys
+
+# Pattern names and evidence contain Cyrillic; a Windows console (cp1252) must
+# not turn printing them into a crash.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -183,7 +190,7 @@ class _CliConnection:
         if params:
             sql = _inline_params(sql, params)
         proc = subprocess.run([self.binary, "-csv", "-noheader", "-c", sql],
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, encoding="utf-8", errors="replace")
         if proc.returncode != 0:
             raise SystemExit(f"duckdb CLI failed:\n{proc.stderr}\nSQL: {sql[:400]}")
         rows = []

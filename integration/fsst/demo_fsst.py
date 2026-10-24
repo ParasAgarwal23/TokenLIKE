@@ -39,7 +39,7 @@ MODES = ["raw", "raw-opt", "decode", "fsst", "fsst-rev2"]
 
 
 def sh(argv: list[str]) -> subprocess.CompletedProcess:
-    return subprocess.run(argv, capture_output=True, text=True)
+    return subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
 def human(n: float) -> str:

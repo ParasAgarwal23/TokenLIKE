@@ -34,7 +34,7 @@ def run_mode(cli: str, spec: PatternSpec, mode: str, out: Path, timeout: int) ->
     if spec.is_concat:
         argv += ["--col2", str(DATA / spec.column2)]
     try:
-        proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
+        proc = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
     except subprocess.TimeoutExpired:
         return "FAIL", f"timed out after {timeout}s", {}
     if proc.returncode == 2:

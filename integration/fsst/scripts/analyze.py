@@ -30,7 +30,7 @@ REV_PATTERNS = [("%.php", "suffix"), ("%.html", "suffix"), ("%.m3u8", "suffix"),
 def q(mode: str, col: str, pattern: str, extra: list[str] | None = None) -> dict:
     argv = [CLI, "--mode", mode, "--col", str(DATA / col), "--pattern", pattern,
             "--runs", "7", "--warmup", "2", "--json"] + (extra or [])
-    p = subprocess.run(argv, capture_output=True, text=True)
+    p = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if p.returncode != 0:
         raise SystemExit(f"{' '.join(argv)}\n{p.stderr}")
     return json.loads([l for l in p.stdout.splitlines() if l.startswith("{")][0])

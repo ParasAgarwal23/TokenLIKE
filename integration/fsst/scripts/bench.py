@@ -35,7 +35,7 @@ def run(cli: str, col: str, pattern: str, mode: str, runs: int, warmup: int, col
             "--runs", str(runs), "--warmup", str(warmup), "--json"]
     if col2:
         argv += ["--col2", str(DATA / col2)]
-    proc = subprocess.run(argv, capture_output=True, text=True)
+    proc = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if proc.returncode == 2:
         return {"mode": mode, "skipped": proc.stderr.strip()}
     if proc.returncode != 0:
@@ -59,7 +59,7 @@ def peak_rss_kb(cli: str, col: str, pattern: str, mode: str) -> int | None:
         key = r"Maximum resident set size \(kbytes\):\s*(\d+)"
         scale = 1
     try:
-        proc = subprocess.run(argv, capture_output=True, text=True)
+        proc = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace")
     except FileNotFoundError:
         return None
     m = re.search(key, proc.stderr)
@@ -94,7 +94,7 @@ def main() -> int:
     }
     if platform.system() == "Darwin":
         env["cpu"] = subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"],
-                                    capture_output=True, text=True).stdout.strip()
+                                    capture_output=True, text=True, encoding="utf-8", errors="replace").stdout.strip()
 
     rows = []
     for spec in specs:

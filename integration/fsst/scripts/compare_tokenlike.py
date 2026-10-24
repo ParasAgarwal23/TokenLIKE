@@ -25,7 +25,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import BUILD, DATA, ROOT, parse_pattern_file, read_ids  # noqa: E402
+from common import BUILD, DATA, ROOT, parse_pattern_file, read_ids, resolve_cli  # noqa: E402
 
 # experiment column -> original TokenLIKE column prefix (relative to its data/)
 COLUMN_MAP = {
@@ -39,7 +39,7 @@ TL_MODES = ["raw", "decode", "token"]
 
 
 def run_json(argv: list[str]) -> dict | None:
-    proc = subprocess.run(argv, capture_output=True, text=True)
+    proc = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if proc.returncode != 0:
         return {"error": f"exit {proc.returncode}: {proc.stderr.strip()[:300]}"}
     for line in proc.stdout.splitlines():
@@ -62,8 +62,8 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=ROOT / "bench" / "vs_tokenlike.json")
     args = ap.parse_args()
 
-    fsst_cli = str(BUILD / "fsst_like")
-    tl_cli = args.tl_cli
+    fsst_cli = resolve_cli(str(BUILD / "fsst_like"))  # adds .exe on Windows
+    tl_cli = resolve_cli(args.tl_cli)
     tl_data = Path(args.tokenlike) / "data"
     for p in (fsst_cli, tl_cli):
         if not Path(p).is_file():
