@@ -1,0 +1,46 @@
+# TokenLIKE tier-2 patterns -- optional scope. Only include these in the demo
+# once they pass; they are not part of the mandatory prefix/suffix gate.
+# Format: name<TAB>column_prefix<TAB>pattern[<TAB>column2_prefix]
+#
+# Counts measured with DuckDB on the 1,000,000-row ClickBench columns.
+# NOTE: '_' matches one CHARACTER, not one byte (measured; see
+# scripts/verify/ground_truth.py --semantics). Backslash is NOT an escape
+# character unless a query says ESCAPE, and we never do.
+
+# ---- '_' single-character wildcard ----
+w_lead_under	data/clickbench/URL	_ttp://%
+w_first_char	data/clickbench/URL	http://_rr.ru%
+w_slash_under	data/clickbench/URL	http://irr.ru/_%
+w_four_under	data/clickbench/URL	http://irr.ru/____%
+
+# ---- interior '%' segments ----
+i_ru_slash	data/clickbench/URL	%.ru/%
+i_amp	data/clickbench/URL	%&%
+i_question	data/clickbench/URL	%?%
+i_search	data/clickbench/URL	%/search%
+i_yandex	data/clickbench/URL	%yandex%
+i_catalog	data/clickbench/URL	%/catalog/%
+i_v_under	data/clickbench/URL	%/v_/%
+
+# ---- deliberate zero-match correctness controls ----
+# A matcher that returns rows here is wrong; a matcher that crashes is wrong.
+z_zzz_prefix	data/clickbench/URL	zzz%
+z_zzz_suffix	data/clickbench/URL	%zzzzzz
+z_ftp	data/clickbench/URL	ftp://%
+
+# ---- concatenated columns: (URL || Referer) LIKE pattern ----
+c_irr	data/clickbench/URL	http://irr.ru%	data/clickbench/Referer
+c_yandex	data/clickbench/URL	%yandex%	data/clickbench/Referer
+c_html	data/clickbench/URL	%.html%	data/clickbench/Referer
+c_double_http	data/clickbench/URL	%http://%http://%	data/clickbench/Referer
+
+# ---- TPC-H SF1 concatenation: the paper's example query shape ----
+# l_comment and o_comment come from one lineitem-orders join in a single
+# deterministic order, so they share row ids (see scripts/encode/gen_tpch.py).
+# Natural-language text compresses far better than URLs with this vocabulary:
+# 4.03 and 4.36 bytes/token here, versus 2.45 on ClickBench URL.
+t_regular	data/tpch/l_comment	%regular%	data/tpch/o_comment
+t_final	data/tpch/l_comment	%final%	data/tpch/o_comment
+t_quickly	data/tpch/l_comment	%quickly%	data/tpch/o_comment
+t_prefix_r	data/tpch/l_comment	r%	data/tpch/o_comment
+t_suffix_s	data/tpch/l_comment	%s	data/tpch/o_comment
