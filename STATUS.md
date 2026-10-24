@@ -121,15 +121,24 @@ Two findings are easy to get wrong:
 - **Loaders: 32/32 checks on each of the six columns**, including one corruption
   fixture per validation rule, each proven to be rejected rather than silently
   accepted.
-- **Patterns, at full 1M-row scale, all three modes:** `core.txt` 66/66,
-  `tier1.txt` 39/39, `tier2.txt` passing, and the 36 edge patterns 108/108 —
-  all against an independent reference matcher, 0 mismatches throughout.
+- **Patterns: 1,182 (pattern, mode) checks, 0 mismatches**, every one against an
+  independent reference matcher, all three modes (`token`, `decode`, `raw`):
+
+  | Pattern set | Patterns | Checks | Scale | Result |
+  |---|---|---|---|---|
+  | `core.txt` | 22 | 66/66 | 1M rows | pass |
+  | `tier1.txt` | 13 | 39/39 | 1M rows | pass |
+  | `tier2.txt` (incl. concat + TPC-H) | 23 | 69/69 | 1M rows | pass |
+  | `generated_edge.txt` | 36 | 108/108 | 51 rows | pass |
+  | `generated_fuzz.txt` (seed 1) | 300 | 900/900 | 20,016 rows | pass |
+
   Three implementations agree: DuckDB, a naive backtracking matcher, and a
   regex translation (cross-checked against each other on 270 cases).
 - **Negative control:** `check.py` detects a single wrong row id even when the
   match count is unchanged, because it compares sets, not counts.
 - **Randomized fuzzing:** 300 seeded patterns derived from real ClickBench
-  substrings, reproducible from the printed seed.
+  substrings; reproduce with
+  `fuzz.py --random --from data/clickbench/URL --seed 1 --rows 20000 --count 300`.
 
 ### Blocked: I cannot push
 
