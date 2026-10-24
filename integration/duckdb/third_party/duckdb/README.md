@@ -10,3 +10,6 @@ Unmodified. Only these two headers are needed: the extension talks to DuckDB exc
 the C extension API function-pointer table (`C_STRUCT` ABI), so no DuckDB source or library is
 compiled or linked. Targeted API version: `v1.5.6` (the default of these headers; stable surface only,
 no `DUCKDB_EXTENSION_API_VERSION_UNSTABLE`).
+
+The SHA-256 values are of the files as published (LF line endings), i.e. of the committed blobs.
+A Windows checkout with `core.autocrlf=true` has CRLF copies whose hashes differ.

@@ -178,3 +178,12 @@ text also stored, it chose raw LIKE 5 of 5 times. It is not a DuckDB optimizer.
   ids. `fuzz.py --random` must be given `--patterns build/duckdb/scratch/fuzz_s7.txt` so that it does not
   overwrite the tracked `patterns/generated_fuzz.txt`.
 * **Person A (matcher):** no matcher bug was found and no matcher file was changed.
+
+## Verified commit
+
+* `82ef6c056ea776a92e5124a22da31f973181e8a9` on `feature/duckdb-sql` is the implementation that the
+  numbers and test results above were produced with. The follow-up commit only adds this section and
+  a note on header hashes.
+* A fresh clone of that commit, with no `data/`, no build outputs and no project `.venv`, builds the module
+  without warnings, passes its CTest smoke test (synthetic vocabulary), and the top-level CTest passes 5/5 (`test_io` is only
+  registered when `data/` exists, as on `main`).
