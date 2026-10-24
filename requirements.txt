@@ -1,0 +1,9 @@
+# Python packages for TokenLIKE's scripts, correctness tools and demo.
+# Exact versions that the release gates were run with (Windows, Python 3.13).
+# duckdb is pinned because the ground truth and the DuckDB extension target 1.5.6.
+duckdb==1.5.6
+pyarrow==26.0.0
+pandas==3.1.0
+numpy==2.5.4
+streamlit==1.66.1
+altair==6.3.0

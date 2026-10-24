@@ -1,0 +1,9 @@
+# Demo server settings (read when Streamlit is started from the repository root).
+# Bind to localhost only: live mode runs the CLI on request, so the app must not
+# be reachable from other machines on a venue network.
+[server]
+address = "127.0.0.1"
+headless = true
+
+[browser]
+gatherUsageStats = false
