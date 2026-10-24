@@ -1,0 +1,5 @@
+# Python packages for integration/duckdb (tested versions).
+# The extension targets DuckDB's C extension API v1.5.6; tested with the duckdb 1.5.6 wheel.
+duckdb==1.5.6
+pyarrow>=20
+pandas>=2

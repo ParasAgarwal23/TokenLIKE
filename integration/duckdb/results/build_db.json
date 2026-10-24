@@ -1,0 +1,39 @@
+{
+  "db": "data/duckdb/tokenlike.duckdb",
+  "duckdb": "1.5.6",
+  "rows": 1000000,
+  "timings_s": {
+    "read_token_files_s": 0.068,
+    "ingest_token_blobs_s": 2.983,
+    "create_urls_table_s": 3.499,
+    "verify_roundtrip_s": 0.255,
+    "sql_tokenize_1m_urls_s": 5.582
+  },
+  "checks": {
+    "rows": [
+      1000000,
+      0,
+      999999,
+      1000000
+    ],
+    "category_alignment_mismatches": 0,
+    "detokenize_roundtrip_mismatches": 0,
+    "edge_rows": 51,
+    "edge_roundtrip_mismatches": 0,
+    "fuzz_rows": 5016,
+    "fuzz_roundtrip_mismatches": 0,
+    "tpch_rows": 1000000,
+    "tpch_roundtrip_mismatches": 0
+  },
+  "bytes": {
+    "url_raw": 88562192,
+    "url_tokens": 72272106,
+    "referer_raw": 79583339,
+    "referer_tokens": 65951752
+  },
+  "db_file_mb": 184.0,
+  "memory": {
+    "working_set_mb": 324.6,
+    "peak_working_set_mb": 1515.6
+  }
+}

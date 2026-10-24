@@ -1,0 +1,306 @@
+{
+  "duckdb": "1.5.6",
+  "rows_compared": "the same 1,000,000 ClickBench rows in every measurement",
+  "logical": {
+    "vocabulary": {
+      "file": "data/vocab.bin",
+      "bytes": 630133,
+      "note": "shared by every encoded column; paid once, not per row"
+    },
+    "URL": {
+      "rows": 1000000,
+      "empty_rows": 265,
+      "text_bytes": 88562192,
+      "token_bytes": 72272106,
+      "tokens": 36136053,
+      "bytes_per_token": 2.4508,
+      "tokens_per_row": 36.136,
+      "offsets_uint64_bytes": 8000008,
+      "text_plus_offsets": 96562200,
+      "tokens_plus_offsets": 80272114,
+      "ratio_tokens_to_text": 0.8161,
+      "ratio_with_offsets": 0.8313,
+      "ratio_with_offsets_and_vocab": 0.8378,
+      "person_b_files": {
+        ".raw": 88562192,
+        ".rawoff": 8000008,
+        ".tok": 72272106,
+        ".off": 8000008
+      },
+      "files_consistent": true,
+      "duckdb_default_text_mb": 38.0,
+      "duckdb_default_tokens_mb": 35.5,
+      "duckdb_default_ratio_tokens_to_text": 0.9342
+    },
+    "Referer": {
+      "rows": 1000000,
+      "empty_rows": 78775,
+      "text_bytes": 79583339,
+      "token_bytes": 65951752,
+      "tokens": 32975876,
+      "bytes_per_token": 2.4134,
+      "tokens_per_row": 32.976,
+      "offsets_uint64_bytes": 8000008,
+      "text_plus_offsets": 87583347,
+      "tokens_plus_offsets": 73951760,
+      "ratio_tokens_to_text": 0.8287,
+      "ratio_with_offsets": 0.8444,
+      "ratio_with_offsets_and_vocab": 0.8516,
+      "person_b_files": {
+        ".raw": 79583339,
+        ".rawoff": 8000008,
+        ".tok": 65951752,
+        ".off": 8000008
+      },
+      "files_consistent": true,
+      "duckdb_default_text_mb": 33.5,
+      "duckdb_default_tokens_mb": 28.25,
+      "duckdb_default_ratio_tokens_to_text": 0.8433
+    }
+  },
+  "physical_single_column": {
+    "original_url/default": {
+      "used_bytes": 39845888,
+      "used_mb": 38.0,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        },
+        {
+          "type": "VARCHAR",
+          "compression": "Dictionary",
+          "segments": 48,
+          "rows": 491520
+        },
+        {
+          "type": "VARCHAR",
+          "compression": "FSST",
+          "segments": 106,
+          "rows": 508480
+        }
+      ],
+      "file_bytes": 39858176
+    },
+    "original_url/uncompressed": {
+      "used_bytes": 93061120,
+      "used_mb": 88.75,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        },
+        {
+          "type": "VARCHAR",
+          "compression": "Uncompressed",
+          "segments": 357,
+          "rows": 1000000
+        }
+      ],
+      "file_bytes": 93073408
+    },
+    "encoded_url/default": {
+      "used_bytes": 37224448,
+      "used_mb": 35.5,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "BLOB",
+          "compression": "Dictionary",
+          "segments": 119,
+          "rows": 860160
+        },
+        {
+          "type": "BLOB",
+          "compression": "FSST",
+          "segments": 27,
+          "rows": 139840
+        },
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        }
+      ],
+      "file_bytes": 37236736
+    },
+    "encoded_url/uncompressed": {
+      "used_bytes": 77070336,
+      "used_mb": 73.5,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "BLOB",
+          "compression": "Uncompressed",
+          "segments": 294,
+          "rows": 1000000
+        },
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        }
+      ],
+      "file_bytes": 77082624
+    },
+    "original_referer/default": {
+      "used_bytes": 35127296,
+      "used_mb": 33.5,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        },
+        {
+          "type": "VARCHAR",
+          "compression": "Dictionary",
+          "segments": 45,
+          "rows": 491520
+        },
+        {
+          "type": "VARCHAR",
+          "compression": "FSST",
+          "segments": 89,
+          "rows": 508480
+        }
+      ],
+      "file_bytes": 35139584
+    },
+    "original_referer/uncompressed": {
+      "used_bytes": 84148224,
+      "used_mb": 80.25,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        },
+        {
+          "type": "VARCHAR",
+          "compression": "Uncompressed",
+          "segments": 323,
+          "rows": 1000000
+        }
+      ],
+      "file_bytes": 84160512
+    },
+    "encoded_referer/default": {
+      "used_bytes": 29622272,
+      "used_mb": 28.25,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "BLOB",
+          "compression": "Dictionary",
+          "segments": 93,
+          "rows": 860160
+        },
+        {
+          "type": "BLOB",
+          "compression": "FSST",
+          "segments": 24,
+          "rows": 139840
+        },
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        }
+      ],
+      "file_bytes": 29634560
+    },
+    "encoded_referer/uncompressed": {
+      "used_bytes": 70516736,
+      "used_mb": 67.25,
+      "block_size": 262144,
+      "segments": [
+        {
+          "type": "BLOB",
+          "compression": "Uncompressed",
+          "segments": 272,
+          "rows": 1000000
+        },
+        {
+          "type": "VALIDITY",
+          "compression": "Constant",
+          "segments": 9,
+          "rows": 1000000
+        }
+      ],
+      "file_bytes": 70529024
+    }
+  },
+  "urls_table_compression_mix": [
+    {
+      "column": "encoded_referer",
+      "type": "BLOB",
+      "compression": "Dictionary",
+      "segments": 71,
+      "rows": 737280
+    },
+    {
+      "column": "encoded_referer",
+      "type": "BLOB",
+      "compression": "FSST",
+      "segments": 45,
+      "rows": 262720
+    },
+    {
+      "column": "encoded_url",
+      "type": "BLOB",
+      "compression": "Dictionary",
+      "segments": 94,
+      "rows": 737280
+    },
+    {
+      "column": "encoded_url",
+      "type": "BLOB",
+      "compression": "FSST",
+      "segments": 47,
+      "rows": 262720
+    },
+    {
+      "column": "original_referer",
+      "type": "VARCHAR",
+      "compression": "Dictionary",
+      "segments": 57,
+      "rows": 614400
+    },
+    {
+      "column": "original_referer",
+      "type": "VARCHAR",
+      "compression": "FSST",
+      "segments": 67,
+      "rows": 385600
+    },
+    {
+      "column": "original_url",
+      "type": "VARCHAR",
+      "compression": "Dictionary",
+      "segments": 53,
+      "rows": 508480
+    },
+    {
+      "column": "original_url",
+      "type": "VARCHAR",
+      "compression": "FSST",
+      "segments": 99,
+      "rows": 491520
+    }
+  ],
+  "person_b_fsst": "No Person B FSST results exist in the repository at this commit; DuckDB's own FSST (physical_single_column */default) is the FSST comparison available here."
+}
