@@ -1,0 +1,167 @@
+"""Build data/duckdb/tokenlike.duckdb for the TokenLIKE DuckDB integration.
+
+Input: Person B's pipeline output in data/ (scripts/encode/*, see the top-level README).
+
+Tables
+  urls        1,000,000 ClickBench rows (partition 0):
+                row_id BIGINT            0-based position in Person B's canonical parquet
+                original_url VARCHAR     raw text   -- truth / baseline only
+                original_referer VARCHAR raw text   -- truth / baseline only
+                encoded_url BLOB         TokenLIKE token ids, little-endian uint16 (Person B's encoder)
+                encoded_referer BLOB
+                traffic_source_id SMALLINT   ClickBench source column TraficSourceID (real data)
+  urls_1k, urls_10k, urls_100k   first N rows of urls (benchmark scales)
+  edge, fuzz  Person B's deterministic edge-case and random fixture columns (optional:
+              scripts/verify/fuzz.py --edge / --random, then scripts/encode/encode.py)
+  tpch        TPC-H SF1 l_comment / o_comment (optional: scripts/encode/gen_tpch.py)
+
+Every encoded column is checked against its raw text with detokenize() after loading, so the
+token BLOBs provably are the encoding of the strings they sit next to.
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import tlsql  # noqa: E402
+
+HITS = tlsql.DATA / "download" / "hits_0.parquet"
+CB = tlsql.DATA / "clickbench"
+
+
+def main() -> int:
+    tlsql.DB.parent.mkdir(parents=True, exist_ok=True)
+    tlsql.RESULTS.mkdir(parents=True, exist_ok=True)
+    tmp = tlsql.DB.with_suffix(".building.duckdb")
+    for p in (tmp, Path(str(tmp) + ".wal")):
+        if p.exists():
+            p.unlink()
+    timings: dict[str, float] = {}
+    con = tlsql.connect(tmp)
+
+    with tlsql.Timer() as t:
+        url_tok = tlsql.token_blobs(CB / "URL")
+        ref_tok = tlsql.token_blobs(CB / "Referer")
+    timings["read_token_files_s"] = t.s
+    n = len(url_tok)
+    assert len(ref_tok) == n
+
+    with tlsql.Timer() as t:
+        import pyarrow as pa
+        enc = pa.table({"row_id": pa.array(range(n), pa.int64()), "encoded_url": url_tok, "encoded_referer": ref_tok})
+        con.register("enc_arrow", enc)
+        con.execute("CREATE TEMP TABLE enc AS SELECT * FROM enc_arrow")
+        con.unregister("enc_arrow")
+    timings["ingest_token_blobs_s"] = t.s
+
+    # Raw text comes from Person B's per-column parquet files (row_id, value): the DuckDB truth source.
+    # The category is read from the ClickBench download with the same row numbering B's
+    # fetch_clickbench.py uses (row_number() over a single-threaded scan, first N rows). The join
+    # below is verified row by row against the canonical URL/Referer before it is used.
+    with tlsql.Timer() as t:
+        con.execute("SET threads=1")
+        con.execute(f"""
+            CREATE TEMP TABLE cat AS
+            SELECT (row_number() OVER () - 1)::BIGINT AS row_id,
+                   COALESCE(decode(URL), '') AS u, COALESCE(decode(Referer), '') AS r,
+                   TraficSourceID AS traffic_source_id
+            FROM read_parquet('{HITS.as_posix()}') LIMIT {n}""")
+        con.execute("RESET threads")
+        con.execute(f"""
+            CREATE TABLE urls AS
+            SELECT e.row_id, u.value AS original_url, r.value AS original_referer,
+                   e.encoded_url, e.encoded_referer, c.traffic_source_id
+            FROM enc e
+            JOIN read_parquet('{(CB / "URL.parquet").as_posix()}') u ON u.row_id = e.row_id
+            JOIN read_parquet('{(CB / "Referer.parquet").as_posix()}') r ON r.row_id = e.row_id
+            JOIN cat c ON c.row_id = e.row_id
+            ORDER BY e.row_id""")
+    timings["create_urls_table_s"] = t.s
+
+    checks = {}
+    checks["rows"] = con.execute("SELECT count(*), min(row_id), max(row_id), count(DISTINCT row_id) FROM urls").fetchone()
+    assert checks["rows"] == (n, 0, n - 1, n), checks["rows"]
+    bad = con.execute("""SELECT count(*) FROM urls JOIN cat USING (row_id)
+                         WHERE cat.u <> original_url OR cat.r <> original_referer""").fetchone()[0]
+    checks["category_alignment_mismatches"] = bad
+    assert bad == 0, f"{bad} rows: ClickBench category join is not aligned with the canonical row ids"
+
+    with tlsql.Timer() as t:
+        bad = con.execute("""SELECT count(*) FROM urls
+                             WHERE detokenize(encoded_url) IS DISTINCT FROM original_url
+                                OR detokenize(encoded_referer) IS DISTINCT FROM original_referer""").fetchone()[0]
+    timings["verify_roundtrip_s"] = t.s
+    checks["detokenize_roundtrip_mismatches"] = bad
+    assert bad == 0, f"{bad} rows do not decode to their original text"
+
+    for k, size in (("1k", 1_000), ("10k", 10_000), ("100k", 100_000)):
+        con.execute(f"CREATE TABLE urls_{k} AS SELECT * FROM urls WHERE row_id < {size} ORDER BY row_id")
+
+    for name, prefix in (("edge", tlsql.DATA / "edge" / "values"), ("fuzz", tlsql.DATA / "fuzz" / "values")):
+        if not Path(str(prefix) + ".tok").exists():
+            checks[f"{name}_rows"] = "absent (optional fixture not generated)"
+            continue
+        blobs = tlsql.token_blobs(prefix)
+        import pyarrow as pa
+        t_arrow = pa.table({"row_id": pa.array(range(len(blobs)), pa.int64()), "encoded": blobs})
+        con.register("t_arrow", t_arrow)
+        con.execute(f"""CREATE TABLE {name} AS
+                        SELECT a.row_id, p.value AS original, a.encoded
+                        FROM t_arrow a JOIN read_parquet('{(prefix.parent / 'values.parquet').as_posix()}') p
+                          ON p.row_id = a.row_id ORDER BY a.row_id""")
+        con.unregister("t_arrow")
+        bad = con.execute(f"SELECT count(*) FROM {name} WHERE detokenize(encoded) IS DISTINCT FROM original").fetchone()[0]
+        checks[f"{name}_rows"] = con.execute(f"SELECT count(*) FROM {name}").fetchone()[0]
+        checks[f"{name}_roundtrip_mismatches"] = bad
+        assert bad == 0
+
+    # TPC-H SF1 l_comment / o_comment, row-aligned by Person B's gen_tpch.py (optional tier-2 data).
+    tp = tlsql.DATA / "tpch"
+    if (tp / "l_comment.tok").exists() and (tp / "o_comment.tok").exists():
+        import pyarrow as pa
+        lt, ot = tlsql.token_blobs(tp / "l_comment"), tlsql.token_blobs(tp / "o_comment")
+        con.register("t_arrow", pa.table({"row_id": pa.array(range(len(lt)), pa.int64()), "encoded_l": lt, "encoded_o": ot}))
+        con.execute(f"""CREATE TABLE tpch AS
+                        SELECT a.row_id, l.value AS l_comment, o.value AS o_comment, a.encoded_l, a.encoded_o
+                        FROM t_arrow a
+                        JOIN read_parquet('{(tp / 'l_comment.parquet').as_posix()}') l ON l.row_id = a.row_id
+                        JOIN read_parquet('{(tp / 'o_comment.parquet').as_posix()}') o ON o.row_id = a.row_id
+                        ORDER BY a.row_id""")
+        con.unregister("t_arrow")
+        bad = con.execute("""SELECT count(*) FROM tpch WHERE detokenize(encoded_l) IS DISTINCT FROM l_comment
+                                                      OR detokenize(encoded_o) IS DISTINCT FROM o_comment""").fetchone()[0]
+        checks["tpch_rows"] = con.execute("SELECT count(*) FROM tpch").fetchone()[0]
+        checks["tpch_roundtrip_mismatches"] = bad
+        assert bad == 0
+
+    # Token encoding inside SQL (greedy longest match), for the encoding-cost measurement only.
+    with tlsql.Timer() as t:
+        con.execute("SELECT sum(octet_length(tokenize(original_url))) FROM urls").fetchone()
+    timings["sql_tokenize_1m_urls_s"] = t.s
+
+    sizes = con.execute("""SELECT sum(strlen(original_url)), sum(octet_length(encoded_url)),
+                                  sum(strlen(original_referer)), sum(octet_length(encoded_referer)) FROM urls""").fetchone()
+    con.execute("CHECKPOINT")
+    con.close()
+    for p in (tlsql.DB, Path(str(tlsql.DB) + ".wal")):
+        if p.exists():
+            p.unlink()
+    tmp.replace(tlsql.DB)
+
+
+    report = {
+        "db": tlsql.rel(tlsql.DB), "duckdb": __import__("duckdb").__version__, "rows": n, "timings_s": {k: round(v, 3) for k, v in timings.items()},
+        "checks": checks,
+        "bytes": {"url_raw": sizes[0], "url_tokens": sizes[1], "referer_raw": sizes[2], "referer_tokens": sizes[3]},
+        "db_file_mb": round(tlsql.DB.stat().st_size / 2**20, 1),
+        "memory": tlsql.memory_mb(),
+    }
+    (tlsql.RESULTS / "build_db.json").write_text(json.dumps(report, indent=2, default=str), encoding="utf-8")
+    print(json.dumps(report, indent=2, default=str))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

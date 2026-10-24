@@ -1,0 +1,6322 @@
+{
+  "extension": "build/duckdb-msvc/tokenlike.duckdb_extension",
+  "duckdb": "1.5.6",
+  "mode": "full",
+  "vocabulary": "data/vocab.bin",
+  "seconds": 69.0,
+  "groups": {
+    "fixture: constant patterns (bind-time matcher)": {
+      "pass": 141,
+      "fail": 0
+    },
+    "fixture: per-row patterns (runtime cache path)": {
+      "pass": 2,
+      "fail": 0
+    },
+    "fixture: token_like_concat": {
+      "pass": 19,
+      "fail": 0
+    },
+    "smoke: NULLs, errors, cache, diagnostics (no dataset)": {
+      "pass": 29,
+      "fail": 0
+    },
+    "real data: pattern files vs DuckDB LIKE": {
+      "pass": 694,
+      "fail": 0
+    },
+    "caching and pattern changes": {
+      "pass": 95,
+      "fail": 0
+    },
+    "SQL features: joins, group by, mixed expressions": {
+      "pass": 13,
+      "fail": 0
+    },
+    "NULLs, empty strings, empty tables": {
+      "pass": 7,
+      "fail": 0
+    },
+    "errors and invalid inputs": {
+      "pass": 31,
+      "fail": 0
+    },
+    "large rows and long patterns": {
+      "pass": 9,
+      "fail": 0
+    },
+    "scan-floor diagnostics": {
+      "pass": 2,
+      "fail": 0
+    },
+    "filter + group in token space, decode only the output": {
+      "pass": 5,
+      "fail": 0
+    },
+    "concurrent queries": {
+      "pass": 2,
+      "fail": 0
+    },
+    "close / reopen / repeated statements": {
+      "pass": 56,
+      "fail": 0
+    },
+    "bug hunting: reload races, interrupts, multiple databases": {
+      "pass": 11,
+      "fail": 0
+    }
+  },
+  "total_pass": 1116,
+  "total_fail": 0,
+  "failures": [],
+  "real_data_patterns": 694,
+  "real_data_skipped": [],
+  "real_data": [
+    {
+      "file": "core.txt",
+      "name": "p_http",
+      "table": "urls",
+      "pattern": "http://%",
+      "concat": false,
+      "matches": 517519,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_https",
+      "table": "urls",
+      "pattern": "https://%",
+      "concat": false,
+      "matches": 481732,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_irr",
+      "table": "urls",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "matches": 341755,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_b",
+      "table": "urls",
+      "pattern": "http://b%",
+      "concat": false,
+      "matches": 8967,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_bonprix",
+      "table": "urls",
+      "pattern": "http://bonprix%",
+      "concat": false,
+      "matches": 7251,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_video",
+      "table": "urls",
+      "pattern": "http://video%",
+      "concat": false,
+      "matches": 2894,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_auto",
+      "table": "urls",
+      "pattern": "http://auto%",
+      "concat": false,
+      "matches": 324,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_diary",
+      "table": "urls",
+      "pattern": "http://diary%",
+      "concat": false,
+      "matches": 194,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_zero",
+      "table": "urls",
+      "pattern": "%0",
+      "concat": false,
+      "matches": 98525,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_ru",
+      "table": "urls",
+      "pattern": "%ru",
+      "concat": false,
+      "matches": 19392,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_php",
+      "table": "urls",
+      "pattern": "%.php",
+      "concat": false,
+      "matches": 12714,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_html_nodot",
+      "table": "urls",
+      "pattern": "%html",
+      "concat": false,
+      "matches": 10336,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_slash",
+      "table": "urls",
+      "pattern": "%/",
+      "concat": false,
+      "matches": 7738,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_html",
+      "table": "urls",
+      "pattern": "%.html",
+      "concat": false,
+      "matches": 7683,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_eq1",
+      "table": "urls",
+      "pattern": "%=1",
+      "concat": false,
+      "matches": 6013,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_jpg",
+      "table": "urls",
+      "pattern": "%.jpg",
+      "concat": false,
+      "matches": 317,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_xml",
+      "table": "urls",
+      "pattern": "%.xml",
+      "concat": false,
+      "matches": 114,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "e_top_url",
+      "table": "urls",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "matches": 58976,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_ref_http",
+      "table": "urls",
+      "pattern": "http://%",
+      "concat": false,
+      "matches": 811457,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "s_ref_html",
+      "table": "urls",
+      "pattern": "%.html",
+      "concat": false,
+      "matches": 3780,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "p_ref_irr",
+      "table": "urls",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "matches": 102,
+      "status": "pass"
+    },
+    {
+      "file": "core.txt",
+      "name": "e_ref_empty",
+      "table": "urls",
+      "pattern": "",
+      "concat": false,
+      "matches": 78775,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_htt",
+      "table": "urls",
+      "pattern": "htt%",
+      "concat": false,
+      "matches": 999735,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_http_colon",
+      "table": "urls",
+      "pattern": "http:%",
+      "concat": false,
+      "matches": 517956,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_http_slash",
+      "table": "urls",
+      "pattern": "http:/%",
+      "concat": false,
+      "matches": 517519,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_irr_i",
+      "table": "urls",
+      "pattern": "http://i%",
+      "concat": false,
+      "matches": 341794,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_irr_ir",
+      "table": "urls",
+      "pattern": "http://ir%",
+      "concat": false,
+      "matches": 341769,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_irr_dot",
+      "table": "urls",
+      "pattern": "http://irr.%",
+      "concat": false,
+      "matches": 341757,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "tb_irr_r",
+      "table": "urls",
+      "pattern": "http://irr.r%",
+      "concat": false,
+      "matches": 341755,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "u8_sezon",
+      "table": "urls",
+      "pattern": "%сезон%",
+      "concat": false,
+      "matches": 2116,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "u8_moskva",
+      "table": "urls",
+      "pattern": "%Москва%",
+      "concat": false,
+      "matches": 6796,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "u8_moskva_lower",
+      "table": "urls",
+      "pattern": "%москва%",
+      "concat": false,
+      "matches": 338,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "u8_ru_cyr",
+      "table": "urls",
+      "pattern": "%ру%",
+      "concat": false,
+      "matches": 6174,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "lit_pct25",
+      "table": "urls",
+      "pattern": "http://%25%",
+      "concat": false,
+      "matches": 35397,
+      "status": "pass"
+    },
+    {
+      "file": "tier1.txt",
+      "name": "s_htm_underscore",
+      "table": "urls",
+      "pattern": "%.htm_",
+      "concat": false,
+      "matches": 7683,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "w_lead_under",
+      "table": "urls",
+      "pattern": "_ttp://%",
+      "concat": false,
+      "matches": 517519,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "w_first_char",
+      "table": "urls",
+      "pattern": "http://_rr.ru%",
+      "concat": false,
+      "matches": 341755,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "w_slash_under",
+      "table": "urls",
+      "pattern": "http://irr.ru/_%",
+      "concat": false,
+      "matches": 341748,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "w_four_under",
+      "table": "urls",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "matches": 341747,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_ru_slash",
+      "table": "urls",
+      "pattern": "%.ru/%",
+      "concat": false,
+      "matches": 614015,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_amp",
+      "table": "urls",
+      "pattern": "%&%",
+      "concat": false,
+      "matches": 475232,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_question",
+      "table": "urls",
+      "pattern": "%?%",
+      "concat": false,
+      "matches": 456258,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_search",
+      "table": "urls",
+      "pattern": "%/search%",
+      "concat": false,
+      "matches": 49278,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_yandex",
+      "table": "urls",
+      "pattern": "%yandex%",
+      "concat": false,
+      "matches": 27864,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_catalog",
+      "table": "urls",
+      "pattern": "%/catalog/%",
+      "concat": false,
+      "matches": 14286,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "i_v_under",
+      "table": "urls",
+      "pattern": "%/v_/%",
+      "concat": false,
+      "matches": 165,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "z_zzz_prefix",
+      "table": "urls",
+      "pattern": "zzz%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "z_zzz_suffix",
+      "table": "urls",
+      "pattern": "%zzzzzz",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "z_ftp",
+      "table": "urls",
+      "pattern": "ftp://%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "c_irr",
+      "table": "urls",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "matches": 341755,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "c_yandex",
+      "table": "urls",
+      "pattern": "%yandex%",
+      "concat": true,
+      "matches": 148394,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "c_html",
+      "table": "urls",
+      "pattern": "%.html%",
+      "concat": true,
+      "matches": 174786,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "c_double_http",
+      "table": "urls",
+      "pattern": "%http://%http://%",
+      "concat": true,
+      "matches": 422398,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "t_regular",
+      "table": "tpch",
+      "pattern": "%regular%",
+      "concat": true,
+      "matches": 314439,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "t_final",
+      "table": "tpch",
+      "pattern": "%final%",
+      "concat": true,
+      "matches": 271015,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "t_quickly",
+      "table": "tpch",
+      "pattern": "%quickly%",
+      "concat": true,
+      "matches": 184530,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "t_prefix_r",
+      "table": "tpch",
+      "pattern": "r%",
+      "concat": true,
+      "matches": 45318,
+      "status": "pass"
+    },
+    {
+      "file": "tier2.txt",
+      "name": "t_suffix_s",
+      "table": "tpch",
+      "pattern": "%s",
+      "concat": true,
+      "matches": 75967,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_empty_pattern",
+      "table": "edge",
+      "pattern": "",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_pct",
+      "table": "edge",
+      "pattern": "%",
+      "concat": false,
+      "matches": 51,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_pct_pct",
+      "table": "edge",
+      "pattern": "%%",
+      "concat": false,
+      "matches": 51,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_underscore",
+      "table": "edge",
+      "pattern": "_",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_underscore2",
+      "table": "edge",
+      "pattern": "__",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_underscore3",
+      "table": "edge",
+      "pattern": "___",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_prefix_h",
+      "table": "edge",
+      "pattern": "h%",
+      "concat": false,
+      "matches": 13,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_prefix_htt",
+      "table": "edge",
+      "pattern": "htt%",
+      "concat": false,
+      "matches": 11,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_prefix_http",
+      "table": "edge",
+      "pattern": "http%",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_prefix_http_colon",
+      "table": "edge",
+      "pattern": "http://%",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_prefix_https",
+      "table": "edge",
+      "pattern": "https://%",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_prefix_upper",
+      "table": "edge",
+      "pattern": "HTTP%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_suffix_html",
+      "table": "edge",
+      "pattern": "%.html",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_suffix_l",
+      "table": "edge",
+      "pattern": "%l",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_suffix_slash",
+      "table": "edge",
+      "pattern": "%/",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_suffix_backslash_pct",
+      "table": "edge",
+      "pattern": "%\\%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_exact_http",
+      "table": "edge",
+      "pattern": "http",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_exact_empty_value",
+      "table": "edge",
+      "pattern": "",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_interior_www",
+      "table": "edge",
+      "pattern": "%www%",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_interior_dot",
+      "table": "edge",
+      "pattern": "%.%",
+      "concat": false,
+      "matches": 12,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_interior_token_split",
+      "table": "edge",
+      "pattern": "%ttp://%",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_literal_backslash_pct",
+      "table": "edge",
+      "pattern": "a\\%b",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_literal_backslash_underscore",
+      "table": "edge",
+      "pattern": "a\\_b",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_literal_underscore_wild",
+      "table": "edge",
+      "pattern": "a_b",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_utf8_one_char",
+      "table": "edge",
+      "pattern": "_",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_utf8_three_char",
+      "table": "edge",
+      "pattern": "___",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_utf8_prefix_jp",
+      "table": "edge",
+      "pattern": "日%",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_utf8_suffix_jp",
+      "table": "edge",
+      "pattern": "%テスト.html",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_utf8_mid_underscore",
+      "table": "edge",
+      "pattern": "_本_",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_utf8_cyrillic_prefix",
+      "table": "edge",
+      "pattern": "https://с%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_multi_segment",
+      "table": "edge",
+      "pattern": "http%www%html",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_multi_underscore_pct",
+      "table": "edge",
+      "pattern": "h_t%p%",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_long_prefix",
+      "table": "edge",
+      "pattern": "http://a/bb%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_whitespace_prefix",
+      "table": "edge",
+      "pattern": " %",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_whitespace_suffix",
+      "table": "edge",
+      "pattern": "% ",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_edge.txt",
+      "name": "edge_backslash",
+      "table": "edge",
+      "pattern": "%slash",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0000",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.1453._16 Safari%2F537.36 (KHTML, like Gecko",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0001",
+      "table": "fuzz",
+      "pattern": "h%ttps:%",
+      "concat": false,
+      "matches": 2474,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0002",
+      "table": "fuzz",
+      "pattern": "https://produkty%2F%pulove.ru/catalog=on&acce/8da24aa/frl-2/bage-42/catalog/80675.html%3Fhtml?1=1&cid=6&pv=20&%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0003",
+      "table": "fuzz",
+      "pattern": "https%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0004",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.r%u/otdam-soulmjj/628965/details/?c%",
+      "concat": false,
+      "matches": 8,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0005",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=1&gearbox",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0006",
+      "table": "fuzz",
+      "pattern": "htt%ps://produkty%%",
+      "concat": false,
+      "matches": 2316,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0007",
+      "table": "fuzz",
+      "pattern": "%op=0%",
+      "concat": false,
+      "matches": 23,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0008",
+      "table": "fuzz",
+      "pattern": "%/inde%",
+      "concat": false,
+      "matches": 1688,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0009",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login_leniya7777294,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0010",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233/tags/price_do=&currency=USB Propetro=240&location%3D0%26ntype=0_vip=0&orderslist.html_params%3Drhost",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0011",
+      "table": "fuzz",
+      "pattern": "%hche",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0012",
+      "table": "fuzz",
+      "pattern": "h%",
+      "concat": false,
+      "matches": 5010,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0013",
+      "table": "fuzz",
+      "pattern": "%#lo%",
+      "concat": false,
+      "matches": 126,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0014",
+      "table": "fuzz",
+      "pattern": "https://pro%dukty%2Fbon%",
+      "concat": false,
+      "matches": 88,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0015",
+      "table": "fuzz",
+      "pattern": "ht%",
+      "concat": false,
+      "matches": 5009,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0016",
+      "table": "fuzz",
+      "pattern": "%t/2564653%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0017",
+      "table": "fuzz",
+      "pattern": "%ind%",
+      "concat": false,
+      "matches": 1751,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0018",
+      "table": "fuzz",
+      "pattern": "%ollet",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0019",
+      "table": "fuzz",
+      "pattern": "%en/ba%",
+      "concat": false,
+      "matches": 23,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0020",
+      "table": "fuzz",
+      "pattern": "%semenn%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0021",
+      "table": "fuzz",
+      "pattern": "http://irr.r%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0022",
+      "table": "fuzz",
+      "pattern": "%Xwe8gE%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0023",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_id=0_page/3179728.php?linkres.php",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0024",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN",
+      "concat": false,
+      "matches": 8,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0025",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/2c58.32638/dobropol/household",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0026",
+      "table": "fuzz",
+      "pattern": "%http://irr.ru%",
+      "concat": false,
+      "matches": 1673,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0027",
+      "table": "fuzz",
+      "pattern": "htt%",
+      "concat": false,
+      "matches": 5008,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0028",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/moscow",
+      "concat": false,
+      "matches": 11,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0029",
+      "table": "fuzz",
+      "pattern": "https://produkty/tructure-internet Explorer&aV=9.80 (Windows NT 5.1; WOW64) AppleWebKit%2F_34.30533&site_off=F&af=223&srch13",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0030",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/~lekai.diary.ru/_tary_fiat_duh_vrements/animals",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0031",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_id=0&last_auto.ria.ua",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0032",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/80315-v-ukrai/nissasis_102695",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0033",
+      "table": "fuzz",
+      "pattern": "%htt%",
+      "concat": false,
+      "matches": 5008,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0034",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapu%sta-advert23165336.html?q=390&Selectio%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0035",
+      "table": "fuzz",
+      "pattern": "%afari",
+      "concat": false,
+      "matches": 25,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0036",
+      "table": "fuzz",
+      "pattern": "ht%tps://produkty/placet%%",
+      "concat": false,
+      "matches": 173,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0037",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.ph%p?showalbum/login-leniya7777294,93%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0038",
+      "table": "fuzz",
+      "pattern": "%ar=бо%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0039",
+      "table": "fuzz",
+      "pattern": "https://produkty/placet%3Dad.adriver",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0040",
+      "table": "fuzz",
+      "pattern": "http://i%",
+      "concat": false,
+      "matches": 1673,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0041",
+      "table": "fuzz",
+      "pattern": "%0; SLCC%",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0042",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/booklyattion-with",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0043",
+      "table": "fuzz",
+      "pattern": "%=Плат%",
+      "concat": false,
+      "matches": 67,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0044",
+      "table": "fuzz",
+      "pattern": "%://%",
+      "concat": false,
+      "matches": 5005,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0045",
+      "table": "fuzz",
+      "pattern": "http%s://pr%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0046",
+      "table": "fuzz",
+      "pattern": "%ndex.php?s%",
+      "concat": false,
+      "matches": 1609,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0047",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory&cated_country=",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0048",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login.html_/v12/?PAGEN_1=4413550895,92895&ch=UTF-8&sF=11,7,700&priceup&page=0&view",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0049",
+      "table": "fuzz",
+      "pattern": "https://produktor-sinij%2F&sr=http://tienshchin",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0050",
+      "table": "fuzz",
+      "pattern": "%e/prod%",
+      "concat": false,
+      "matches": 48,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0051",
+      "table": "fuzz",
+      "pattern": "https:/%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0052",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-32-kv-Leningredit=0&view_types=",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0053",
+      "table": "fuzz",
+      "pattern": "%tp://irr%",
+      "concat": false,
+      "matches": 1673,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0054",
+      "table": "fuzz",
+      "pattern": "%u%",
+      "concat": false,
+      "matches": 4714,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0055",
+      "table": "fuzz",
+      "pattern": "http://gaw%",
+      "concat": false,
+      "matches": 28,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0056",
+      "table": "fuzz",
+      "pattern": "http://irr%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0057",
+      "table": "fuzz",
+      "pattern": "http:/%",
+      "concat": false,
+      "matches": 2530,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0058",
+      "table": "fuzz",
+      "pattern": "%=category",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0059",
+      "table": "fuzz",
+      "pattern": "http://ir%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0060",
+      "table": "fuzz",
+      "pattern": "http://%",
+      "concat": false,
+      "matches": 2530,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0061",
+      "table": "fuzz",
+      "pattern": "http://k%omme%2%",
+      "concat": false,
+      "matches": 216,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0062",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_name=1&fuelRateTo=&powerFromArea=3&marke_ing",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0063",
+      "table": "fuzz",
+      "pattern": "http:%",
+      "concat": false,
+      "matches": 2533,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0064",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/frl-2/bage-recept-Ikra-iz-kurtki-i-zamenskaia",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0065",
+      "table": "fuzz",
+      "pattern": "%s://%",
+      "concat": false,
+      "matches": 2474,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0066",
+      "table": "fuzz",
+      "pattern": "https://pr%odukty%2Fkategory_name=Платья - %",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0067",
+      "table": "fuzz",
+      "pattern": "http://ekburg.irr.ru%2Fpuloveplanet",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0068",
+      "table": "fuzz",
+      "pattern": "http%s://produkty%2%",
+      "concat": false,
+      "matches": 1980,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0069",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpl%ata-pr-%",
+      "concat": false,
+      "matches": 169,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0070",
+      "table": "fuzz",
+      "pattern": "%.diary",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0071",
+      "table": "fuzz",
+      "pattern": "%/18038124%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0072",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login.html5/v12/?from]=&input_who1=3&input_countpage.aspx?from=&raceTo=&raceTo=&powerFrom=&fuelRateFrom=&powerTo=&powerFrom=&raceTo=&fuelRateTo=&raceFrom=&powers.yandex.ru/zoom_php?dom=100&onlyPhoto35509408_11640",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0073",
+      "table": "fuzz",
+      "pattern": "https://%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0074",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategoriya/dlia-zhienskaia-moda-topic",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0075",
+      "table": "fuzz",
+      "pattern": "http:_/edp2.adriver.ru/catalog/181",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0076",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert279292%0488%",
+      "concat": false,
+      "matches": 16,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0077",
+      "table": "fuzz",
+      "pattern": "https://produkty/search?text=булочная",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0078",
+      "table": "fuzz",
+      "pattern": "%html_%",
+      "concat": false,
+      "matches": 474,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0079",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulo_e.ru/good.com/iframe",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0080",
+      "table": "fuzz",
+      "pattern": "%=20%",
+      "concat": false,
+      "matches": 111,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0081",
+      "table": "fuzz",
+      "pattern": "http://afisha.yandex.ua/offers/office-russin's Truck/motsaris",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0082",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-legal.ua/search=0&user_id=907826232230&op_style=0&view/vie_topic.php?attal.ru/cine/give_type=city&custom%3D%26custom%3D%26xpid%3D1216/00001216/0000&currency=RUR/page=0&s_yers=0&po_yers=200&lo=http://love.ru/katerinburg.irr.ru/mymail.ru%2Fkategory_name=Длинны минске&yn=1&input_who1=2&input_bdsmpeople.ru/view/1033",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0083",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONEICK, STEFANI, RITANIT][]=&selection Nessa.ru/real-e_tate/rent/25/women-bezopasn/angeTypeId=0",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0084",
+      "table": "fuzz",
+      "pattern": "%https:/%",
+      "concat": false,
+      "matches": 2474,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0085",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-_dvert2726125413975d77cf&search=0&dom_source%3D0",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0086",
+      "table": "fuzz",
+      "pattern": "%t_price",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0087",
+      "table": "fuzz",
+      "pattern": "https://pro%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0088",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login=aba875898&st=0&view_type=0&state_apartments-saledParams",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0089",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, A%DRIAN - Perepitsa-i-k%",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0090",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login=http://saint-petersburg/detail=",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0091",
+      "table": "fuzz",
+      "pattern": "%nburg",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0092",
+      "table": "fuzz",
+      "pattern": "%produk%",
+      "concat": false,
+      "matches": 2495,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0093",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fparts.ru/moscow/offertyj-918039303492%26ni_",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0094",
+      "table": "fuzz",
+      "pattern": "%ty%2Fbonp%",
+      "concat": false,
+      "matches": 88,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0095",
+      "table": "fuzz",
+      "pattern": "https:%//produkty%2Fpulove.ru/mosco%",
+      "concat": false,
+      "matches": 15,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0096",
+      "table": "fuzz",
+      "pattern": "%&k=M6y10",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0097",
+      "table": "fuzz",
+      "pattern": "http://kom%me%2F27.0.1453%",
+      "concat": false,
+      "matches": 206,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0098",
+      "table": "fuzz",
+      "pattern": "%03130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0099",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=_осудар менения",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0100",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbu_/login-leniya7777294,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0101",
+      "table": "fuzz",
+      "pattern": "%gam%",
+      "concat": false,
+      "matches": 30,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0102",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN _ The One",
+      "concat": false,
+      "matches": 8,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0103",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-souls for comandirov.ru/c_/myword",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0104",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login=DESC&search/tag/день коллица, 199248.msg31486&op_page4/#page/1962@mail.ru/action/vacancies/passekrenev/detail.aspx#location=1&bc=3&ct=1419/ATLAS BD30097722505/page.aspx#location/vacancies/yearTo=&power_name=Короткие платок&where=all&filter][725018331468466.18_8094,95894,9360&lo=http://tvidi.ru/document",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0105",
+      "table": "fuzz",
+      "pattern": "%odukty%%",
+      "concat": false,
+      "matches": 2344,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0106",
+      "table": "fuzz",
+      "pattern": "%l_param=0",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0107",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul/touristika/1626RAVE",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0108",
+      "table": "fuzz",
+      "pattern": "%_id",
+      "concat": false,
+      "matches": 84,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0109",
+      "table": "fuzz",
+      "pattern": "https://produkty/_ructure/view=Москва&filmId=G12",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0110",
+      "table": "fuzz",
+      "pattern": "%ru",
+      "concat": false,
+      "matches": 113,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0111",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-us&cE%=t%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0112",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-%advert279292048836%",
+      "concat": false,
+      "matches": 16,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0113",
+      "table": "fuzz",
+      "pattern": "%t%",
+      "concat": false,
+      "matches": 5010,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0114",
+      "table": "fuzz",
+      "pattern": "% Gecko",
+      "concat": false,
+      "matches": 12,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0115",
+      "table": "fuzz",
+      "pattern": "http://ir%r.ru/index.php?showalbum/login.pl?cmd=showCampStat&cid=594&ch=utf-8&sF=11,7,7,7,700&page=0&engineVolumeFro%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0116",
+      "table": "fuzz",
+      "pattern": "%-s%",
+      "concat": false,
+      "matches": 753,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0117",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-msvirskie_android=1373450/6/i-342295][to]=&input_age2/#overi/vacancies/Clients/?%cauth=0&confiscategory_id=1&bc=3&ct=1&pr=OsmN-tvKUXI&where=all&film/64393038395&check.xml?id=233&pvno=2&evlg=VC,3;VL,624;IC,747;c10157_40553998-g-v-pro-plus%252fe%%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0118",
+      "table": "fuzz",
+      "pattern": "https://produkty/tructure/char=2013/07/1/?supdate_credit=0&s_yers_2005&po_yers=2013/?page=10&cat",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0119",
+      "table": "fuzz",
+      "pattern": "https://produkty%2%Fplata-pr-adver%",
+      "concat": false,
+      "matches": 169,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0120",
+      "table": "fuzz",
+      "pattern": "_ttp://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONEICK, JOE - OTTO_REPORT_rOIOCjIr_eBNArpasse.html?1=1&cid=577&oki=1&op_category_id=0&price=0&s_yers",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0121",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/img/catalog/53485785916376235313635653739333118964d89f8fd7d-0e5781,19744/?_h=search=0&driver.ru/filmId=bwAUJANHXCI&_here=all&filmId=bf1d207/2194,940307&po_yers=1&ru=1&exchangeTypeSearch?text=советские в унитарый - bonprix.ru/games.ru/building/index.ru/news.ru/krd/events/74162",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0122",
+      "table": "fuzz",
+      "pattern": "%o",
+      "concat": false,
+      "matches": 119,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0123",
+      "table": "fuzz",
+      "pattern": "http://irr.%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0124",
+      "table": "fuzz",
+      "pattern": "%tps://pro%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0125",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_id=9251-etazhnaia-moda%2F9.80 (Windows",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0126",
+      "table": "fuzz",
+      "pattern": "https://produktor-sinij%2F%2Fwww.bonprix.ru/ms%k.irr.ru/tortivnyye_14073719.php?input_who2=1&input_age1447%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0127",
+      "table": "fuzz",
+      "pattern": "https:%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0128",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login=tovpod&elem=4#photo.ashx/376431653690.html?1=1&cid=Все Танцуютgroup_c_d_1s=1465][to]=&int[2352][to]=&chatles/88468018901&uuid=137331430182/?limi gun",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0129",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=Шорты терянном ф_льм   танцы. Чумаков",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0130",
+      "table": "fuzz",
+      "pattern": "http://vid%",
+      "concat": false,
+      "matches": 18,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0131",
+      "table": "fuzz",
+      "pattern": "%5713%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0132",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverl_net.ru/otdam-soul/topic.aspx",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0133",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.p%hp?showalbum/login-kapusta-advert2631920&lo=https://smeshar%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0134",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-id-31945366-p414.html?page21/frl-4/trashbox.ru/a-p_oto=&isgrand",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0135",
+      "table": "fuzz",
+      "pattern": "%http://irr.ru/index.php?showalbum/l%",
+      "concat": false,
+      "matches": 1604,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0136",
+      "table": "fuzz",
+      "pattern": "http%",
+      "concat": false,
+      "matches": 5007,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0137",
+      "table": "fuzz",
+      "pattern": "%ct_%",
+      "concat": false,
+      "matches": 837,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0138",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=Пуловек 2 серия&where=all&filmId=WvZb8nb0UXI&where=al_&filmId",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0139",
+      "table": "fuzz",
+      "pattern": "https://pr%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0140",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - P%LAYERS-MIRACLE-REECT-THONY, BON JOVI, JONATHAN-PAUL STOUCK SAUCE-TUJA%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0141",
+      "table": "fuzz",
+      "pattern": "%0&order_by=0",
+      "concat": false,
+      "matches": 45,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0142",
+      "table": "fuzz",
+      "pattern": "%ad%",
+      "concat": false,
+      "matches": 919,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0143",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - Here Troublejzer-chast.co.ua/login-irkotik.ru/real-estate_id=&top=0&orderDone?cartview&categoriya%2FmyAccountpage5887341586489991634571027989/currency=1#count.php/topnews/ciklyuev2013-8-10-sotokondary/mobilejj",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0144",
+      "table": "fuzz",
+      "pattern": "http://ku%",
+      "concat": false,
+      "matches": 351,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0145",
+      "table": "fuzz",
+      "pattern": "%ve.ru/goo%",
+      "concat": false,
+      "matches": 27,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0146",
+      "table": "fuzz",
+      "pattern": "htt_s://produkty/kurortmag",
+      "concat": false,
+      "matches": 29,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0147",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - Perepitsa-i-kun-aleksanatostavia",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0148",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233-b7fa-d61f-fef3-013f9e3f81.30533&op_seo_entry=-1&from=adwolf.ru/real",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0149",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BENJAMIE - Dance=3995,9292692464%26pz%3D0%26ar_ntype=0&state=0&view.php?t=8828044%26sll%3D%26xpid%3D0%26nid",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0150",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index_php?showalbum/login-na-donu.irr.ru",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0151",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct",
+      "concat": false,
+      "matches": 59,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0152",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalb%um/login-leniya7777294,93830%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0153",
+      "table": "fuzz",
+      "pattern": "http://md.mi%rkvartira-HriUw&where=all&film/2614.html?country=-1&type=prodam-3-3-0-07-09/06295205345f346537363%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0154",
+      "table": "fuzz",
+      "pattern": "%h",
+      "concat": false,
+      "matches": 102,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0155",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/c0130709_1_1195&choosOu_8gE&where=all&filmId",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0156",
+      "table": "fuzz",
+      "pattern": "%=newly&tr%",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0157",
+      "table": "fuzz",
+      "pattern": "%y%2Fka%",
+      "concat": false,
+      "matches": 240,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0158",
+      "table": "fuzz",
+      "pattern": "http_//komme%2F27.0",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0159",
+      "table": "fuzz",
+      "pattern": "https://%produ%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0160",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/courses/Sluzhskaia-mogut_price=бо_ьше 15000000",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0161",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/country=&op_seo_entry=-1&type=cated",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0162",
+      "table": "fuzz",
+      "pattern": "%ru&pvid=120",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0163",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLA%YERS-MIRACLE-REECT-THONEICK, EDDICTION_ID=3246275427613727/detail.ru%26bn%3D0%26ntype=category_id=1%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0164",
+      "table": "fuzz",
+      "pattern": "%ova.ru",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0165",
+      "table": "fuzz",
+      "pattern": "http://g%",
+      "concat": false,
+      "matches": 30,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0166",
+      "table": "fuzz",
+      "pattern": "https://produkty%2F%p%",
+      "concat": false,
+      "matches": 1558,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0167",
+      "table": "fuzz",
+      "pattern": "%ndex.php?%",
+      "concat": false,
+      "matches": 1616,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0168",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login_hLoP-Yr48U9tDu0Cw&where=all&filmId",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0169",
+      "table": "fuzz",
+      "pattern": "% Gecko)",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0170",
+      "table": "fuzz",
+      "pattern": "http://kuror%",
+      "concat": false,
+      "matches": 351,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0171",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata.ru/1.128965%/?instvo.ru/GameMain.aspx?trafkey=9a7e4ccf220f1ee5b%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0172",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login_passenger/tul/event=li_tle&category_id=123313062-86785",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0173",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kupalnik.ru/catalog/85412421189575273743&custom%3D%26xpid%3D2%26bid%3DBYaQZi6Iyw",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0174",
+      "table": "fuzz",
+      "pattern": "_ttps://produkty%2F",
+      "concat": false,
+      "matches": 47,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0175",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert261616140-16-foton.ru/search",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0176",
+      "table": "fuzz",
+      "pattern": "https://prod%uktor-sinij%",
+      "concat": false,
+      "matches": 145,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0177",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/~lekai.diary.ru/stary_flatTy_eId",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0178",
+      "table": "fuzz",
+      "pattern": "https://produkty/pla%cet%3Dad.adrive_tyothes%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0179",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fsc.chelyabinsk/detail",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0180",
+      "table": "fuzz",
+      "pattern": "https://prod%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0181",
+      "table": "fuzz",
+      "pattern": "%16%",
+      "concat": false,
+      "matches": 586,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0182",
+      "table": "fuzz",
+      "pattern": "%er=B&group",
+      "concat": false,
+      "matches": 13,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0183",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/logi_-kupalnaya_oblast_auto_mazda,Merce/travel",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0184",
+      "table": "fuzz",
+      "pattern": "%4,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0185",
+      "table": "fuzz",
+      "pattern": "%dex.php?%",
+      "concat": false,
+      "matches": 1616,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0186",
+      "table": "fuzz",
+      "pattern": "http://i_r.ru/index.php?showalbum/login-kupalnik.ru/catalog/20/women.aspx#location=search?text=поможет ли видео",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0187",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum_login-leniya7777294,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0188",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/inde%x.php?showalbum/login-leniya7777294,938303%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0189",
+      "table": "fuzz",
+      "pattern": "%tka",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0190",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONEICK, YVES СЕЗОНА&ch=utf-8&sF=11,7,7,700&aN=Operatorii_krasnodar.irr.ru/read.php?city=18",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0191",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fbonprix.ru/images/0001216629%26bid%3D1216/000121667,13143&op_ca_ed_country=&op_page=0",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0192",
+      "table": "fuzz",
+      "pattern": "%e/52281%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0193",
+      "table": "fuzz",
+      "pattern": "h%ttps://produkty%2Fpulove.ru/kiro%",
+      "concat": false,
+      "matches": 381,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0194",
+      "table": "fuzz",
+      "pattern": "http://afish%",
+      "concat": false,
+      "matches": 25,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0195",
+      "table": "fuzz",
+      "pattern": "http://k%urort/SINA, ADRIAN - Dan Blytheno%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0196",
+      "table": "fuzz",
+      "pattern": "%wolf.ru",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0197",
+      "table": "fuzz",
+      "pattern": "%earch%",
+      "concat": false,
+      "matches": 381,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0198",
+      "table": "fuzz",
+      "pattern": "http://gaw.ru/luboj-vanie-planet.ru/servierk-supiertsien-zhienskoe-korotkim-rukav-i-dlia-zhiensmed.ru/login",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0199",
+      "table": "fuzz",
+      "pattern": "https%://produkty/truct%",
+      "concat": false,
+      "matches": 229,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0200",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-mir.ir%r.ru/real-estate_creditoriy%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0201",
+      "table": "fuzz",
+      "pattern": "http://kuro%",
+      "concat": false,
+      "matches": 351,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0202",
+      "table": "fuzz",
+      "pattern": "%ha.yande%",
+      "concat": false,
+      "matches": 31,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0203",
+      "table": "fuzz",
+      "pattern": "%puloveplanet",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0204",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/currency=RUR/page.aspx?group_cod_1s=8258786/topic=6108&po_yers",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0205",
+      "table": "fuzz",
+      "pattern": "%olnye",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0206",
+      "table": "fuzz",
+      "pattern": "http://_rr.ru/index.php?showalbum/login-kapusta-advert25055085&numphoto.kurortmag.ru/users/saledParams",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0207",
+      "table": "fuzz",
+      "pattern": "http://k%omme%2F27.0.1453.116 Safari%2F5.0 (compatible; MSIE 9.0%",
+      "concat": false,
+      "matches": 16,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0208",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kurtki%2%F5.0 (Windows NT 6.1; rv:22.0&he%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0209",
+      "table": "fuzz",
+      "pattern": "http_://produkty/placetti-club/songs/sekcionnov.ru/socionat_zelena1282",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0210",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert27929969&lb_id=0&with_video.yandex.ru/_ladimir.php?topicID=258cbfb9cb2cbe",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0211",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?%showalbum/%",
+      "concat": false,
+      "matches": 1604,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0212",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert26523.jpg._tml?p=123773340560_Beigeratorija",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0213",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/album/login",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0214",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fprod%uct_name=Пуловерк %",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0215",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert27929217742/4F2E",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0216",
+      "table": "fuzz",
+      "pattern": "%%2F",
+      "concat": false,
+      "matches": 48,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0217",
+      "table": "fuzz",
+      "pattern": "%ail.r%",
+      "concat": false,
+      "matches": 49,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0218",
+      "table": "fuzz",
+      "pattern": "http://komme%2F2_.0.1453.116",
+      "concat": false,
+      "matches": 144,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0219",
+      "table": "fuzz",
+      "pattern": "https:_/produkty/kurortmag",
+      "concat": false,
+      "matches": 29,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0220",
+      "table": "fuzz",
+      "pattern": "%.ru%",
+      "concat": false,
+      "matches": 3123,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0221",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fbonpr%ix.ru%2Fkurtka-a-p4787%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0222",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/log_n-vsem_state/compatible",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0223",
+      "table": "fuzz",
+      "pattern": "%//pr%",
+      "concat": false,
+      "matches": 2472,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0224",
+      "table": "fuzz",
+      "pattern": "http://md.mirkvartira-Ul-y%ar.%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0225",
+      "table": "fuzz",
+      "pattern": "https://produkt%y%2Fproduct_name=Карний - bonprix%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0226",
+      "table": "fuzz",
+      "pattern": "%a7e4ccf2",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0227",
+      "table": "fuzz",
+      "pattern": "%аны%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0228",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata%-pr-advert27929969&lb_id=4&page=/vk.html?beg=0&view/10512/details-auto_travel.ru/GameMain.aspx%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0229",
+      "table": "fuzz",
+      "pattern": "https%://produkty%2Fplata.ru%",
+      "concat": false,
+      "matches": 46,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0230",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fbonprix.ru/showalbums/in_estate=yes&page=1024",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0231",
+      "table": "fuzz",
+      "pattern": "http://komme%",
+      "concat": false,
+      "matches": 215,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0232",
+      "table": "fuzz",
+      "pattern": "https%://produkty%2Fpulove.ru/GameMain.a%",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0233",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/inde%x.php?showalbum/login-kapus%",
+      "concat": false,
+      "matches": 469,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0234",
+      "table": "fuzz",
+      "pattern": "%826293",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0235",
+      "table": "fuzz",
+      "pattern": "%urortmag",
+      "concat": false,
+      "matches": 30,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0236",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233-b7f8-8baf-fef3-013fc7b3a4cca08d4dc256.php",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0237",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login",
+      "concat": false,
+      "matches": 31,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0238",
+      "table": "fuzz",
+      "pattern": "http://k%",
+      "concat": false,
+      "matches": 583,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0239",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=Топы в Рим&city=0&price_ot",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0240",
+      "table": "fuzz",
+      "pattern": "%in%",
+      "concat": false,
+      "matches": 2467,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0241",
+      "table": "fuzz",
+      "pattern": "http://ekbur%",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0242",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata.ru/filmId=e308f57e53d8369702994&op_seo_entry",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0243",
+      "table": "fuzz",
+      "pattern": "%g.php?%",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0244",
+      "table": "fuzz",
+      "pattern": "h_tps://produkty/tructure/soft Internet Explorer&aV=5.0 (iPad",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0245",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233/tags/price_do=&currency=USB в поле&film/5756/page=1080&with_exchangeType=0&door",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0246",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?s%howalbum/login=http://russinoozhidkie%2F22.1%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0247",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login=AppleWebKi_%2F5.0 (Windows",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0248",
+      "table": "fuzz",
+      "pattern": "%anet.info",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0249",
+      "table": "fuzz",
+      "pattern": "%nskaia",
+      "concat": false,
+      "matches": 17,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0250",
+      "table": "fuzz",
+      "pattern": "%OW&op_%",
+      "concat": false,
+      "matches": 15,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0251",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert2741395,907_0/detail.ru/Checked=0&exchange&location",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0252",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=12&city&custom_Acc_jpg",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0253",
+      "table": "fuzz",
+      "pattern": "https://produkty%/brju%",
+      "concat": false,
+      "matches": 44,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0254",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/search_terms-vzyatosign&id=1&bodystyle=0&scroll_to_opel_kamnyayan",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0255",
+      "table": "fuzz",
+      "pattern": "%303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0256",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fbonpr%ix.ru%2Fkurtka-a-d%",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0257",
+      "table": "fuzz",
+      "pattern": "%//produkty%",
+      "concat": false,
+      "matches": 2317,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0258",
+      "table": "fuzz",
+      "pattern": "%ttp:%",
+      "concat": false,
+      "matches": 2622,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0259",
+      "table": "fuzz",
+      "pattern": "%ategoriya",
+      "concat": false,
+      "matches": 14,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0260",
+      "table": "fuzz",
+      "pattern": "%kty%2Fp%",
+      "concat": false,
+      "matches": 1329,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0261",
+      "table": "fuzz",
+      "pattern": "http%s://produkty/tructure/view_ty%",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0262",
+      "table": "fuzz",
+      "pattern": "%rg.irr.r%",
+      "concat": false,
+      "matches": 21,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0263",
+      "table": "fuzz",
+      "pattern": "%116 Safari",
+      "concat": false,
+      "matches": 22,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0264",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login=vladimir.irr",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0265",
+      "table": "fuzz",
+      "pattern": "%ts/op%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0266",
+      "table": "fuzz",
+      "pattern": "%oduct",
+      "concat": false,
+      "matches": 89,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0267",
+      "table": "fuzz",
+      "pattern": "%m",
+      "concat": false,
+      "matches": 93,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0268",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?sho%walbum/login-kapusta-advert2631%",
+      "concat": false,
+      "matches": 45,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0269",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=Куртки решки от",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0270",
+      "table": "fuzz",
+      "pattern": "https%://produkty/placetti-club/songs/search?text=поиск&item=1#product_brand=4638633D-4126/47fb358d%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0271",
+      "table": "fuzz",
+      "pattern": "%tat%",
+      "concat": false,
+      "matches": 177,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0272",
+      "table": "fuzz",
+      "pattern": "https://produ_ty%2Fproduct",
+      "concat": false,
+      "matches": 59,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0273",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.1453.116 Safari%2F5.0 (compatible; MSIE 9.0;",
+      "concat": false,
+      "matches": 16,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0274",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapustic/product_name",
+      "concat": false,
+      "matches": 53,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0275",
+      "table": "fuzz",
+      "pattern": "% игры&where",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0276",
+      "table": "fuzz",
+      "pattern": "https://p%rodukty%2%",
+      "concat": false,
+      "matches": 1984,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0277",
+      "table": "fuzz",
+      "pattern": "%611",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0278",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalb%um/login-kapusta-advert2741395,90750/detail.ru/Checked=0&excha%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0279",
+      "table": "fuzz",
+      "pattern": "%kty%2%",
+      "concat": false,
+      "matches": 2004,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0280",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB - Run Awake-predprofiles/3978/currency=1#country=&op_category_id=2013&m1=06&d1=15&m1=07&year_by=0&hide",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0281",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY%, BOB - Run Away.turizm.ru/moskovsk.ru/sverhov.moikrug.ru/izhego_mosko%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0282",
+      "table": "fuzz",
+      "pattern": "%ame=Пулове%",
+      "concat": false,
+      "matches": 18,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0283",
+      "table": "fuzz",
+      "pattern": "%2740387993",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0284",
+      "table": "fuzz",
+      "pattern": "%ct_name",
+      "concat": false,
+      "matches": 55,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0285",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya777_294,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0286",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?sh_walbum/login/investirovka-sny-chasti.html?cc=mv",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0287",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-2250905Gm.26098-1.13795,93729079&p=1&pr=82805498%26height%3Dad.adrivery",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0288",
+      "table": "fuzz",
+      "pattern": "%vert27927304",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0289",
+      "table": "fuzz",
+      "pattern": "%to%",
+      "concat": false,
+      "matches": 949,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0290",
+      "table": "fuzz",
+      "pattern": "%showalbum/%",
+      "concat": false,
+      "matches": 1616,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0291",
+      "table": "fuzz",
+      "pattern": "%ttp://video",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0292",
+      "table": "fuzz",
+      "pattern": "%x",
+      "concat": false,
+      "matches": 74,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0293",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showa_bum/login-kapusta-advert27360359.html_param=0&under",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0294",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soulmjj/628965/detail/series.ru/catalog/101617671,55.8128/A254vTt0Cw&where",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0295",
+      "table": "fuzz",
+      "pattern": "https://produktor-sinij_2F%2Fwwww.bonprix",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0296",
+      "table": "fuzz",
+      "pattern": "htt%p://irr.ru/index.php?showalbum/logan/de/#lingvo/#!%",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0297",
+      "table": "fuzz",
+      "pattern": "%https://p%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0298",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.1453.116",
+      "concat": false,
+      "matches": 144,
+      "status": "pass"
+    },
+    {
+      "file": "generated_fuzz.txt",
+      "name": "fuzz_0299",
+      "table": "fuzz",
+      "pattern": "%nQ",
+      "concat": false,
+      "matches": 0,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0000",
+      "table": "fuzz",
+      "pattern": "https://pro%dukty%2Fp%",
+      "concat": false,
+      "matches": 1326,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0001",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?s%howalbum/login-nano.php?ds=1559][from=&fuelRateTo%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0002",
+      "table": "fuzz",
+      "pattern": "http%",
+      "concat": false,
+      "matches": 5007,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0003",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB-FIREBALL LAKE, JUSTIN - That PowerFrom=&powerTo=&powerFrom=&engineVolumeTo=&raceFrom=&raceFrom=&fuelRates/built_in/shansacristupnye-sh-Gor-kirilliar.com/iframe_right.ru/kulin_refrigerator",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0004",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/k_roverlanet.ru/otdam-soula233-b7fa-d61f",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0005",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=Длинны мот_в гагалиевая.mp3ex.net/match28590723719731",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0006",
+      "table": "fuzz",
+      "pattern": "%bums/event",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0007",
+      "table": "fuzz",
+      "pattern": "h%",
+      "concat": false,
+      "matches": 5010,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0008",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?sho%walbum/login-1%",
+      "concat": false,
+      "matches": 39,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0009",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/booklyattion-ware-news.ru/cars/newsru.com/fitness.ru/accii",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0010",
+      "table": "fuzz",
+      "pattern": "%lbum/login",
+      "concat": false,
+      "matches": 65,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0011",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0012",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.%1453.116 Safari%2F8536.%",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0013",
+      "table": "fuzz",
+      "pattern": "%eType=%",
+      "concat": false,
+      "matches": 14,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0014",
+      "table": "fuzz",
+      "pattern": "https://pr%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0015",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fsc.chelyabinsk/detail.ru/anima%ls/dogs/SchET-qUXI&where=all&film/644595888&numphoto/6302923485/details.html?prun%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0016",
+      "table": "fuzz",
+      "pattern": "%VolumeT%",
+      "concat": false,
+      "matches": 19,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0017",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.1453.1_6 Safari%2F5.0 (Windows NT 5.1) AppleWebKit",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0018",
+      "table": "fuzz",
+      "pattern": "http://k%",
+      "concat": false,
+      "matches": 583,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0019",
+      "table": "fuzz",
+      "pattern": "https://produkty/placetti-svadba-2%2F%2Fwww.bonprix_ru_ru_ru_ru_1_ru_202_ru_ru_4_ru_ru_1}%2Fcategory",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0020",
+      "table": "fuzz",
+      "pattern": "http://kuror%",
+      "concat": false,
+      "matches": 351,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0021",
+      "table": "fuzz",
+      "pattern": "http://kurort/%SINA, ADRIAN - Teodo%",
+      "concat": false,
+      "matches": 27,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0022",
+      "table": "fuzz",
+      "pattern": "http://stalker-pub-20087898675494,960948/#page_type%3D260117152337&spn=1395,9459301bd969/curre201fc7f5a4f15.2.Klimitsubishi_params%3D%26xpid%3D2788888,264;IC,236;IC,691;IC,324",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0023",
+      "table": "fuzz",
+      "pattern": "%2&e%",
+      "concat": false,
+      "matches": 58,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0024",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert2431719.html?1=1&cid=577&oki=1&op_product",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0025",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul_1131/courses/Sluzhskaia-mogut_price=больше 15000000",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0026",
+      "table": "fuzz",
+      "pattern": "https%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0027",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRI%AN - PLAYERS-MIRACLE-REECT-THONY, BOB-FIRE OF THE MAFIA-KNIGHT]=&select[23%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0028",
+      "table": "fuzz",
+      "pattern": "%8303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0029",
+      "table": "fuzz",
+      "pattern": "http:/%",
+      "concat": false,
+      "matches": 2530,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0030",
+      "table": "fuzz",
+      "pattern": "%ol",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0031",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-928274f5a653/detail.ru/cation&op_categoriya/keramicinon-houses/Yuzhnaia-moda-tuniki.ru/imagecache/wm/2013%26bid%3D0%26url%3D//ad.adrive_type=0&view.php?vacancies/6491085.html?1=1&custom=0&doors.html%3Fhtml%3Fhtml?1=1&cid=577&oki=1&op_page5/russinskaia-moda-bluzki-GSX-1000000&Curretroll_to_auto_region=2013 лунгал смотреть онлайн все серии",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0032",
+      "table": "fuzz",
+      "pattern": "%erlanet.%",
+      "concat": false,
+      "matches": 381,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0033",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.r%u/otdam-soul_1131/country=&op_seo_entry=-1&ty%",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0034",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-do-3d.9048274,194768&with_exchangeType=text=во видео",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0035",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulo%v%",
+      "concat": false,
+      "matches": 714,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0036",
+      "table": "fuzz",
+      "pattern": "https://produkty/brjuki-gorod.ru/p189770507333/?cid=577&oki",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0037",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert279299298&input_online=on&p0=on&p1=chhneonovyy-metallitel.aspx?sort",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0038",
+      "table": "fuzz",
+      "pattern": "%t27929%",
+      "concat": false,
+      "matches": 145,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0039",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_id=2420400&page=11&op_cat%egory_id=456524_303499-km-advert2694/hasim%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0040",
+      "table": "fuzz",
+      "pattern": "https://produkty/placetti/product_price_ot=&price/0507",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0041",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB-FIRM_PR_CE][from=index.ru/issunchiki-2013-07-07:22 - Спорт %26 Пляж - bonprix.ru",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0042",
+      "table": "fuzz",
+      "pattern": "%lumeTo",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0043",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php%?showalbum/login-leniy%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0044",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-R_ECT-THONY, BOB-FIRE&firms.turizm.ru/list.php?link=11473947546/view.html?1=1&cid=577&oki=1&op_uid=1059&op_category_name=1&fuelRatesTypeId=0&last_auto_id=159&op_produkty/books/Sony",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0045",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - Walkinopoisk.ru/frl-4/transportinsk",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0046",
+      "table": "fuzz",
+      "pattern": "https://produk_ov_55_ru",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0047",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert279295",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0048",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert26700-78449&__yers=0&price/artira-Tvarden",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0049",
+      "table": "fuzz",
+      "pattern": "https://produkty/tructure/char=2013/07/08/21840/D55F4-4CB2-9CB2-9406821.html%3Fhtml?html_param=0&doors/Mazda_3_Touch 3d",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0050",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THON 24006.jвь -_Обувь - bonprix.ru/secondary/detail/556-1-5-advert25595,94809.htm&sourcefrom]=&int[245][to",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0051",
+      "table": "fuzz",
+      "pattern": "%D=270083",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0052",
+      "table": "fuzz",
+      "pattern": "%d=577",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0053",
+      "table": "fuzz",
+      "pattern": "htt%ps://produkty%2F%",
+      "concat": false,
+      "matches": 1798,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0054",
+      "table": "fuzz",
+      "pattern": "%p",
+      "concat": false,
+      "matches": 138,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0055",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONE69#/view/33%7155&internet Explorer&aV=5.0 (complecv.php?gidcar%3dcaf6-057%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0056",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fbonprix.ru/linkvac.php?r=9&submit_btn=Поиска_игры",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0057",
+      "table": "fuzz",
+      "pattern": "%-%",
+      "concat": false,
+      "matches": 3206,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0058",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/%index.php?showalbum/login-mi%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0059",
+      "table": "fuzz",
+      "pattern": "%1%",
+      "concat": false,
+      "matches": 2679,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0060",
+      "table": "fuzz",
+      "pattern": "ht%",
+      "concat": false,
+      "matches": 5009,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0061",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kupaljinik-2008-g-v-stroika/photo=1",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0062",
+      "table": "fuzz",
+      "pattern": "%r.ru/inde%",
+      "concat": false,
+      "matches": 1651,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0063",
+      "table": "fuzz",
+      "pattern": "%ie-razmiere",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0064",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert2631920&lo=http:%2F%2Fwww_w",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0065",
+      "table": "fuzz",
+      "pattern": "%produ%",
+      "concat": false,
+      "matches": 2643,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0066",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert27929204_8363985.php?actionatorian&ss=Перевод/#lingvo/#1252",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0067",
+      "table": "fuzz",
+      "pattern": "https://%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0068",
+      "table": "fuzz",
+      "pattern": "%r-adve%",
+      "concat": false,
+      "matches": 174,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0069",
+      "table": "fuzz",
+      "pattern": "%u/pr%",
+      "concat": false,
+      "matches": 22,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0070",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Ffieiiervices-_usiness",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0071",
+      "table": "fuzz",
+      "pattern": "https://produk%tor-sinij%2F&sr%",
+      "concat": false,
+      "matches": 30,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0072",
+      "table": "fuzz",
+      "pattern": "https:%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0073",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fp%ulove.ru/GameMain.asp%",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0074",
+      "table": "fuzz",
+      "pattern": "https%://produkty/tructure/char=18&ps_page5/refrigerators/a%",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0075",
+      "table": "fuzz",
+      "pattern": "http:_/irr.ru/index.php?showalbum/login-kapusta-advert2650482,91443875.0.1364.15751 Safari%2F5.0",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0076",
+      "table": "fuzz",
+      "pattern": "https://prod%ukty%2Fpulove.ru/album/log%",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0077",
+      "table": "fuzz",
+      "pattern": "%login-%",
+      "concat": false,
+      "matches": 1279,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0078",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert2739520290281.html?1=1&cid=577&oki=1&op_product_pric_",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0079",
+      "table": "fuzz",
+      "pattern": "%district",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0080",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/log%iya11984897551 Safari%2F__48%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0081",
+      "table": "fuzz",
+      "pattern": "http%://irr.ru/i%",
+      "concat": false,
+      "matches": 1671,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0082",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-nature_area=order_creditGuarant/page=0&s_yers=0&s_yer%s=1978%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0083",
+      "table": "fuzz",
+      "pattern": "%0",
+      "concat": false,
+      "matches": 464,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0084",
+      "table": "fuzz",
+      "pattern": "%u/cars%",
+      "concat": false,
+      "matches": 28,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0085",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/booklyattion-ware-nezhno-gorod.irr.ru/5_ivan-ask/ural.ru/cgi-bin/click",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0086",
+      "table": "fuzz",
+      "pattern": "%r=0&a%",
+      "concat": false,
+      "matches": 19,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0087",
+      "table": "fuzz",
+      "pattern": "%club%",
+      "concat": false,
+      "matches": 76,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0088",
+      "table": "fuzz",
+      "pattern": "%e",
+      "concat": false,
+      "matches": 389,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0089",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advertXtoDVD/SHtatnews/2012/10/konkursa_narsr.php?r=416/messa.ru/society",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0090",
+      "table": "fuzz",
+      "pattern": "%y_id=0%",
+      "concat": false,
+      "matches": 86,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0091",
+      "table": "fuzz",
+      "pattern": "%e%",
+      "concat": false,
+      "matches": 4651,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0092",
+      "table": "fuzz",
+      "pattern": "http://komme%%2%",
+      "concat": false,
+      "matches": 215,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0093",
+      "table": "fuzz",
+      "pattern": "http://i%rr.ru/index.php?showalbum/login-kapustom%3D%26xpid%3DBBn-investa%",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0094",
+      "table": "fuzz",
+      "pattern": "%php",
+      "concat": false,
+      "matches": 58,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0095",
+      "table": "fuzz",
+      "pattern": "%94,%",
+      "concat": false,
+      "matches": 345,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0096",
+      "table": "fuzz",
+      "pattern": "%ex.ph%",
+      "concat": false,
+      "matches": 1660,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0097",
+      "table": "fuzz",
+      "pattern": "%sQ",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0098",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php%?showalbum/login-kapusta-advert263192%",
+      "concat": false,
+      "matches": 42,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0099",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_id=1&bodystyle=0&ord=Серьги сезон вид_о",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0100",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THON_ICK, YVES-AX-7SMfyUXI&where=all&film/3180;IC,95758/detail/?folder-2/#page/page=1080&with_exchangeTypeId",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0101",
+      "table": "fuzz",
+      "pattern": "%roduct",
+      "concat": false,
+      "matches": 89,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0102",
+      "table": "fuzz",
+      "pattern": "%n",
+      "concat": false,
+      "matches": 190,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0103",
+      "table": "fuzz",
+      "pattern": "%ew.p%",
+      "concat": false,
+      "matches": 16,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0104",
+      "table": "fuzz",
+      "pattern": "http://bonprix.ru/start=46386138365%26bn%3D0%26ntype_id=0&scroll",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0105",
+      "table": "fuzz",
+      "pattern": "%- Кардины",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0106",
+      "table": "fuzz",
+      "pattern": "%ov_%",
+      "concat": false,
+      "matches": 977,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0107",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/gosthelpix.ru%2F&ti=Пуловек",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0108",
+      "table": "fuzz",
+      "pattern": "%ex.php",
+      "concat": false,
+      "matches": 45,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0109",
+      "table": "fuzz",
+      "pattern": "http://irr.ru%/index.php?showalbum/login-kapusta-advert24451&op_product%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0110",
+      "table": "fuzz",
+      "pattern": "https://prod%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0111",
+      "table": "fuzz",
+      "pattern": "https://p%rodukty%2Fpulove.ru/booklyattion-ware-news/s%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0112",
+      "table": "fuzz",
+      "pattern": "https://produktor-sinij%2F%3Fpage=%showbiz/produkty%2Fprodazheltravel.ru/tanaya_i_samosvalida3375f346&op_seo_en%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0113",
+      "table": "fuzz",
+      "pattern": "%planet.ru%",
+      "concat": false,
+      "matches": 37,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0114",
+      "table": "fuzz",
+      "pattern": "%05,276",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0115",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-TH%ONY, BOB-FIREBALL %",
+      "concat": false,
+      "matches": 41,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0116",
+      "table": "fuzz",
+      "pattern": "%duct_name",
+      "concat": false,
+      "matches": 55,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0117",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_name=Платье + ремени",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0118",
+      "table": "fuzz",
+      "pattern": "%r.ru/in%",
+      "concat": false,
+      "matches": 1664,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0119",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login",
+      "concat": false,
+      "matches": 31,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0120",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADR_AN - PLAYERS-MIRACLE-REECT-THONY, BOB-FIRE UA1%2F%2Fwww.bonprix.ru/price_asc&page/1/4/piter.feriod=0&po_yers=0&page3/#overy/Chevropolskiy",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0121",
+      "table": "fuzz",
+      "pattern": "%d=91979/%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0122",
+      "table": "fuzz",
+      "pattern": "htt_s://produkty%2Fproduct",
+      "concat": false,
+      "matches": 59,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0123",
+      "table": "fuzz",
+      "pattern": "htt%",
+      "concat": false,
+      "matches": 5008,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0124",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/inde%x.php?showalbum/login-leniya77%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0125",
+      "table": "fuzz",
+      "pattern": "%m/login-%",
+      "concat": false,
+      "matches": 1267,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0126",
+      "table": "fuzz",
+      "pattern": "%inde%",
+      "concat": false,
+      "matches": 1695,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0127",
+      "table": "fuzz",
+      "pattern": "https://produkty/placetti19289.html%26custom=0&ItemID",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0128",
+      "table": "fuzz",
+      "pattern": "https://produkty/kurortmundskaya-lab.com/iframe-owa.html_params",
+      "concat": false,
+      "matches": 4,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0129",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showa%lbum/login%",
+      "concat": false,
+      "matches": 1495,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0130",
+      "table": "fuzz",
+      "pattern": "%ro%",
+      "concat": false,
+      "matches": 3216,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0131",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/log%in-kapusta-advert2691661.html5/%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0132",
+      "table": "fuzz",
+      "pattern": "https:/%",
+      "concat": false,
+      "matches": 2473,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0133",
+      "table": "fuzz",
+      "pattern": "%594253273",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0134",
+      "table": "fuzz",
+      "pattern": "https://produk_y%2Fpulove.ru/album/login",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0135",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/logies cache/wm/2013",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0136",
+      "table": "fuzz",
+      "pattern": "http://bdsm_position/279204550|295%26bn%3_0%26url%3D%26CompPath.2; WOW64; MRA 6.1)&bL=ru&web=0#2095,9052",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0137",
+      "table": "fuzz",
+      "pattern": "%pro%",
+      "concat": false,
+      "matches": 2678,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0138",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplatjie-razvodi/32.html_parket.net/b/ndv/forum/view.php?product_id=1&bodystyle=0&expand_search",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0139",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/list=138149&op_cated_country=-1&Order_cf[1][]=&selection=products/passeinspb2/",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0140",
+      "table": "fuzz",
+      "pattern": "%rt/SINA, %",
+      "concat": false,
+      "matches": 350,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0141",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.1453.116 Safari",
+      "concat": false,
+      "matches": 19,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0142",
+      "table": "fuzz",
+      "pattern": "%uct",
+      "concat": false,
+      "matches": 89,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0143",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login_stalker-gsc.ru",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0144",
+      "table": "fuzz",
+      "pattern": "https://produkty/_rjuki-gorod.ru/searchAuto=oldAutoSearch",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0145",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.r_/otdam-soul",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0146",
+      "table": "fuzz",
+      "pattern": "%uctur%",
+      "concat": false,
+      "matches": 229,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0147",
+      "table": "fuzz",
+      "pattern": "https:/%/pro%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0148",
+      "table": "fuzz",
+      "pattern": "%26863.xlsx",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0149",
+      "table": "fuzz",
+      "pattern": "%dex.%",
+      "concat": false,
+      "matches": 1781,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0150",
+      "table": "fuzz",
+      "pattern": "%453.116",
+      "concat": false,
+      "matches": 146,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0151",
+      "table": "fuzz",
+      "pattern": "%27.0.14%",
+      "concat": false,
+      "matches": 219,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0152",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_brands/passpx#locations/FM",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0153",
+      "table": "fuzz",
+      "pattern": "%2f728%",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0154",
+      "table": "fuzz",
+      "pattern": "http://sslow_13507.ht_l?aspx?naId=6r7RoWvxU9qQ=",
+      "concat": false,
+      "matches": 24,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0155",
+      "table": "fuzz",
+      "pattern": "%erl%",
+      "concat": false,
+      "matches": 387,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0156",
+      "table": "fuzz",
+      "pattern": "https://produkty/tructure/produkty",
+      "concat": false,
+      "matches": 8,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0157",
+      "table": "fuzz",
+      "pattern": "https://produkty/tructure/char=2013/07/06/91007&op_uid=111,7,7,463;_C,1762#photo=1&with_page=2&search&event=little&categoriya",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0158",
+      "table": "fuzz",
+      "pattern": "%tml",
+      "concat": false,
+      "matches": 49,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0159",
+      "table": "fuzz",
+      "pattern": "http://kolaev/detail/%5546106811.html%3Fhtml?1=1&cid=13732363346][]=&selectra_filter][99944858371ebe6ffbb495db%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0160",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONE69#/view_type%3D60%2F%2Fwwww.bonprix.ru/jobinmoscow.ru/a-album/login-tationclude/werface_3681884",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0161",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapus%ta-advert2626rleurl%3Dhttp://bsplugi-arenok.ru/s%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0162",
+      "table": "fuzz",
+      "pattern": "%ia",
+      "concat": false,
+      "matches": 58,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0163",
+      "table": "fuzz",
+      "pattern": "https://produkty%2F",
+      "concat": false,
+      "matches": 47,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0164",
+      "table": "fuzz",
+      "pattern": "%uki-gorod.%",
+      "concat": false,
+      "matches": 30,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0165",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/albums/testo%2F25.0.1453.116&op_process=1&price=37;37,54.211520.htm",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0166",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kupe-2/#page_type=0&city_id=0&with_photo3513&Stat&cid=22415/00001216629/0/&&puid2",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0167",
+      "table": "fuzz",
+      "pattern": "http://stalker-pub-20087898675494,960948/#page_type%3D260117152337&spn=1%395,94035/room=1&marka=13&pvno=2&evlg=VC,16;VL,419;;r104/women.aspx#location=post;to%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0168",
+      "table": "fuzz",
+      "pattern": "http:_/irr.ru/index.php?showalbum/login.html_params%3Dfacetti/delo.ua/misc/Arenda_cr-v/внешние игра&where",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0169",
+      "table": "fuzz",
+      "pattern": "%rod/search",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0170",
+      "table": "fuzz",
+      "pattern": "http:_/irr.ru/index.php?showalbum/login-kardigan",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0171",
+      "table": "fuzz",
+      "pattern": "%ukty%",
+      "concat": false,
+      "matches": 2344,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0172",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOBODA-47BC5B918C91F9F2-4E71-_100595&option&op_seo_entry=&op_page=10&n=12f&city=439468.html",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0173",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index_php?showalbum/login=RRTB6VFhwbk55",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0174",
+      "table": "fuzz",
+      "pattern": "http://irr.r%u/index.php?showalbum/login-leniya77772%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0175",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert2668]=0&order_by=0",
+      "concat": false,
+      "matches": 45,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0176",
+      "table": "fuzz",
+      "pattern": "http://irr%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0177",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula25.29144/hasimages/00000&Form.ru/Web/Pages/00001216629/0/&&puid1=f&puid1=m&puid1=f&puid2=19&query=белковый страна/24695,93889/frl-29/#top_boys.ru/item/sell/restorii",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0178",
+      "table": "fuzz",
+      "pattern": "%&under_by=0",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0179",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert27414.jpg?page_type_id=659178",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0180",
+      "table": "fuzz",
+      "pattern": "%/lcd_tvs/tv",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0181",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-ka%pustom=0&Itemid=577&oki=1&op_categ%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0182",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/booklyattion-ware-news.ru/art/D4105741/detail.aspx#location%3D158197%26ar",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0183",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-dressa.ru/catal_g",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0184",
+      "table": "fuzz",
+      "pattern": "https://produkty/truct_re/char=2013/07/7_culture-symbian94/pamm_dlia-zhienskaia-moda-muzhchin",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0185",
+      "table": "fuzz",
+      "pattern": "%r=http",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0186",
+      "table": "fuzz",
+      "pattern": "http://komme%2F27.0.1453.116 S_fari",
+      "concat": false,
+      "matches": 19,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0187",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/catalog=on&acce/8da24aa/0a35807709/?from=&raceFrom=&powerFrom=&engineVolumeFro_=&fuelRatesTypeSearch",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0188",
+      "table": "fuzz",
+      "pattern": "%.%",
+      "concat": false,
+      "matches": 3815,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0189",
+      "table": "fuzz",
+      "pattern": "%8",
+      "concat": false,
+      "matches": 65,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0190",
+      "table": "fuzz",
+      "pattern": "https://produkty/topic,192;343=127&orderevanie/146217,9991",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0191",
+      "table": "fuzz",
+      "pattern": "http:/%/irr.ru/index.php?showalbum/login-kapusta-advert2631920&lo=http:/%",
+      "concat": false,
+      "matches": 39,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0192",
+      "table": "fuzz",
+      "pattern": "%n.a%",
+      "concat": false,
+      "matches": 133,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0193",
+      "table": "fuzz",
+      "pattern": "http%://komme%2F%",
+      "concat": false,
+      "matches": 216,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0194",
+      "table": "fuzz",
+      "pattern": "%38303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0195",
+      "table": "fuzz",
+      "pattern": "%l?1%",
+      "concat": false,
+      "matches": 154,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0196",
+      "table": "fuzz",
+      "pattern": "https://produkty/placetti-club/songs/search=0&under_credit",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0197",
+      "table": "fuzz",
+      "pattern": "%.1453.116",
+      "concat": false,
+      "matches": 145,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0198",
+      "table": "fuzz",
+      "pattern": "https:/_produkty/kurortmag",
+      "concat": false,
+      "matches": 29,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0199",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fsc.chelyabinsk/detail.ru/animals/card/ikonborisogladimir/check_SMS_BBST-90km-advert278175&ad=all&filmId",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0200",
+      "table": "fuzz",
+      "pattern": "https://produktor-sin_j%2F%2Fwww.bonprix.ru/catalog/8569",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0201",
+      "table": "fuzz",
+      "pattern": "%3.%",
+      "concat": false,
+      "matches": 318,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0202",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advertist/?act=full&Forum25/topa_-music",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0203",
+      "table": "fuzz",
+      "pattern": "http://kuror_/SINA, ADRIAN - Walkinopoisk.ru/frl-4/transportinsk",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0204",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soulstvo.ru/catalog/101567][to]=&internet Explorer",
+      "concat": false,
+      "matches": 5,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0205",
+      "table": "fuzz",
+      "pattern": "%tps://pro%",
+      "concat": false,
+      "matches": 2471,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0206",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-rabochi.tut.by/Thermichaginovaya-5990103-zhenie_dni_stur.html?1=1&cid=5050||1129%26sid%3D0CC8KNJ0Cw&where=all&film/301576495&checkbox[806]=Y&page%3Dmedia/ryche.biz/photo=1757.php?act=showalbum/login.htm?from]=&int[1]=0&s_yers=1995,916075194238825.html?&ss=L0taQ29PYmlLhytUXI&where=all&film/617206.html?1",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0207",
+      "table": "fuzz",
+      "pattern": "https:/%/produkty%2Fpulove.ru/ki%",
+      "concat": false,
+      "matches": 381,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0208",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233/tags/price_ot=&price_ot=&price=меньше 30/photo",
+      "concat": false,
+      "matches": 8,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0209",
+      "table": "fuzz",
+      "pattern": "%l%",
+      "concat": false,
+      "matches": 3888,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0210",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fdlia",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0211",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/boo%klyatti%",
+      "concat": false,
+      "matches": 100,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0212",
+      "table": "fuzz",
+      "pattern": "%vip-da%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0213",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Ffiei_e-razmiere",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0214",
+      "table": "fuzz",
+      "pattern": "htt%ps://produkty/kurortma%",
+      "concat": false,
+      "matches": 30,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0215",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_name=1&fuelRateTo=&powerTo=&power_name=С короткие солнышко",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0216",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fprod_ct_name=Куртки и трикотажные куртки&ch=UTF-8&sF=11,7,700&aN=Netscape&aV=5.0 (building",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0217",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fbonprix.ru/memb_red/main.aspx#location_id=0",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0218",
+      "table": "fuzz",
+      "pattern": "%soul",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0219",
+      "table": "fuzz",
+      "pattern": "https://%produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soulmjj/628965%",
+      "concat": false,
+      "matches": 42,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0220",
+      "table": "fuzz",
+      "pattern": "%о",
+      "concat": false,
+      "matches": 22,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0221",
+      "table": "fuzz",
+      "pattern": "http://irr.r%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0222",
+      "table": "fuzz",
+      "pattern": "%product",
+      "concat": false,
+      "matches": 89,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0223",
+      "table": "fuzz",
+      "pattern": "%iew",
+      "concat": false,
+      "matches": 20,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0224",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/lo%gin-15-advert26038&s_yers=0&prr=http://kinopoisk.ru%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0225",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-kapusta-advert26011216/0001216629%26bt%3D90%26ref%3Dhttp://vaz-2106.ru/search/room",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0226",
+      "table": "fuzz",
+      "pattern": "%/c48_Barcel",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0227",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/GameMain.aspx?group_cod_1s=860",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0228",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalb%um/lo%",
+      "concat": false,
+      "matches": 1587,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0229",
+      "table": "fuzz",
+      "pattern": "%dex.php?sh%",
+      "concat": false,
+      "matches": 1609,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0230",
+      "table": "fuzz",
+      "pattern": "%asa_tonnye",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0231",
+      "table": "fuzz",
+      "pattern": "http://sp-money.%yandsearch?text=часть/%",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0232",
+      "table": "fuzz",
+      "pattern": "http://gaw.ru/l%uboj-vanie-planet.%",
+      "concat": false,
+      "matches": 13,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0233",
+      "table": "fuzz",
+      "pattern": "%j",
+      "concat": false,
+      "matches": 10,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0234",
+      "table": "fuzz",
+      "pattern": "%400&on%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0235",
+      "table": "fuzz",
+      "pattern": "http://irr.%",
+      "concat": false,
+      "matches": 1672,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0236",
+      "table": "fuzz",
+      "pattern": "%.ru/%",
+      "concat": false,
+      "matches": 3059,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0237",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?show%album/login.ff?sle=41&fid=acur.pulscen.ru/%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0238",
+      "table": "fuzz",
+      "pattern": "%03130%",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0239",
+      "table": "fuzz",
+      "pattern": "%.aspx%",
+      "concat": false,
+      "matches": 227,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0240",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/loginPhones/mirsovies/turkey/kemer__ogo&ti=Каро современи гара беларусель",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0241",
+      "table": "fuzz",
+      "pattern": "%u/bookl%",
+      "concat": false,
+      "matches": 100,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0242",
+      "table": "fuzz",
+      "pattern": "%irr.ru/in%",
+      "concat": false,
+      "matches": 1664,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0243",
+      "table": "fuzz",
+      "pattern": "https://%produkty%2Fpulove.ru/GameMain.aspx#location/vacancy/en/#lingvo/#127147%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0244",
+      "table": "fuzz",
+      "pattern": "http://irr.ru%/index.php?showalbum/login=tran%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0245",
+      "table": "fuzz",
+      "pattern": "%=150",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0246",
+      "table": "fuzz",
+      "pattern": "http://%",
+      "concat": false,
+      "matches": 2530,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0247",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB - OTTO_REPORT/07_2013-08-170516209.html#A",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0248",
+      "table": "fuzz",
+      "pattern": "http://ku%",
+      "concat": false,
+      "matches": 351,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0249",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB-FIRMATION_ID=5&FORUM.aspx#location/vacancies/7849/graya-obl/bron.sunmar.ru/catalog/20/women",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0250",
+      "table": "fuzz",
+      "pattern": "%pe=te%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0251",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fp%lata-pr-adv%",
+      "concat": false,
+      "matches": 169,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0252",
+      "table": "fuzz",
+      "pattern": "%lbum/%",
+      "concat": false,
+      "matches": 1652,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0253",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fb_nprix.ru%26title=миньет регион",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0254",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.r%u/kiroverlanet.ru%",
+      "concat": false,
+      "matches": 381,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0255",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?sh%owalbum/login-a-%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0256",
+      "table": "fuzz",
+      "pattern": "%03130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0257",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login%-kapusta-advert%",
+      "concat": false,
+      "matches": 404,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0258",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233/tags/price_do=&currency=USB в перево_но",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0259",
+      "table": "fuzz",
+      "pattern": "http://ekburg.irr.ru%2Fpuloveplanet",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0260",
+      "table": "fuzz",
+      "pattern": "https://pr%odukty%2Fpulove.ru/g%",
+      "concat": false,
+      "matches": 53,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0261",
+      "table": "fuzz",
+      "pattern": "http://irr%.ru/index.php?s%",
+      "concat": false,
+      "matches": 1608,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0262",
+      "table": "fuzz",
+      "pattern": "%j-97795",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0263",
+      "table": "fuzz",
+      "pattern": "http://kurort/SINA, ADRIAN - PLAYERS-MIRACLE-REECT-THONY, BOB - Turniture-inter PC 2.0.50727; SLCC2; .NET CLR 2.0.50727; .NET CLR 2.0.50727; .NET CLR 2.0 OPN-B&bL=ru&wauth=0&undefined/under-5",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0264",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-ecosis.ru/Mayky_y_product_id=0&input_with",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0265",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata.ru/catalog",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0266",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php%?show%",
+      "concat": false,
+      "matches": 1608,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0267",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert27929969&lb_id_1&bodystyle=0&damage",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0268",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-2528872/1_7.html?1=1&cost_pointernet Explorer&aV=5.0 (Windows)&bL",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0269",
+      "table": "fuzz",
+      "pattern": "http://afisha.yandex.ua/offers/office-russin's Truck/motsaris",
+      "concat": false,
+      "matches": 6,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0270",
+      "table": "fuzz",
+      "pattern": "h_tps://produkty/brjuki",
+      "concat": false,
+      "matches": 7,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0271",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniy_7777294,938303130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0272",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula23%3-b7fa-79fa-d61f-fef3-013%",
+      "concat": false,
+      "matches": 2,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0273",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplata-pr-advert27929969&lb_id=0&wi=1920x100x1280&lo=http:%2F%2Fwww",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0274",
+      "table": "fuzz",
+      "pattern": "https://produkty_placetticwindows NT",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0275",
+      "table": "fuzz",
+      "pattern": "http://kurort/%SINA, ADRIAN - %",
+      "concat": false,
+      "matches": 342,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0276",
+      "table": "fuzz",
+      "pattern": "%ty/kurortmag",
+      "concat": false,
+      "matches": 29,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0277",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/logabass.ru/cation&op_category/?is=1&page=0&checked=0",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0278",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fproduct_price",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0279",
+      "table": "fuzz",
+      "pattern": "https://produkty/brjuki-%gorod.irr.ru/registerh4.adr%",
+      "concat": false,
+      "matches": 8,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0280",
+      "table": "fuzz",
+      "pattern": "%284369654%",
+      "concat": false,
+      "matches": 19,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0281",
+      "table": "fuzz",
+      "pattern": "%30",
+      "concat": false,
+      "matches": 285,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0282",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory_id=0&l_st_auto",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0283",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soul",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0284",
+      "table": "fuzz",
+      "pattern": "%iceid%3D21%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0285",
+      "table": "fuzz",
+      "pattern": "%T%",
+      "concat": false,
+      "matches": 624,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0286",
+      "table": "fuzz",
+      "pattern": "https://%produkty%%",
+      "concat": false,
+      "matches": 2320,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0287",
+      "table": "fuzz",
+      "pattern": "%transporti%",
+      "concat": false,
+      "matches": 32,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0288",
+      "table": "fuzz",
+      "pattern": "%https://produkty%2Fplata-pr-advert2792920488363985.php?f=12674100870-36121%26width%3Dhttp://pogod%",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0289",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fplat_-pr-advert27929217742/4F2E",
+      "concat": false,
+      "matches": 9,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0290",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fkategory&op_product&op_uid=b930a4ad88f4ad",
+      "concat": false,
+      "matches": 3,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0291",
+      "table": "fuzz",
+      "pattern": "%2EH5307645",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0292",
+      "table": "fuzz",
+      "pattern": "%kt%",
+      "concat": false,
+      "matches": 2523,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0293",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-sould_en/baby.org/commenty/tuflirt/?action=rr&dayskiy-avtolika",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0294",
+      "table": "fuzz",
+      "pattern": "%opic=54",
+      "concat": false,
+      "matches": 1,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0295",
+      "table": "fuzz",
+      "pattern": "http://irr%.ru/index.php?showalbum/login-kupaljinik-I%",
+      "concat": false,
+      "matches": 28,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0296",
+      "table": "fuzz",
+      "pattern": "%ru/index.%",
+      "concat": false,
+      "matches": 1661,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0297",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/logaba%ss.ru/c%",
+      "concat": false,
+      "matches": 37,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0298",
+      "table": "fuzz",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,9383_3130",
+      "concat": false,
+      "matches": 280,
+      "status": "pass"
+    },
+    {
+      "file": "fuzz_s7.txt",
+      "name": "fuzz_0299",
+      "table": "fuzz",
+      "pattern": "https://produkty%2Fpulo%ve.ru/kiroverlane%",
+      "concat": false,
+      "matches": 381,
+      "status": "pass"
+    }
+  ]
+}
