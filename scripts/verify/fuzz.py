@@ -1,0 +1,267 @@
+#!/usr/bin/env python3
+"""Generate correctness fixtures: deterministic edge cases, then random ones.
+
+Two modes:
+
+  --edge    Write the deterministic edge-case column (data/edge/values). These
+            are the cases that break token-level matching: patterns whose
+            boundary falls inside a token, literal wildcards in the data,
+            multi-byte characters under `_`, empty values, and case.
+
+  --random  Write a randomly generated column plus a pattern file, derived from
+            real substrings of an existing column so the patterns actually hit.
+            Seeded, so a failure is reproducible from the printed seed.
+
+Both modes emit a pattern file alongside the column; feed it to
+scripts/verify/check.py like any other.
+
+Usage:
+    python scripts/verify/fuzz.py --edge
+    python scripts/verify/fuzz.py --random --from data/clickbench/URL --seed 7
+"""
+
+import argparse
+import os
+import random
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "encode"))
+from make_column import write_raw, write_parquet, verify_parquet_matches_raw  # noqa: E402
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from common import read_raw_values  # noqa: E402
+
+# Values chosen to stress token-level matching specifically. The vocabulary
+# tokenizes "http://www." as  http | :// | www | .  so patterns like 'htt%'
+# and '%ttp://%' deliberately start or end in the middle of a token.
+EDGE_VALUES = [
+    "",                               # empty value
+    " ",                              # whitespace only
+    "a",
+    "h",
+    "ht",                             # proper prefix of the "http" token
+    "htt",                            # boundary falls inside a token
+    "http",                           # exactly one token
+    "http:",
+    "http://",
+    "http://a",
+    "http://www.example.com/",
+    "http://www.example.com/index.html",
+    "https://www.example.com/index.html",
+    "HTTP://WWW.EXAMPLE.COM/INDEX.HTML",   # case sensitivity
+    "HtTp://MiXeD.CaSe/",
+    "%",                              # literal wildcard characters in the data
+    "%%",
+    "_",
+    "__",
+    "a%b",
+    "a_b",
+    "100%",
+    "100%off",
+    "under_score",
+    "many_under_scores_here",
+    "back\\slash",
+    "\\",
+    "/",
+    "//",
+    "///",
+    "...",
+    ".html",
+    "x.html",
+    "é",                              # 2-byte codepoint
+    "éé",
+    "ééé",
+    "naïve-café.html",
+    "日",                              # 3-byte codepoints
+    "日本",
+    "日本語",
+    "日本語のURL/テスト.html",
+    "https://секрет.рф/путь",          # cyrillic
+    "https://例え.テスト/日本語.html",
+    "mixed-ascii-and-日本語-and-café",
+    "a" * 64,                         # long single-token-class run
+    "http://a/" + "b" * 100,          # long value, anchored prefix
+    "trailing ",
+    " leading",
+    "tab\tinside",
+    "quote\"inside",
+    "single'quote",
+]
+
+# Each entry is (name, pattern). Patterns deliberately include anchored
+# prefixes, anchored suffixes, exact literals, interior wildcards, literal
+# backslashes and `_` against multi-byte characters.
+#
+# Measured DuckDB behaviour (scripts/verify/ground_truth.py --semantics):
+# backslash is NOT an escape character unless the query says ESCAPE '\'. We
+# never use an ESCAPE clause, so '\' is an ordinary literal byte and the
+# backslash patterns below assert exactly that.
+EDGE_PATTERNS = [
+    ("edge_empty_pattern", ""),
+    ("edge_pct", "%"),
+    ("edge_pct_pct", "%%"),
+    ("edge_underscore", "_"),
+    ("edge_underscore2", "__"),
+    ("edge_underscore3", "___"),
+    ("edge_prefix_h", "h%"),
+    ("edge_prefix_htt", "htt%"),
+    ("edge_prefix_http", "http%"),
+    ("edge_prefix_http_colon", "http://%"),
+    ("edge_prefix_https", "https://%"),
+    ("edge_prefix_upper", "HTTP%"),
+    ("edge_suffix_html", "%.html"),
+    ("edge_suffix_l", "%l"),
+    ("edge_suffix_slash", "%/"),
+    ("edge_suffix_backslash_pct", "%\\%"),
+    ("edge_exact_http", "http"),
+    ("edge_exact_empty_value", ""),
+    ("edge_interior_www", "%www%"),
+    ("edge_interior_dot", "%.%"),
+    ("edge_interior_token_split", "%ttp://%"),
+    ("edge_literal_backslash_pct", "a\\%b"),
+    ("edge_literal_backslash_underscore", "a\\_b"),
+    ("edge_literal_underscore_wild", "a_b"),
+    ("edge_utf8_one_char", "_"),
+    ("edge_utf8_three_char", "___"),
+    ("edge_utf8_prefix_jp", "日%"),
+    ("edge_utf8_suffix_jp", "%テスト.html"),
+    ("edge_utf8_mid_underscore", "_本_"),
+    ("edge_utf8_cyrillic_prefix", "https://с%"),
+    ("edge_multi_segment", "http%www%html"),
+    ("edge_multi_underscore_pct", "h_t%p%"),
+    ("edge_long_prefix", "http://a/bb%"),
+    ("edge_whitespace_prefix", " %"),
+    ("edge_whitespace_suffix", "% "),
+    ("edge_backslash", "%slash"),
+]
+
+
+def write_pattern_file(path: str, column: str, patterns) -> None:
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("# Generated by scripts/verify/fuzz.py -- do not hand-edit.\n")
+        f.write("# name\tcolumn_prefix\tpattern\n")
+        for name, pattern in patterns:
+            f.write(f"{name}\t{column}\t{pattern}\n")
+
+
+def build_column(prefix: str, values, label: str) -> dict:
+    """Write raw + parquet for a list of str values and report the result."""
+    encoded = [v.encode("utf-8") for v in values]
+    stats = write_raw(prefix, encoded)
+
+    for v in values:
+        if "\n" in v:
+            raise ValueError("fixture values must not contain newlines")
+    stats.update(write_parquet(prefix, encoded))
+    stats.update(verify_parquet_matches_raw(prefix))
+
+    print(f"{label}: wrote {prefix}.raw/.rawoff ({stats['rows']} rows, {stats['raw_bytes']} bytes)")
+    if stats.get("parquet_note"):
+        print(f"  {stats['parquet_note']}")
+    else:
+        print(f"  parquet={stats['parquet']} matches_raw={stats.get('parquet_matches_raw')}")
+    return stats
+
+
+def do_edge(out_prefix: str, pattern_file: str) -> int:
+    if len(set(EDGE_VALUES)) != len(EDGE_VALUES):
+        dupes = [v for v in set(EDGE_VALUES) if EDGE_VALUES.count(v) > 1]
+        raise ValueError(f"duplicate edge values: {dupes!r}")
+    names = [n for n, _ in EDGE_PATTERNS]
+    if len(set(names)) != len(names):
+        raise ValueError("duplicate edge pattern names")
+
+    build_column(out_prefix, EDGE_VALUES, "edge fixtures")
+    write_pattern_file(pattern_file, out_prefix, EDGE_PATTERNS)
+    print(f"  wrote {pattern_file} ({len(EDGE_PATTERNS)} patterns)")
+    print("  next: encode it, then check it")
+    print(f"    python scripts/encode/encode.py {out_prefix}")
+    print(f"    python scripts/encode/roundtrip.py {out_prefix}")
+    print(f"    python scripts/verify/check.py {pattern_file} --modes token,decode,raw")
+    return 0
+
+
+def random_patterns(values, rng, count):
+    """Derive patterns from real substrings so they actually match something."""
+    non_empty = [v for v in values if v]
+    if not non_empty:
+        raise ValueError("source column has no non-empty values")
+    out = []
+    seen = set()
+    shapes = ("prefix", "suffix", "exact", "interior", "underscore", "multi")
+    while len(out) < count:
+        value = rng.choice(non_empty).decode("utf-8", "replace")
+        shape = rng.choice(shapes)
+        n = len(value)
+        if shape == "prefix":
+            pattern = value[: rng.randint(1, min(n, 12))] + "%"
+        elif shape == "suffix":
+            pattern = "%" + value[-rng.randint(1, min(n, 12)) :]
+        elif shape == "exact":
+            pattern = value
+        elif shape == "interior":
+            i = rng.randint(0, max(n - 2, 0))
+            j = min(n, i + rng.randint(1, 10))
+            pattern = "%" + value[i:j] + "%"
+        elif shape == "underscore":
+            i = rng.randint(0, max(n - 1, 0))
+            pattern = value[:i] + "_" + value[i + 1 :]
+        else:
+            i = rng.randint(0, max(n // 2, 0))
+            j = rng.randint(min(i + 1, n), n)
+            pattern = value[:i] + "%" + value[i:j] + "%"
+        # A literal backslash at the end would make an incomplete escape.
+        if pattern.endswith("\\"):
+            continue
+        if pattern in seen:
+            continue
+        seen.add(pattern)
+        out.append((f"fuzz_{len(out):04d}", pattern))
+    return out
+
+
+def do_random(source: str, out_prefix: str, pattern_file: str, seed: int, rows: int, count: int) -> int:
+    rng = random.Random(seed)
+    values = read_raw_values(source)
+    if not values:
+        raise ValueError(f"{source} has no rows")
+
+    sample = [values[rng.randrange(len(values))] for _ in range(min(rows, len(values)))]
+    # Always include the awkward values, so fuzzing never loses the edge cases.
+    sample = [v.decode("utf-8", "replace") for v in sample] + EDGE_VALUES[:16]
+    rng.shuffle(sample)
+
+    build_column(out_prefix, sample, f"random fixtures (seed={seed})")
+    patterns = random_patterns([v.encode("utf-8") for v in sample], rng, count)
+    write_pattern_file(pattern_file, out_prefix, patterns)
+    print(f"  wrote {pattern_file} ({len(patterns)} patterns), seed={seed}")
+    print(f"  reproduce with: --random --from {source} --seed {seed} --rows {rows} --count {count}")
+    return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    mode = ap.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--edge", action="store_true", help="write deterministic edge fixtures")
+    mode.add_argument("--random", action="store_true", help="write randomized fixtures")
+    ap.add_argument("--from", dest="source", default="data/clickbench/URL", help="source column for --random")
+    ap.add_argument("--out", default=None, help="output column prefix")
+    ap.add_argument("--patterns", default=None, help="output pattern file")
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--rows", type=int, default=5000)
+    ap.add_argument("--count", type=int, default=200, help="number of random patterns")
+    args = ap.parse_args()
+
+    if args.edge:
+        out = args.out or "data/edge/values"
+        pf = args.patterns or "patterns/generated_edge.txt"
+        return do_edge(out, pf)
+
+    out = args.out or "data/fuzz/values"
+    pf = args.patterns or "patterns/generated_fuzz.txt"
+    return do_random(args.source, out, pf, args.seed, args.rows, args.count)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

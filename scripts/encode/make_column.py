@@ -98,14 +98,17 @@ def read_lines(path: str, limit: int | None) -> list[bytes]:
     return values
 
 
-def write_parquet(prefix: str, source_path: str, limit: int | None) -> dict:
-    """Write the canonical parquet via duckdb, reading the same source file.
+def write_parquet(prefix: str, values: list[bytes]) -> dict:
+    """Write the canonical parquet (row_id, value) from the column's values.
 
-    The parquet is built from the original source rather than from our raw
-    binaries, so the DuckDB ground truth stays an independent view of the data.
-    A delimiter that cannot occur in the input (0x01) plus disabled quoting and
-    escaping makes read_csv a faithful line reader for URLs containing commas
-    and quotes.
+    Rows are inserted explicitly rather than parsed out of a text file by
+    DuckDB. read_csv was the obvious route and it is wrong here: it silently
+    drops an empty line, so a 51-value fixture became 50 parquet rows and every
+    row id after the empty value shifted. Inserting the values we already have
+    is exact for empty strings, embedded quotes and commas alike.
+
+    (The ClickBench path does not go through here: fetch_clickbench.py builds
+    its canonical parquet in SQL straight from the source parquet.)
     """
     try:
         import duckdb
@@ -113,31 +116,30 @@ def write_parquet(prefix: str, source_path: str, limit: int | None) -> dict:
         return {"parquet": None, "parquet_note": "duckdb unavailable; parquet skipped"}
 
     out = prefix + ".parquet"
+    rows = []
+    for row_id, value in enumerate(values):
+        try:
+            rows.append((row_id, value.decode("utf-8")))
+        except UnicodeDecodeError as e:
+            raise ValueError(
+                f"row {row_id} is not valid UTF-8 and cannot be stored as a parquet "
+                f"VARCHAR: {value[:40]!r}"
+            ) from e
+
     con = duckdb.connect()
-    con.execute("SET threads=1")  # keep line order deterministic
-    limit_clause = f"LIMIT {int(limit)}" if limit is not None else ""
+    con.execute("SET threads=1")
+    con.execute("CREATE TABLE col (row_id BIGINT, value VARCHAR)")
+    if rows:
+        con.executemany("INSERT INTO col VALUES (?, ?)", rows)
     con.execute(
-        f"""
-        COPY (
-            SELECT (row_number() OVER () - 1)::BIGINT AS row_id,
-                   COALESCE(value, '') AS value
-            FROM read_csv(
-                     ?,
-                     delim := chr(1),
-                     quote := '',
-                     escape := '',
-                     header := false,
-                     columns := {{'value': 'VARCHAR'}},
-                     normalize_names := false
-                 )
-            {limit_clause}
-        ) TO '{out}' (FORMAT PARQUET)
-        """,
-        [source_path],
+        f"COPY (SELECT row_id, value FROM col ORDER BY row_id) TO '{out}' (FORMAT PARQUET)"
     )
-    (rows,) = con.execute(f"SELECT count(*) FROM read_parquet('{out}')").fetchone()
+    (written,) = con.execute(f"SELECT count(*) FROM read_parquet('{out}')").fetchone()
     con.close()
-    return {"parquet": out, "parquet_rows": rows, "parquet_sha256": sha256_file(out)}
+
+    if written != len(values):
+        raise AssertionError(f"{out} holds {written} rows, expected {len(values)}")
+    return {"parquet": out, "parquet_rows": written, "parquet_sha256": sha256_file(out)}
 
 
 def verify_parquet_matches_raw(prefix: str) -> dict:
@@ -212,7 +214,7 @@ def main() -> int:
         "raw": stats,
     }
     if args.parquet:
-        meta["raw"].update(write_parquet(args.out, args.lines, args.limit))
+        meta["raw"].update(write_parquet(args.out, values))
         meta["raw"].update(verify_parquet_matches_raw(args.out))
 
     with open(args.out + ".meta.json", "w") as f:
