@@ -63,9 +63,10 @@ if [ -f include/tokenlike/common.h ] || [ -n "$STUB_FLAG" ]; then
    if clang++ -std=c++20 -O2 -Wall -Wextra -Iinclude $STUB_FLAG \
         src/vocab.cpp src/column.cpp tests/test_io.cpp -o build/test_io 2>build/test_io.buildlog; then
       ok "test_io compiled"
-      for col in data/clickbench/URL data/sample/urls data/edge/values; do
-         [ -f "$col.tok" ] || continue
-         run ./build/test_io "$VOCAB" "$col"
+      # Every encoded column present, so a new dataset is covered automatically.
+      for tok in data/*/*.tok; do
+         [ -f "$tok" ] || continue
+         run ./build/test_io "$VOCAB" "${tok%.tok}"
       done
    else
       bad "test_io failed to compile (see build/test_io.buildlog)"
@@ -74,25 +75,44 @@ if [ -f include/tokenlike/common.h ] || [ -n "$STUB_FLAG" ]; then
 fi
 
 step "round-trip (decode every row, compare with original bytes)"
-for col in data/edge/values data/sample/urls data/clickbench/URL data/clickbench/Referer; do
-   [ -f "$col.tok" ] || continue
-   if [ "$QUICK" = "1" ] && [ "${col#data/clickbench/}" != "$col" ]; then
-      printf '  skipped %s (--quick)\n' "$col"
+for tok in data/*/*.tok; do
+   [ -f "$tok" ] || continue
+   col="${tok%.tok}"
+   rows=$(( $(wc -c <"${col}.off" | tr -d ' ') / 8 - 1 ))
+   if [ "$QUICK" = "1" ] && [ "$rows" -gt 100000 ]; then
+      printf '  skipped %s (%s rows, --quick)\n' "$col" "$rows"
       continue
-    fi
+   fi
    run "$PY" scripts/encode/roundtrip.py "$col" --vocab "$VOCAB"
 done
 
 step "pattern correctness vs DuckDB"
-for pf in patterns/core.txt patterns/tier1.txt patterns/generated_edge.txt patterns/tier2.txt; do
-   [ -f "$pf" ] || continue
-   printf '  -- %s\n' "$pf"
-   if "$PY" scripts/verify/check.py "$pf" --modes token,decode,raw --cli "$CLI" --vocab "$VOCAB"; then
-      ok "$pf"
-   else
-      bad "$pf"
-   fi
-done
+if [ ! -x "$CLI" ]; then
+   # Person C's CLI is what turns patterns into row ids. Its absence is not a
+   # failure of the data pipeline, so it is reported loudly and skipped -- but
+   # if a CLI IS present and gets any pattern wrong, that is a hard failure.
+   printf '  SKIPPED: no CLI at %s\n' "$CLI"
+   printf '           build Person C'"'"'s CLI, or set TOKENLIKE_CLI, to run this section.\n'
+   printf '           ground truth is still generated and verified below.\n'
+   for pf in patterns/core.txt patterns/tier1.txt patterns/generated_edge.txt patterns/tier2.txt; do
+      [ -f "$pf" ] || continue
+      if "$PY" scripts/verify/ground_truth.py "$pf" >/dev/null 2>&1; then
+         ok "ground truth for $pf"
+      else
+         bad "ground truth generation failed for $pf"
+      fi
+   done
+else
+   for pf in patterns/core.txt patterns/tier1.txt patterns/generated_edge.txt patterns/tier2.txt; do
+      [ -f "$pf" ] || continue
+      printf '  -- %s\n' "$pf"
+      if "$PY" scripts/verify/check.py "$pf" --modes token,decode,raw --cli "$CLI" --vocab "$VOCAB"; then
+         ok "$pf"
+      else
+         bad "$pf"
+      fi
+   done
+fi
 
 printf '\n'
 if [ "$failures" -eq 0 ]; then
