@@ -6,7 +6,89 @@
 
 ## Person B — Data and Correctness (branch `b/data`)
 
-**State: data pipeline and correctness tooling complete and verified at full scale. Ready for Person A's matcher.**
+**State: data pipeline and correctness tooling complete. Verified against the
+real integrated TokenLIKE matcher — 1,163 of 1,164 integrated checks pass, with
+one Person A capacity limit documented below.**
+
+See `HANDOFF_B.md` for the executable handoff (formats, commands, CLI contract).
+
+### Integrated verification vs the real matcher
+
+Binary: `origin/main` @ `ec189f8` + the four Person B loader files from
+`b/data` @ `a74b435`. CMake reported `loaders (Person B) = ON, matcher
+(Person A) = ON`, and every CLI invocation reported `"loaders": "official"`,
+so these results exercise the real loaders and the real datasets, not fixtures.
+
+| Stage | Dataset | Patterns | Modes | Checks | Pass | Fail | Skip |
+|---|---|---|---|---|---|---|---|
+| 1 edge | `data/edge/values` (51 rows) | 36 | token, decode, raw | 108 | 108 | 0 | 0 |
+| 2 core | ClickBench 1,000,000 rows | 22 | token, decode, raw | 66 | 66 | 0 | 0 |
+| 3 tier1 | ClickBench 1,000,000 rows | 13 | token, decode, raw | 39 | 39 | 0 | 0 |
+| 4 tier2 | ClickBench + TPC-H, 1,000,000 rows | 23 | token, decode, raw | 69 | 51 | 0 | 18 |
+| 5 fuzz | `data/fuzz/values` (20,016 rows) | 300 | token, decode, raw | 900 | 899 | 1 | 0 |
+| **Total** | | **394** | | **1,182** | **1,163** | **1** | **18** |
+
+The 18 skips are legitimate and self-reported by the CLI with exit code 2:
+`--col2` is only implemented for `token` mode, so the 9 concatenation patterns
+cannot run in `decode` or `raw`. Concatenation **is** verified in `token` mode,
+which is the mode that matters for TokenLIKE.
+
+Anchored-prefix early exit is working: `http://%` over 1,000,000 rows reads
+**1.52 tokens per row** at 3.0 ns/row.
+
+### Open item for Person A: 512-state DFA cap (1 fuzz pattern)
+
+`fuzz_0082` fails in `token` mode only, with
+`error: pattern needs more than 512 DFA states` (exit code 1). `decode` and
+`raw` return the correct answer for the same pattern on the same data, and
+round-trip on that column is 0 mismatches, so **this is not a data, encoding,
+loader or alignment problem** — it is a capacity limit in token-mode DFA
+construction.
+
+Measured cost model, from controlled probes against the integrated binary:
+
+| Pattern shape | Result |
+|---|---|
+| plain literal + `%`, 500 bytes | ok |
+| plain literal + `%`, 600 bytes | over the cap |
+| Cyrillic literal, 250 chars / 500 bytes | ok |
+| `_` repeated 120× | ok |
+| `_` repeated 150× | over the cap |
+| 300 literal bytes + 40 `_` | ok |
+| 300 literal bytes + 60 `_` | over the cap |
+
+So roughly **1 state per literal byte, ~4 states per `_`** (one per UTF-8 length
+class), against a hard cap of 512. But cost grows faster once several interior
+`%` segments and `_` are combined: `fuzz_0082` has 6 `%` and 9 `_` and hits the
+cap at only ~300 literal bytes. Bisecting its prefix, 302 characters is accepted
+and 303 is rejected — the character that tips it over is a single 2-byte
+Cyrillic `с`.
+
+Suggested resolution, Person A's and C's call:
+1. raise the cap, or
+2. fall back to the decode path when construction would exceed it, or
+3. return exit code 2 (unavailable) instead of 1, so it is classified as an
+   unsupported pattern rather than a wrong answer.
+
+Option 3 alone would make this a documented limitation rather than a failure in
+the final numbers. **No pattern in mandatory scope reaches this**: it is only
+reachable because the fuzzer synthesizes a 353-character pattern out of a real
+1,991-byte URL, and real analytics patterns are short.
+
+### Person B change required by integration
+
+`check.py` originally used the `--column` / `--column2` / `--out` flags I had
+proposed. The merged `src/cli.cpp` is the authority and uses
+`--col` / `--col2` / `--rowids`, so `check.py` now matches it, passes
+`--runs 1 --warmup 0` for correctness runs, distinguishes CLI exit code 2
+(unsupported → SKIP) from 1 (error → FAIL), and records the CLI's
+`"loaders"` field so a fixture-loader build can never be mistaken for an
+integrated run. My loaders also compile clean under the project's C++17 setting
+against the real frozen `common.h`.
+
+The bit-packed `Bitmap` decision (commit `092fc58`) does not affect my
+components: the CLI converts the bitmap to row ids, and my tooling only reads
+those row-id files.
 
 ### What A and C can use right now
 
