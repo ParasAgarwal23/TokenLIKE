@@ -1,0 +1,24 @@
+# Build output
+build/
+build-*/
+cmake-build-*/
+CMakeUserPresets.json
+
+# Data (produced by scripts/encode, never committed)
+data/
+
+# Benchmark artifacts: row-id files are large; JSON results ARE committed.
+results/rowids/
+results/tmp/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

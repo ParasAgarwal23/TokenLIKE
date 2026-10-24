@@ -1,0 +1,9 @@
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.bin binary
+*.tok binary
+*.off binary
+*.raw binary
+*.rawoff binary
+*.parquet binary

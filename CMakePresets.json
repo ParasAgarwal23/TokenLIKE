@@ -1,0 +1,27 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "Release (default compiler)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS": "-O3 -march=native"
+      }
+    },
+    {
+      "name": "mingw-release",
+      "displayName": "Release (mingw-w64 GCC 14 at C:/mingw-w64)",
+      "inherits": "release",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "C:/mingw-w64/mingw64/bin/g++.exe"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "release", "configurePreset": "release" },
+    { "name": "mingw-release", "configurePreset": "mingw-release" }
+  ]
+}
