@@ -22,14 +22,40 @@ elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/fsst/fsst.h")
   set(FSST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/fsst")
   message(STATUS "FSST module: using the local snapshot in integration/fsst/third_party/fsst")
 else()
-  message(STATUS "FSST module: fetching ${FSST_UPSTREAM_URL} @ ${FSST_PINNED_COMMIT}")
-  include(FetchContent)
-  FetchContent_Declare(fsst_upstream_src
-    GIT_REPOSITORY "${FSST_UPSTREAM_URL}"
-    GIT_TAG        "${FSST_PINNED_COMMIT}"
-    GIT_SHALLOW    FALSE)
-  FetchContent_MakeAvailable(fsst_upstream_src)
-  set(FSST_DIR "${fsst_upstream_src_SOURCE_DIR}")
+  # Clone the pinned revision ourselves, into the same place the fetch script
+  # uses, and compile only the two translation units we need.
+  #
+  # Deliberately NOT FetchContent_MakeAvailable: that runs upstream's own
+  # CMakeLists, which declares an `fsst12` target, and upstream's
+  # libfsst12.cpp/fsst12.h DO NOT COMPILE with Apple clang on arm64 --
+  # write_two_codes_aligned() and write_one_code_aligned() are declared taking
+  # `unsigned long*` and called with `unsigned long long*`. That is an upstream
+  # bug in a target this module never uses, but MakeAvailable would add it to
+  # the default build target and break `cmake --build`. Verified: a bare
+  # `clang++ -c libfsst12.cpp` fails the same way, while libfsst.cpp compiles
+  # clean. See THIRD_PARTY.md.
+  set(FSST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/fsst")
+  message(STATUS "FSST module: cloning ${FSST_UPSTREAM_URL} @ ${FSST_PINNED_COMMIT}")
+  find_package(Git REQUIRED)
+  if(NOT EXISTS "${FSST_DIR}/.git")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
+    execute_process(
+      COMMAND "${GIT_EXECUTABLE}" clone --quiet "${FSST_UPSTREAM_URL}" "${FSST_DIR}"
+      RESULT_VARIABLE git_rc ERROR_VARIABLE git_err)
+    if(NOT git_rc EQUAL 0)
+      message(FATAL_ERROR
+        "FSST module: could not clone ${FSST_UPSTREAM_URL}\n${git_err}\n"
+        "Run integration/fsst/scripts/fetch_fsst.sh when you have network, or "
+        "pass -DTOKENLIKE_FSST_SOURCE_DIR=<path to a cwida/fsst checkout>.")
+    endif()
+  endif()
+  execute_process(
+    COMMAND "${GIT_EXECUTABLE}" -c advice.detachedHead=false -C "${FSST_DIR}"
+            checkout --quiet "${FSST_PINNED_COMMIT}"
+    RESULT_VARIABLE git_rc ERROR_VARIABLE git_err)
+  if(NOT git_rc EQUAL 0)
+    message(FATAL_ERROR "FSST module: could not check out ${FSST_PINNED_COMMIT}\n${git_err}")
+  endif()
 endif()
 if(NOT EXISTS "${FSST_DIR}/fsst.h")
   message(FATAL_ERROR "FSST module: no usable FSST source at '${FSST_DIR}'. "

@@ -245,7 +245,13 @@ Performance headlines (full table in `FINAL_REPORT.md` §I):
 8. **`fsst-rev2` is ~20% slower than `fsst-rev` on full reverse traversals**
    of unanchored patterns, where reverse scanning is the wrong plan anyway. It is
    faster on suffixes and costs no storage.
-9. **The benchmark data is not in the repository** (gitignored, ~450 MB).
+9. **Upstream FSST's `fsst12` target does not build on arm64** — declared
+   `unsigned long*` against a called `unsigned long long*` in `fsst12.h`. The
+   module never uses it and never runs upstream's `CMakeLists.txt`; it clones
+   the pinned revision and compiles only `libfsst.cpp` and `fsst_avx512.cpp`.
+   Worth knowing if you ever point the module at FSST a different way. Details
+   in `THIRD_PARTY.md`.
+10. **The benchmark data is not in the repository** (gitignored, ~450 MB).
    `scripts/build_columns.sh` regenerates it byte-deterministically from the
    original project's raw columns.
 

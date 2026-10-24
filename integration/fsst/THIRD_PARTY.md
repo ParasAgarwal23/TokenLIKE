@@ -19,7 +19,22 @@ module finds the source in this order:
 1. `-DTOKENLIKE_FSST_SOURCE_DIR=<path>` — an existing checkout.
 2. `integration/fsst/third_party/fsst` — what `scripts/fetch_fsst.sh` creates.
    Gitignored.
-3. `FetchContent` from the URL above at the pinned commit, at configure time.
+3. a direct `git clone` of the pinned commit into (2), done by the module's
+   CMake at configure time.
+
+**Why not `FetchContent_MakeAvailable`.** It runs upstream's own
+`CMakeLists.txt`, which declares an `fsst12` target — and upstream's
+`libfsst12.cpp` / `fsst12.h` **do not compile with Apple clang on arm64**:
+`write_two_codes_aligned()` and `write_one_code_aligned()` are declared taking
+`unsigned long*` and called with `unsigned long long*` (`fsst12.h:125`, `:138`
+against `:157`). A bare `clang++ -std=c++17 -c libfsst12.cpp` fails the same
+way, so it is an upstream bug and not an artifact of this build; `libfsst.cpp`,
+which is what this module uses, compiles clean. `fsst12` is the 12-bit-code
+variant and nothing here touches it, but `MakeAvailable` would add it to the
+default build target and break `cmake --build`. So the module clones the pinned
+revision itself and compiles only the two translation units it needs. This was
+caught by building a fresh clone of the pushed branch, not by the in-place
+build, which already had a snapshot on disk.
 
 Only two upstream translation units are compiled, **unmodified**:
 `libfsst.cpp` and `fsst_avx512.cpp`. The latter carries its own runtime CPU
