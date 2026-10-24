@@ -284,7 +284,8 @@ def main() -> int:
     cli = find_cli(args.build)
     patterns = read_patterns(args.patterns, args.col)
 
-    status = git("status", "--porcelain", "--untracked-files=no")
+    # Benchmark outputs under results/ do not make the measured code dirty.
+    status = git("status", "--porcelain", "--untracked-files=no", "--", ".", ":!results")
     dirty = bool(status) if status is not None else None
     if dirty and not args.allow_dirty:
         sys.exit("error: working tree has uncommitted changes; commit or pass --allow-dirty")
