@@ -202,6 +202,22 @@ tier 2 from the plan and is semantically identical to the official encoder,
 not an approximation. Token bytes come from the authoritative hex column, never
 the human-readable text column.
 
+**The encoder is corroborated against the paper's own published numbers.** We
+encoded the paper's own `data/dbtext/urls` file (`data/dbtext/urls.*` here):
+
+| | |
+|---|---|
+| Paper's `original_size` for `urls` | 6,327,875 bytes |
+| Our `.raw` bytes | 6,227,875 = 6,327,875 − 100,000 newlines (exact match) |
+| Our ratio, `claude_patched` | **1.2837×** |
+| Paper's published SGTT ratios, same file | 1.158 (openai50k) … 1.448 (openai100kpatched) |
+
+Our independent implementation lands inside their published range on their own
+dataset, and reproduces their qualitative result that URLs compress far worse
+than prose (their `l_comment` ratios are 1.515–1.928; ours is 2.013). They did
+not publish a Claude row for `urls`, so this is a corroboration of the
+algorithm and vocabulary handling, not a bit-exact replication.
+
 ### Not done / out of scope so far
 
 - **No pattern has been verified against A's real matcher**, because A's matcher
