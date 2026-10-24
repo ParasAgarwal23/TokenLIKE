@@ -62,6 +62,17 @@ Args parse(int argc, char** argv) {
 
 } // namespace
 
+// Paths go into JSON; a Windows path contains backslashes that must be escaped.
+static std::string json_path(const std::string& s) {
+   std::string out;
+   for (unsigned char c : s) {
+      if (c == '"' || c == '\\') { out += '\\'; out += static_cast<char>(c); }
+      else if (c < 0x20) { char b[8]; std::snprintf(b, sizeof(b), "\\u%04x", c); out += b; }
+      else out += static_cast<char>(c);
+   }
+   return out;
+}
+
 int main(int argc, char** argv) try {
    Args args = parse(argc, argv);
    RawColumn src = load_raw(args.raw, args.rows);
@@ -189,7 +200,7 @@ int main(int argc, char** argv) try {
                  "  \"fnv64_off\": \"%s\",\n"
                  "  \"fnv64_sym\": \"%s\"\n"
                  "}\n",
-                 args.out.c_str(), args.raw.c_str(), static_cast<unsigned long long>(src.rows),
+                 json_path(args.out).c_str(), json_path(args.raw).c_str(), static_cast<unsigned long long>(src.rows),
                  static_cast<unsigned long long>(src.bytes.size()), static_cast<unsigned long long>(cmp.size()),
                  static_cast<unsigned long long>(exported.size()),
                  static_cast<unsigned long long>(args.rev ? rev.size() * sizeof(u32) : 0),

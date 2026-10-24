@@ -61,7 +61,7 @@ def main() -> int:
     args = ap.parse_args()
 
     cli = resolve_cli()
-    enc = Path(ENCODER)
+    enc = Path(resolve_cli(ENCODER))  # adds .exe on Windows
     for p in (cli, enc):
         if not Path(p).is_file():
             raise SystemExit(f"{p} is not built; configure the repository with "
