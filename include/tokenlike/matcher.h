@@ -71,7 +71,8 @@ namespace tokenlike::detail {
 struct BuildOptions {
     int force_dir = -1;  // -1 automatic, 0 forward, 1 backward (no retry when forced)
     bool minimize = true;
-    uint32_t max_states = kMaxStates;
+    uint32_t max_states = kMaxStates;               // limit on the DFA the tables are built from
+    uint32_t max_subset_states = kMaxSubsetStates;  // limit on subset construction
 };
 
 struct MatcherAccess {

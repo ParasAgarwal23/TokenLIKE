@@ -20,9 +20,13 @@ namespace tokenlike {
 
 using State = uint16_t;
 
-// Upper bound on DFA states. The dense table costs states * vocab.n * 2 bytes
-// (~100 KB per state for a 50k vocabulary), so 512 states is ~51 MB at build time.
+// Upper bound on MINIMIZED DFA states. The dense table costs states * vocab.n * 2 bytes
+// (128 KB per state for a 65,536-token vocabulary), so 512 states is 64 MB at build time.
 constexpr uint32_t kMaxStates = 512;
+
+// Upper bound on subset-construction states before minimization (S * 512 bytes of
+// transitions). Long literal-heavy patterns with '_' produce up to ~3x redundant raw states.
+constexpr uint32_t kMaxSubsetStates = 4096;
 
 enum class Dir : uint8_t { Forward, Backward };
 
@@ -77,7 +81,7 @@ struct Dfa {
 };
 
 // Subset construction. Throws TooComplex above max_states. Result is classified.
-Dfa determinize(const Nfa& n, uint32_t max_states = kMaxStates);
+Dfa determinize(const Nfa& n, uint32_t max_states = kMaxSubsetStates);
 
 // Moore partition refinement. Result is classified.
 Dfa minimize(const Dfa& d);
