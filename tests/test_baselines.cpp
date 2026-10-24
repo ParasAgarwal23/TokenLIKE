@@ -320,6 +320,15 @@ int write_fixture(const std::string& dir) {
     for (const char* p : kColumnPatterns)
         if (*p) std::fprintf(f, "%s\n", p);
     std::fclose(f);
+
+    // Invalid inputs for the CLI regression tests (exit code 1 expected).
+    Column bad = fixture_column(v, synth_urls(100, 3));
+    bad.tok[bad.tok.size() / 2] = static_cast<uint16_t>(v.n + 1000);  // id outside the vocabulary
+    write_column(dir + "/synth/bad_ids", bad);
+    f = std::fopen((dir + "/bad_utf8_pattern.txt").c_str(), "wb");
+    if (!f) return 1;
+    std::fputs("%\xff%", f);  // 0xFF never occurs in UTF-8
+    std::fclose(f);
     std::printf("fixture written to %s\n", dir.c_str());
     return 0;
 }

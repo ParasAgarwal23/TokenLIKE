@@ -46,7 +46,9 @@ const char* kUsage =
     "usage: tokenlike --mode token|decode|raw (--pattern LIKE | --pattern-file FILE)\n"
     "                 --col PREFIX [--col2 PREFIX] [--vocab data/vocab.bin]\n"
     "                 [--runs 5] [--warmup 1] [--rowids FILE] [--stats FILE] [--pin-cpu N]\n"
-    "       aliases:  --column = --col, --column2 = --col2, --out = --rowids\n";
+    "       aliases:  --column = --col, --column2 = --col2, --out = --rowids\n"
+    "       each option may be given once; the pattern must be valid UTF-8.\n"
+    "       exit codes: 0 ok, 1 error, 2 mode unavailable in this build.\n";
 
 struct Args {
     std::string mode;
@@ -81,6 +83,8 @@ bool pin_to_cpu(int cpu) {
 struct UsageError : std::runtime_error {
     using std::runtime_error::runtime_error;
 };
+
+struct HelpRequested {};
 
 std::vector<std::string> utf8_argv(int argc, char** argv) {
 #ifdef _WIN32
@@ -119,12 +123,22 @@ int to_int(const std::string& key, const std::string& v) {
     return static_cast<int>(x);
 }
 
+// Canonical name of an option, so that an alias counts as the same option.
+std::string canonical(const std::string& key) {
+    if (key == "--column") return "--col";
+    if (key == "--column2") return "--col2";
+    if (key == "--out") return "--rowids";
+    if (key == "--pattern-file") return "--pattern";
+    return key;
+}
+
 Args parse_args(const std::vector<std::string>& av) {
     Args a;
+    std::vector<std::string> seen;
     for (size_t i = 1; i < av.size(); ++i) {
         std::string key = av[i], val;
         const auto eq = key.find('=');
-        if (key == "-h" || key == "--help") throw UsageError("");
+        if (key == "-h" || key == "--help") throw HelpRequested{};
         if (key.rfind("--", 0) != 0) throw UsageError("unexpected argument " + key);
         if (eq != std::string::npos) {
             val = key.substr(eq + 1);
@@ -133,6 +147,10 @@ Args parse_args(const std::vector<std::string>& av) {
             if (i + 1 >= av.size()) throw UsageError("missing value for " + key);
             val = av[++i];
         }
+        const std::string canon = canonical(key);
+        if (std::find(seen.begin(), seen.end(), canon) != seen.end())
+            throw UsageError(key + " given more than once (or together with an alias)");
+        seen.push_back(canon);
         // --column / --column2 / --out are the names Person B's check.py uses.
         if (key == "--mode") a.mode = val;
         else if (key == "--pattern") a.pattern = val;
@@ -152,7 +170,52 @@ Args parse_args(const std::vector<std::string>& av) {
     if (!a.pattern) throw UsageError("--pattern or --pattern-file is required");
     if (a.col.empty()) throw UsageError("--col is required");
     if (a.runs < 1) throw UsageError("--runs must be >= 1");
+    // Every mode rejects the same inputs, so results are comparable across modes.
+    const size_t bad = tl_utf8_invalid_at(*a.pattern);
+    if (bad != std::string_view::npos) {
+        char buf[96];
+        std::snprintf(buf, sizeof buf, "pattern is not valid UTF-8 (byte 0x%02X at offset %zu)",
+                      static_cast<unsigned char>((*a.pattern)[bad]), bad);
+        throw UsageError(buf);
+    }
     return a;
+}
+
+// Rejects token ids outside the vocabulary before any matching: an id >= n
+// would index past the decode table (crash) or take an arbitrary transition in
+// the token matcher (silent wrong answer). One O(tokens) pass, not timed.
+void validate_ids(const Column& c, const Vocab& v, const std::string& name) {
+#if defined(TOKENLIKE_HAVE_LOADERS)
+    try {
+        validate_column(c, v);  // Person B's checker for the frozen formats
+    } catch (const std::exception& e) {
+        throw std::runtime_error("column " + name + ": " + e.what());
+    }
+#else
+    for (size_t i = 0; i < c.tok.size(); ++i)
+        if (c.tok[i] >= v.n)
+            throw std::runtime_error("column " + name + ": token id " + std::to_string(c.tok[i]) +
+                                     " at position " + std::to_string(i) + " is outside the vocabulary of " +
+                                     std::to_string(v.n) + " tokens");
+#endif
+}
+
+// Git Bash (MSYS) rewrites arguments that look like POSIX paths, e.g.
+// '/static/%' arrives as 'C:/Program Files/Git/static/%'. Warn when that seems
+// to have happened; the pattern is still used exactly as received.
+void warn_if_msys_mangled(const std::string& pattern) {
+    if (!std::getenv("MSYSTEM")) return;
+    for (size_t i = 0; i + 2 < pattern.size(); ++i) {
+        const char c = pattern[i];
+        if (((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) && pattern[i + 1] == ':' && pattern[i + 2] == '/' &&
+            (i == 0 || pattern[i - 1] == '%' || pattern[i - 1] == '_')) {
+            std::fprintf(stderr,
+                         "[tokenlike] WARNING: pattern contains a Windows path (%s); Git Bash may have rewritten a "
+                         "'/...' argument. Use MSYS_NO_PATHCONV=1, PowerShell, or --pattern-file.\n",
+                         pattern.c_str());
+            return;
+        }
+    }
 }
 
 void validate(const Column& c, const std::string& name) {
@@ -230,6 +293,7 @@ int run(const Args& a) {
 
     if (a.pin_cpu && !pin_to_cpu(*a.pin_cpu))
         std::fprintf(stderr, "[tokenlike] WARNING: could not pin to CPU %d\n", *a.pin_cpu);
+    warn_if_msys_mangled(pattern);
 
     // ---- Load (not timed as part of matching).
     auto t_load = Clock::now();
@@ -244,8 +308,16 @@ int run(const Args& a) {
         validate(col2, *a.col2);
         if (col2.rows != col.rows) throw std::runtime_error("--col and --col2 row counts differ");
     }
-    std::fprintf(stderr, "[tokenlike] loaded %llu rows in %.1f ms\n",
-                 static_cast<unsigned long long>(col.rows), ms_since(t_load));
+    const double load_ms = ms_since(t_load);
+    // Token ids are only read by the modes that use the vocabulary.
+    const auto t_validate = Clock::now();
+    if (need_vocab) {
+        validate_ids(col, vocab, a.col);
+        if (a.col2) validate_ids(col2, vocab, *a.col2);
+    }
+    const double validate_ms = ms_since(t_validate);
+    std::fprintf(stderr, "[tokenlike] loaded %llu rows in %.1f ms (id validation %.1f ms)\n",
+                 static_cast<unsigned long long>(col.rows), load_ms, validate_ms);
 
     // ---- Build (timed separately).
     std::function<void(Bitmap&, Stats&)> scan;
@@ -286,11 +358,16 @@ int run(const Args& a) {
 #endif
 
     // ---- Scan: warmup, then timed runs. Only the match call is timed.
+    // The first scan of the process (cold caches, first touch of the column) is
+    // timed separately and is not part of the warm median.
     Bitmap bm(bitmap_bytes(col.rows)), first;
     Stats st;
+    double first_scan_ns = -1;
     for (int i = 0; i < a.warmup; ++i) {
         st = Stats{};
+        const auto t0 = Clock::now();
         scan(bm, st);
+        if (i == 0) first_scan_ns = std::chrono::duration<double, std::nano>(Clock::now() - t0).count();
     }
     std::vector<double> ns;
     for (int r = 0; r < a.runs; ++r) {
@@ -299,6 +376,7 @@ int run(const Args& a) {
         scan(bm, st);
         const auto t1 = Clock::now();
         ns.push_back(std::chrono::duration<double, std::nano>(t1 - t0).count());
+        if (first_scan_ns < 0) first_scan_ns = ns.back();  // --warmup 0
         if (r == 0) first = bm;
         else if (bm != first) throw std::runtime_error("result differs between runs");
     }
@@ -345,6 +423,12 @@ int run(const Args& a) {
     j += ", \"ns_per_row_max\": " + json_num(*mx / rows);
     j += ", \"bytes_compared_per_row\": " + json_num(st.bytes_compared / rows);
     j += ", \"pin_cpu\": " + (a.pin_cpu ? std::to_string(*a.pin_cpu) : std::string("null"));
+    // Timing breakdown: load + id validation + matcher build + first scan is the
+    // cold cost of one query; median_ns is the warm scan.
+    j += ", \"load_ms\": " + json_num(load_ms);
+    j += ", \"validate_ms\": " + json_num(validate_ms);
+    j += ", \"first_scan_ns\": " + json_num(first_scan_ns);
+    j += ", \"cold_total_ms\": " + json_num(load_ms + validate_ms + build_us / 1000.0 + first_scan_ns / 1e6);
 #if defined(TOKENLIKE_FIXTURE_LOADERS)
     j += ", \"loaders\": \"fixture\"";
 #else
@@ -367,12 +451,19 @@ int run(const Args& a) {
 int main(int argc, char** argv) {
     try {
         return run(parse_args(utf8_argv(argc, argv)));
+    } catch (const HelpRequested&) {
+        std::fputs(kUsage, stdout);
+        return kExitOk;
     } catch (const UsageError& e) {
         if (*e.what()) std::fprintf(stderr, "error: %s\n", e.what());
         std::fputs(kUsage, stderr);
         return kExitError;
     } catch (const std::exception& e) {
         std::fprintf(stderr, "error: %s\n", e.what());
+        if (std::string(e.what()).find("DFA states") != std::string::npos)
+            std::fprintf(stderr, "hint: token mode supports patterns up to 512 automaton states "
+                                 "(about 510 literal bytes, fewer with many '_'); see README "
+                                 "'Token-mode limits'. decode and raw modes have no such limit.\n");
         return kExitError;
     }
 }

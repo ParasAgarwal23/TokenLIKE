@@ -34,6 +34,29 @@ inline bool tl_eq_bytes(const char* a, const char* b, size_t n) {
     return true;
 }
 
+// Offset of the first byte that is not part of well-formed UTF-8 (rejecting
+// overlongs, surrogates and code points above U+10FFFF), or npos if `s` is valid.
+inline size_t tl_utf8_invalid_at(std::string_view s) {
+    const auto* p = reinterpret_cast<const unsigned char*>(s.data());
+    const size_t n = s.size();
+    size_t i = 0;
+    while (i < n) {
+        const unsigned char c = p[i];
+        if (c < 0x80) { ++i; continue; }
+        size_t len;
+        unsigned char lo = 0x80, hi = 0xBF;  // allowed range of the second byte
+        if (c >= 0xC2 && c <= 0xDF) len = 2;
+        else if (c >= 0xE0 && c <= 0xEF) { len = 3; if (c == 0xE0) lo = 0xA0; if (c == 0xED) hi = 0x9F; }
+        else if (c >= 0xF0 && c <= 0xF4) { len = 4; if (c == 0xF0) lo = 0x90; if (c == 0xF4) hi = 0x8F; }
+        else return i;
+        if (i + len > n || p[i + 1] < lo || p[i + 1] > hi) return i;
+        for (size_t k = 2; k < len; ++k)
+            if (p[i + k] < 0x80 || p[i + k] > 0xBF) return i;
+        i += len;
+    }
+    return std::string_view::npos;
+}
+
 // Compiled LIKE pattern. Semantics as documented in common.h.
 class LikePlan {
 public:

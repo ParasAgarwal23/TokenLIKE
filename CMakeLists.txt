@@ -129,10 +129,47 @@ endif()
 set(FIXTURE_DIR ${CMAKE_BINARY_DIR}/fixture)
 add_test(NAME fixture_write COMMAND test_baselines --write-fixture ${FIXTURE_DIR})
 set_tests_properties(fixture_write PROPERTIES FIXTURES_SETUP synth)
-foreach(mode raw decode)
+set(CLI_MODES raw decode)
+if(HAVE_MATCHER)
+  list(APPEND CLI_MODES token)
+endif()
+foreach(mode ${CLI_MODES})
   add_test(NAME cli_${mode}
-    COMMAND tokenlike_cli --mode ${mode} --pattern "%.m3u8" --runs 3
+    COMMAND tokenlike_cli --mode ${mode} --pattern "%/v_/%" --runs 3
             --vocab ${FIXTURE_DIR}/vocab.bin --col ${FIXTURE_DIR}/synth/url
             --rowids ${FIXTURE_DIR}/rowids_${mode}.bin)
-  set_tests_properties(cli_${mode} PROPERTIES FIXTURES_REQUIRED synth)
+  set_tests_properties(cli_${mode} PROPERTIES FIXTURES_REQUIRED synth FIXTURES_SETUP cli_out)
 endforeach()
+
+# Every mode must write byte-identical row ids (sorted uint32), not just equal counts.
+foreach(mode ${CLI_MODES})
+  if(NOT mode STREQUAL "raw")
+    add_test(NAME cli_rowids_${mode}_eq_raw
+      COMMAND ${CMAKE_COMMAND} -E compare_files ${FIXTURE_DIR}/rowids_raw.bin ${FIXTURE_DIR}/rowids_${mode}.bin)
+    set_tests_properties(cli_rowids_${mode}_eq_raw PROPERTIES FIXTURES_REQUIRED cli_out)
+  endif()
+endforeach()
+
+# Invalid inputs must fail cleanly with exit code 1 (never a crash, never exit 0).
+set(EXPECT_EXIT ${CMAKE_CURRENT_SOURCE_DIR}/tests/expect_exit.cmake)
+foreach(mode ${CLI_MODES})
+  add_test(NAME cli_rejects_bad_utf8_${mode}
+    COMMAND ${CMAKE_COMMAND} -DEXPECT=1 "-DSTDERR_HAS=not valid UTF-8"
+            "-DCMD=$<TARGET_FILE:tokenlike_cli>;--mode;${mode};--pattern-file;${FIXTURE_DIR}/bad_utf8_pattern.txt;--col;${FIXTURE_DIR}/synth/url;--vocab;${FIXTURE_DIR}/vocab.bin"
+            -P ${EXPECT_EXIT})
+  set_tests_properties(cli_rejects_bad_utf8_${mode} PROPERTIES FIXTURES_REQUIRED synth)
+  if(NOT mode STREQUAL "raw")  # raw mode never reads token ids
+    add_test(NAME cli_rejects_bad_ids_${mode}
+      COMMAND ${CMAKE_COMMAND} -DEXPECT=1 "-DSTDERR_HAS=outside the vocabulary"
+              "-DCMD=$<TARGET_FILE:tokenlike_cli>;--mode;${mode};--pattern;%;--col;${FIXTURE_DIR}/synth/bad_ids;--vocab;${FIXTURE_DIR}/vocab.bin"
+              -P ${EXPECT_EXIT})
+    set_tests_properties(cli_rejects_bad_ids_${mode} PROPERTIES FIXTURES_REQUIRED synth)
+  endif()
+endforeach()
+add_test(NAME cli_help_exit0
+  COMMAND ${CMAKE_COMMAND} -DEXPECT=0 -DSTDOUT_HAS=usage "-DCMD=$<TARGET_FILE:tokenlike_cli>;--help" -P ${EXPECT_EXIT})
+add_test(NAME cli_rejects_repeated_option
+  COMMAND ${CMAKE_COMMAND} -DEXPECT=1 "-DSTDERR_HAS=more than once"
+          "-DCMD=$<TARGET_FILE:tokenlike_cli>;--mode;raw;--pattern;%;--col;${FIXTURE_DIR}/synth/url;--runs;1;--runs;2"
+          -P ${EXPECT_EXIT})
+set_tests_properties(cli_rejects_repeated_option PROPERTIES FIXTURES_REQUIRED synth)
