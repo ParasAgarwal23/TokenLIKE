@@ -1,0 +1,3704 @@
+{
+  "meta": {
+    "timestamp": "2026-10-25 03:52:12",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-1334U",
+    "logical_cpus": 12,
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.13.0",
+    "duckdb": "1.5.6",
+    "runs": 7,
+    "extension": "build/duckdb/tokenlike.duckdb_extension",
+    "extension_build": "i5-1334U",
+    "note": "statement time from Python, median of runs after 1 warm-up",
+    "pinning": {
+      "pinned_cpus": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "affinity_ok": true,
+      "power_throttling_disabled": true
+    },
+    "seconds": 90.6
+  },
+  "cold_warm": [
+    {
+      "name": "p_http",
+      "pattern": "http://%",
+      "kind": "forward",
+      "states": 9,
+      "table_kb": 12.6,
+      "dense_table_kb_transient": 1152.0,
+      "build_ms": 4.001,
+      "cold_ms": 24.6646,
+      "warm_ms": 19.3284,
+      "cold_minus_warm_ms": 5.336,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "p_irr",
+      "pattern": "http://irr.ru%",
+      "kind": "forward",
+      "states": 15,
+      "table_kb": 36.6,
+      "dense_table_kb_transient": 1920.0,
+      "build_ms": 9.304,
+      "cold_ms": 30.9778,
+      "warm_ms": 22.893,
+      "cold_minus_warm_ms": 8.085,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "s_php",
+      "pattern": "%.php",
+      "kind": "backward",
+      "states": 6,
+      "table_kb": 12.6,
+      "dense_table_kb_transient": 768.0,
+      "build_ms": 2.535,
+      "cold_ms": 20.4593,
+      "warm_ms": 17.6762,
+      "cold_minus_warm_ms": 2.783,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "s_html",
+      "pattern": "%.html",
+      "kind": "backward",
+      "states": 7,
+      "table_kb": 13.1,
+      "dense_table_kb_transient": 896.0,
+      "build_ms": 2.822,
+      "cold_ms": 22.3094,
+      "warm_ms": 17.9093,
+      "cold_minus_warm_ms": 4.4,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "e_top_url",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "kind": "anchored",
+      "states": 65,
+      "table_kb": 24.9,
+      "dense_table_kb_transient": 8320.0,
+      "build_ms": 70.173,
+      "cold_ms": 98.8887,
+      "warm_ms": 25.7952,
+      "cold_minus_warm_ms": 73.094,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "i_search",
+      "pattern": "%/search%",
+      "kind": "forward",
+      "states": 8,
+      "table_kb": 23.4,
+      "dense_table_kb_transient": 1024.0,
+      "build_ms": 5.072,
+      "cold_ms": 44.0852,
+      "warm_ms": 36.7664,
+      "cold_minus_warm_ms": 7.319,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "u8_ru_cyr",
+      "pattern": "%ру%",
+      "kind": "forward",
+      "states": 5,
+      "table_kb": 10.3,
+      "dense_table_kb_transient": 640.0,
+      "build_ms": 2.493,
+      "cold_ms": 35.2113,
+      "warm_ms": 31.2129,
+      "cold_minus_warm_ms": 3.998,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "w_four_under",
+      "pattern": "http://irr.ru/____%",
+      "kind": "forward",
+      "states": 32,
+      "table_kb": 1059.0,
+      "dense_table_kb_transient": 4096.0,
+      "build_ms": 36.986,
+      "cold_ms": 66.7137,
+      "warm_ms": 22.032,
+      "cold_minus_warm_ms": 44.682,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "c_irr",
+      "pattern": "http://irr.ru%",
+      "kind": "forward",
+      "states": 15,
+      "table_kb": 36.6,
+      "dense_table_kb_transient": 1920.0,
+      "build_ms": 9.369,
+      "cold_ms": 53.3265,
+      "warm_ms": 41.5464,
+      "cold_minus_warm_ms": 11.78,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    },
+    {
+      "name": "c_yandex",
+      "pattern": "%yandex%",
+      "kind": "forward",
+      "states": 7,
+      "table_kb": 50.7,
+      "dense_table_kb_transient": 896.0,
+      "build_ms": 3.426,
+      "cold_ms": 85.9528,
+      "warm_ms": 70.9067,
+      "cold_minus_warm_ms": 15.046,
+      "cold_builds": 1,
+      "warm_builds": 0,
+      "warm_cache_hits": 7,
+      "warm_runs": 7,
+      "verified": "pass"
+    }
+  ],
+  "scan_floor": [
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "count(*) without filter",
+      "median_ms": 0.1782,
+      "ns_per_row": 0.178,
+      "count": 1000000,
+      "filter_in_plan": null
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "octet_length(encoded_url) >= 0",
+      "median_ms": 14.8275,
+      "ns_per_row": 14.827,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "strlen(original_url) >= 0",
+      "median_ms": 14.5841,
+      "ns_per_row": 14.584,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "tokenlike_floor_noop(encoded_url)",
+      "median_ms": 14.1883,
+      "ns_per_row": 14.188,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "tokenlike_floor_copy(encoded_url)",
+      "median_ms": 16.7363,
+      "ns_per_row": 16.736,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "token_like(encoded_url, '%.php')",
+      "median_ms": 19.4232,
+      "ns_per_row": 19.423,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "token_like(encoded_url, 'http://%')",
+      "median_ms": 19.5505,
+      "ns_per_row": 19.55,
+      "count": 517519,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "token_like(encoded_url, '%/search%')",
+      "median_ms": 33.9587,
+      "ns_per_row": 33.959,
+      "count": 49278,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "original_url LIKE '%.php'",
+      "median_ms": 14.9832,
+      "ns_per_row": 14.983,
+      "count": 12714,
+      "filter_in_plan": false
+    },
+    {
+      "scale": "1m",
+      "threads": 4,
+      "query": "detokenize(encoded_url) LIKE '%.php'",
+      "median_ms": 40.1871,
+      "ns_per_row": 40.187,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "count(*) without filter",
+      "median_ms": 0.1162,
+      "ns_per_row": 0.116,
+      "count": 1000000,
+      "filter_in_plan": null
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "octet_length(encoded_url) >= 0",
+      "median_ms": 26.1628,
+      "ns_per_row": 26.163,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "strlen(original_url) >= 0",
+      "median_ms": 28.9896,
+      "ns_per_row": 28.99,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "tokenlike_floor_noop(encoded_url)",
+      "median_ms": 27.4706,
+      "ns_per_row": 27.471,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "tokenlike_floor_copy(encoded_url)",
+      "median_ms": 35.0212,
+      "ns_per_row": 35.021,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "token_like(encoded_url, '%.php')",
+      "median_ms": 37.2515,
+      "ns_per_row": 37.252,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "token_like(encoded_url, 'http://%')",
+      "median_ms": 39.4027,
+      "ns_per_row": 39.403,
+      "count": 517519,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "token_like(encoded_url, '%/search%')",
+      "median_ms": 77.8567,
+      "ns_per_row": 77.857,
+      "count": 49278,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "original_url LIKE '%.php'",
+      "median_ms": 29.4896,
+      "ns_per_row": 29.49,
+      "count": 12714,
+      "filter_in_plan": false
+    },
+    {
+      "scale": "1m",
+      "threads": 1,
+      "query": "detokenize(encoded_url) LIKE '%.php'",
+      "median_ms": 86.4784,
+      "ns_per_row": 86.478,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "count(*) without filter",
+      "median_ms": 0.383,
+      "ns_per_row": 0.383,
+      "count": 1000000,
+      "filter_in_plan": null
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "octet_length(encoded_url) >= 0",
+      "median_ms": 4.7809,
+      "ns_per_row": 4.781,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "strlen(original_url) >= 0",
+      "median_ms": 4.9497,
+      "ns_per_row": 4.95,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "tokenlike_floor_noop(encoded_url)",
+      "median_ms": 4.2802,
+      "ns_per_row": 4.28,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "tokenlike_floor_copy(encoded_url)",
+      "median_ms": 7.8521,
+      "ns_per_row": 7.852,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "token_like(encoded_url, '%.php')",
+      "median_ms": 11.6795,
+      "ns_per_row": 11.679,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "token_like(encoded_url, 'http://%')",
+      "median_ms": 12.8125,
+      "ns_per_row": 12.813,
+      "count": 517519,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "token_like(encoded_url, '%/search%')",
+      "median_ms": 33.8483,
+      "ns_per_row": 33.848,
+      "count": 49278,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "original_url LIKE '%.php'",
+      "median_ms": 5.6889,
+      "ns_per_row": 5.689,
+      "count": 12714,
+      "filter_in_plan": false
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 4,
+      "query": "detokenize(encoded_url) LIKE '%.php'",
+      "median_ms": 41.3818,
+      "ns_per_row": 41.382,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "count(*) without filter",
+      "median_ms": 0.126,
+      "ns_per_row": 0.126,
+      "count": 1000000,
+      "filter_in_plan": null
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "octet_length(encoded_url) >= 0",
+      "median_ms": 8.1928,
+      "ns_per_row": 8.193,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "strlen(original_url) >= 0",
+      "median_ms": 9.0696,
+      "ns_per_row": 9.07,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "tokenlike_floor_noop(encoded_url)",
+      "median_ms": 9.4603,
+      "ns_per_row": 9.46,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "tokenlike_floor_copy(encoded_url)",
+      "median_ms": 16.059,
+      "ns_per_row": 16.059,
+      "count": 1000000,
+      "filter_in_plan": true,
+      "verified": "pass"
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "token_like(encoded_url, '%.php')",
+      "median_ms": 23.9981,
+      "ns_per_row": 23.998,
+      "count": 12714,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "token_like(encoded_url, 'http://%')",
+      "median_ms": 27.3149,
+      "ns_per_row": 27.315,
+      "count": 517519,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "token_like(encoded_url, '%/search%')",
+      "median_ms": 75.139,
+      "ns_per_row": 75.139,
+      "count": 49278,
+      "filter_in_plan": true
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "original_url LIKE '%.php'",
+      "median_ms": 9.9464,
+      "ns_per_row": 9.946,
+      "count": 12714,
+      "filter_in_plan": false
+    },
+    {
+      "scale": "1m-uncompressed",
+      "threads": 1,
+      "query": "detokenize(encoded_url) LIKE '%.php'",
+      "median_ms": 84.4052,
+      "ns_per_row": 84.405,
+      "count": 12714,
+      "filter_in_plan": true
+    }
+  ],
+  "decode_selected": {
+    "token_then_decode_10": {
+      "sql": "SELECT detokenize(encoded_url) AS url, n FROM ( SELECT encoded_url, count(*) AS n FROM urls WHERE token_like(encoded_url, '%.php') GROUP BY encoded_url ORDER BY n DESC, encoded_url LIMIT 10)",
+      "median_ms": 23.6954,
+      "rows_out": 10,
+      "detokenize_rows": 10,
+      "token_like_rows": 684751
+    },
+    "decode_all_then_like": {
+      "sql": "SELECT url, count(*) AS n FROM (SELECT detokenize(encoded_url) AS url FROM urls) WHERE url LIKE '%.php' GROUP BY url ORDER BY n DESC, url LIMIT 10",
+      "median_ms": 48.8859,
+      "rows_out": 10,
+      "detokenize_rows": 732466,
+      "token_like_rows": 0
+    },
+    "raw_text": {
+      "sql": "SELECT original_url AS url, count(*) AS n FROM urls WHERE original_url LIKE '%.php' GROUP BY original_url ORDER BY n DESC, original_url LIMIT 10",
+      "median_ms": 16.9492,
+      "rows_out": 10,
+      "detokenize_rows": 0,
+      "token_like_rows": 0
+    },
+    "verified": "pass",
+    "note": "The token query orders ties by the BLOB (token-id bytes), the raw query by text, so the URLs inside a tie may differ; verification checks every decoded URL's count against the raw-text GROUP BY and that the 10 counts are the 10 largest.",
+    "top10": [
+      {
+        "url": "http://irr.ru/index.php",
+        "n": 7758
+      },
+      {
+        "url": "http://video.yandex.php",
+        "n": 1986
+      },
+      {
+        "url": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soula233-b7f8-8baf-fef3-013fc7b3a4cca08d4dc256.php",
+        "n": 510
+      },
+      {
+        "url": "https://produkty%2Fpulove.ru/moscow/choic.php",
+        "n": 142
+      },
+      {
+        "url": "http://stars-visa.html_params%3Drhost%3Dad.adriver.ru/catalog.php",
+        "n": 62
+      },
+      {
+        "url": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soulle=0&exchangeTypeSearch/ab_are.ru/libyaniki/suzuki/view.php",
+        "n": 54
+      },
+      {
+        "url": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soulmjj/628965/details.php",
+        "n": 52
+      },
+      {
+        "url": "http://irr.ru/index.php?showalbum/login-kapusta-advert21124631/?Search.php",
+        "n": 49
+      },
+      {
+        "url": "http://irr.ru/index.php?showalbum/login/?do=read.php",
+        "n": 42
+      },
+      {
+        "url": "https://produkty%2Fpulove.ru/kiroverlanet.ru/otdam-soular&brand=&op_page.php",
+        "n": 42
+      }
+    ],
+    "explain_analyze_token_then_decode_10": "┌─────────────────────────────────────┐\n│┌───────────────────────────────────┐│\n││    Query Profiling Information    ││\n│└───────────────────────────────────┘│\n└─────────────────────────────────────┘\nEXPLAIN ANALYZE SELECT detokenize(encoded_url) AS url, n FROM (         SELECT encoded_url, count(*) AS n FROM urls WHERE token_like(encoded_url, '%.php')         GROUP BY encoded_url ORDER BY n DESC, encoded_url LIMIT 10)\n┌────────────────────────────────────────────────┐\n│┌──────────────────────────────────────────────┐│\n││              Total Time: 0.0293s             ││\n│└──────────────────────────────────────────────┘│\n└────────────────────────────────────────────────┘\n┌───────────────────────────┐\n│           QUERY           │\n└─────────────┬─────────────┘\n┌─────────────┴─────────────┐\n│      EXPLAIN_ANALYZE      │\n│    ────────────────────   │\n│                           │\n│           0 rows          │\n│           0.00s           │\n└─────────────┬─────────────┘\n┌─────────────┴─────────────┐\n│         PROJECTION        │\n│    ────────────────────   │\n│            url            │\n│             n             │\n│                           │\n│                           │\n│                           │\n│          10 rows          │\n│           0.00s           │\n└─────────────┬─────────────┘\n┌─────────────┴─────────────┐\n│           TOP_N           │\n│    ────────────────────   │\n│          Top: 10          │\n│                           │\n│         Order By:         │\n│     count_star() DESC     │\n│    tokenlike.main.urls    │\n│      .encoded_url ASC     │\n│                           │\n│                           │\n│                           │\n│          10 rows          │\n│           0.00s           │\n└─────────────┬─────────────┘\n┌─────────────┴─────────────┐\n│       HASH_GROUP_BY       │\n│    ────────────────────   │\n│         Groups: #0        │\n│                           │\n│        Aggregates:        │\n│        count_star()       │\n│                           │\n│                           │\n│                           │\n│          962 rows         │\n│           0.00s           │\n└─────────────┬─────────────┘\n┌─────────────┴─────────────┐\n│         PROJECTION        │\n│    ────────────────────   │\n│        encoded_url        │\n│                           │\n│                           │\n│                           │\n│        12,714 rows        │\n│           0.00s           │\n└─────────────┬─────────────┘\n┌─────────────┴─────────────┐\n│         TABLE_SCAN        │\n│    ────────────────────   │\n│           Table:          │\n│    tokenlike.main.urls    │\n│                           │\n│   Type: Sequential Scan   │\n│                           │\n│        Projections:       │\n│        encoded_url        │\n│                           │\n│          Filters:         │\n│ token_like(encoded_url, '%│\n│           .php')          │\n│                           │\n│                           │\n│                           │\n│        12,714 rows        │\n│           0.06s           │\n└───────────────────────────┘\n"
+  },
+  "grid": [
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2321,
+        "min_ms": 0.2058,
+        "ns_per_row": 232.1
+      },
+      "decode": {
+        "median_ms": 0.3188,
+        "min_ms": 0.2924,
+        "ns_per_row": 318.8
+      },
+      "token": {
+        "median_ms": 0.3042,
+        "min_ms": 0.2896,
+        "ns_per_row": 304.2
+      },
+      "matches": 71,
+      "verified": "pass",
+      "token_vs_decode": 1.05,
+      "token_vs_raw": 0.76
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2636,
+        "min_ms": 0.2496,
+        "ns_per_row": 263.6
+      },
+      "decode": {
+        "median_ms": 0.4079,
+        "min_ms": 0.3613,
+        "ns_per_row": 407.9
+      },
+      "token": {
+        "median_ms": 0.2986,
+        "min_ms": 0.241,
+        "ns_per_row": 298.6
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.37,
+      "token_vs_raw": 0.88
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2142,
+        "min_ms": 0.2096,
+        "ns_per_row": 214.2
+      },
+      "decode": {
+        "median_ms": 0.3062,
+        "min_ms": 0.2906,
+        "ns_per_row": 306.2
+      },
+      "token": {
+        "median_ms": 0.226,
+        "min_ms": 0.22,
+        "ns_per_row": 226.0
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.35,
+      "token_vs_raw": 0.95
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.229,
+        "min_ms": 0.2014,
+        "ns_per_row": 229.0
+      },
+      "decode": {
+        "median_ms": 0.3054,
+        "min_ms": 0.2967,
+        "ns_per_row": 305.4
+      },
+      "token": {
+        "median_ms": 0.2554,
+        "min_ms": 0.2372,
+        "ns_per_row": 255.4
+      },
+      "matches": 4,
+      "verified": "pass",
+      "token_vs_decode": 1.2,
+      "token_vs_raw": 0.9
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.3326,
+        "min_ms": 0.2964,
+        "ns_per_row": 332.6
+      },
+      "decode": {
+        "median_ms": 0.4331,
+        "min_ms": 0.3905,
+        "ns_per_row": 433.1
+      },
+      "token": {
+        "median_ms": 0.3434,
+        "min_ms": 0.2434,
+        "ns_per_row": 343.4
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.26,
+      "token_vs_raw": 0.97
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2644,
+        "min_ms": 0.2419,
+        "ns_per_row": 264.4
+      },
+      "decode": {
+        "median_ms": 0.3631,
+        "min_ms": 0.3479,
+        "ns_per_row": 363.1
+      },
+      "token": {
+        "median_ms": 0.2842,
+        "min_ms": 0.2724,
+        "ns_per_row": 284.2
+      },
+      "matches": 130,
+      "verified": "pass",
+      "token_vs_decode": 1.28,
+      "token_vs_raw": 0.93
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2557,
+        "min_ms": 0.2417,
+        "ns_per_row": 255.7
+      },
+      "decode": {
+        "median_ms": 0.3619,
+        "min_ms": 0.3398,
+        "ns_per_row": 361.9
+      },
+      "token": {
+        "median_ms": 0.3794,
+        "min_ms": 0.3556,
+        "ns_per_row": 379.4
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 0.95,
+      "token_vs_raw": 0.67
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.3331,
+        "min_ms": 0.3127,
+        "ns_per_row": 333.1
+      },
+      "decode": {
+        "median_ms": 0.3851,
+        "min_ms": 0.3566,
+        "ns_per_row": 385.1
+      },
+      "token": {
+        "median_ms": 0.3687,
+        "min_ms": 0.2711,
+        "ns_per_row": 368.7
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.04,
+      "token_vs_raw": 0.9
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 0.2962,
+        "min_ms": 0.2914,
+        "ns_per_row": 296.2
+      },
+      "decode": {
+        "median_ms": 0.5222,
+        "min_ms": 0.4802,
+        "ns_per_row": 522.2
+      },
+      "token": {
+        "median_ms": 0.2764,
+        "min_ms": 0.2711,
+        "ns_per_row": 276.4
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.89,
+      "token_vs_raw": 1.07
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 4,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 0.3669,
+        "min_ms": 0.3465,
+        "ns_per_row": 366.9
+      },
+      "decode": {
+        "median_ms": 0.5657,
+        "min_ms": 0.5157,
+        "ns_per_row": 565.7
+      },
+      "token": {
+        "median_ms": 0.4674,
+        "min_ms": 0.4181,
+        "ns_per_row": 467.4
+      },
+      "matches": 171,
+      "verified": "pass",
+      "token_vs_decode": 1.21,
+      "token_vs_raw": 0.78
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2063,
+        "min_ms": 0.1894,
+        "ns_per_row": 206.3
+      },
+      "decode": {
+        "median_ms": 0.3207,
+        "min_ms": 0.3035,
+        "ns_per_row": 320.7
+      },
+      "token": {
+        "median_ms": 0.2649,
+        "min_ms": 0.2495,
+        "ns_per_row": 264.9
+      },
+      "matches": 71,
+      "verified": "pass",
+      "token_vs_decode": 1.21,
+      "token_vs_raw": 0.78
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2124,
+        "min_ms": 0.2029,
+        "ns_per_row": 212.4
+      },
+      "decode": {
+        "median_ms": 0.2836,
+        "min_ms": 0.2716,
+        "ns_per_row": 283.6
+      },
+      "token": {
+        "median_ms": 0.2443,
+        "min_ms": 0.229,
+        "ns_per_row": 244.3
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.16,
+      "token_vs_raw": 0.87
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2142,
+        "min_ms": 0.2019,
+        "ns_per_row": 214.2
+      },
+      "decode": {
+        "median_ms": 0.3037,
+        "min_ms": 0.2915,
+        "ns_per_row": 303.7
+      },
+      "token": {
+        "median_ms": 0.2399,
+        "min_ms": 0.2284,
+        "ns_per_row": 239.9
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.27,
+      "token_vs_raw": 0.89
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2134,
+        "min_ms": 0.2099,
+        "ns_per_row": 213.4
+      },
+      "decode": {
+        "median_ms": 0.304,
+        "min_ms": 0.2931,
+        "ns_per_row": 304.0
+      },
+      "token": {
+        "median_ms": 0.2651,
+        "min_ms": 0.2501,
+        "ns_per_row": 265.1
+      },
+      "matches": 4,
+      "verified": "pass",
+      "token_vs_decode": 1.15,
+      "token_vs_raw": 0.8
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2288,
+        "min_ms": 0.2201,
+        "ns_per_row": 228.8
+      },
+      "decode": {
+        "median_ms": 0.3294,
+        "min_ms": 0.308,
+        "ns_per_row": 329.4
+      },
+      "token": {
+        "median_ms": 0.4807,
+        "min_ms": 0.3516,
+        "ns_per_row": 480.7
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 0.69,
+      "token_vs_raw": 0.48
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.3654,
+        "min_ms": 0.3098,
+        "ns_per_row": 365.4
+      },
+      "decode": {
+        "median_ms": 0.4049,
+        "min_ms": 0.3646,
+        "ns_per_row": 404.9
+      },
+      "token": {
+        "median_ms": 0.2721,
+        "min_ms": 0.2586,
+        "ns_per_row": 272.1
+      },
+      "matches": 130,
+      "verified": "pass",
+      "token_vs_decode": 1.49,
+      "token_vs_raw": 1.34
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2399,
+        "min_ms": 0.2266,
+        "ns_per_row": 239.9
+      },
+      "decode": {
+        "median_ms": 0.373,
+        "min_ms": 0.3594,
+        "ns_per_row": 373.0
+      },
+      "token": {
+        "median_ms": 0.2915,
+        "min_ms": 0.2795,
+        "ns_per_row": 291.5
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.28,
+      "token_vs_raw": 0.82
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.2318,
+        "min_ms": 0.2273,
+        "ns_per_row": 231.8
+      },
+      "decode": {
+        "median_ms": 0.3077,
+        "min_ms": 0.2945,
+        "ns_per_row": 307.7
+      },
+      "token": {
+        "median_ms": 0.2151,
+        "min_ms": 0.2053,
+        "ns_per_row": 215.1
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.43,
+      "token_vs_raw": 1.08
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 0.257,
+        "min_ms": 0.2384,
+        "ns_per_row": 257.0
+      },
+      "decode": {
+        "median_ms": 0.4157,
+        "min_ms": 0.3914,
+        "ns_per_row": 415.7
+      },
+      "token": {
+        "median_ms": 0.2367,
+        "min_ms": 0.2229,
+        "ns_per_row": 236.7
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.76,
+      "token_vs_raw": 1.09
+    },
+    {
+      "scale": "1k",
+      "rows": 1000,
+      "threads": 1,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 0.345,
+        "min_ms": 0.3156,
+        "ns_per_row": 345.0
+      },
+      "decode": {
+        "median_ms": 0.5155,
+        "min_ms": 0.4933,
+        "ns_per_row": 515.5
+      },
+      "token": {
+        "median_ms": 0.3976,
+        "min_ms": 0.3827,
+        "ns_per_row": 397.6
+      },
+      "matches": 171,
+      "verified": "pass",
+      "token_vs_decode": 1.3,
+      "token_vs_raw": 0.87
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.6646,
+        "min_ms": 0.656,
+        "ns_per_row": 66.46
+      },
+      "decode": {
+        "median_ms": 0.6833,
+        "min_ms": 0.6582,
+        "ns_per_row": 68.33
+      },
+      "token": {
+        "median_ms": 0.4249,
+        "min_ms": 0.4161,
+        "ns_per_row": 42.49
+      },
+      "matches": 597,
+      "verified": "pass",
+      "token_vs_decode": 1.61,
+      "token_vs_raw": 1.56
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.6974,
+        "min_ms": 0.6856,
+        "ns_per_row": 69.74
+      },
+      "decode": {
+        "median_ms": 0.696,
+        "min_ms": 0.6688,
+        "ns_per_row": 69.6
+      },
+      "token": {
+        "median_ms": 0.3678,
+        "min_ms": 0.3602,
+        "ns_per_row": 36.78
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.89,
+      "token_vs_raw": 1.9
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.715,
+        "min_ms": 0.6441,
+        "ns_per_row": 71.5
+      },
+      "decode": {
+        "median_ms": 0.793,
+        "min_ms": 0.7379,
+        "ns_per_row": 79.3
+      },
+      "token": {
+        "median_ms": 0.4525,
+        "min_ms": 0.4335,
+        "ns_per_row": 45.25
+      },
+      "matches": 62,
+      "verified": "pass",
+      "token_vs_decode": 1.75,
+      "token_vs_raw": 1.58
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.699,
+        "min_ms": 0.6581,
+        "ns_per_row": 69.9
+      },
+      "decode": {
+        "median_ms": 0.6971,
+        "min_ms": 0.6805,
+        "ns_per_row": 69.71
+      },
+      "token": {
+        "median_ms": 0.5463,
+        "min_ms": 0.4982,
+        "ns_per_row": 54.63
+      },
+      "matches": 68,
+      "verified": "pass",
+      "token_vs_decode": 1.28,
+      "token_vs_raw": 1.28
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.7234,
+        "min_ms": 0.6545,
+        "ns_per_row": 72.34
+      },
+      "decode": {
+        "median_ms": 0.7297,
+        "min_ms": 0.6989,
+        "ns_per_row": 72.97
+      },
+      "token": {
+        "median_ms": 0.6549,
+        "min_ms": 0.5216,
+        "ns_per_row": 65.49
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.11,
+      "token_vs_raw": 1.1
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.3573,
+        "min_ms": 1.2095,
+        "ns_per_row": 135.73
+      },
+      "decode": {
+        "median_ms": 1.0687,
+        "min_ms": 1.0217,
+        "ns_per_row": 106.87
+      },
+      "token": {
+        "median_ms": 0.7463,
+        "min_ms": 0.6727,
+        "ns_per_row": 74.63
+      },
+      "matches": 672,
+      "verified": "pass",
+      "token_vs_decode": 1.43,
+      "token_vs_raw": 1.82
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.2644,
+        "min_ms": 1.1546,
+        "ns_per_row": 126.44
+      },
+      "decode": {
+        "median_ms": 0.9972,
+        "min_ms": 0.9429,
+        "ns_per_row": 99.72
+      },
+      "token": {
+        "median_ms": 0.5346,
+        "min_ms": 0.5191,
+        "ns_per_row": 53.46
+      },
+      "matches": 108,
+      "verified": "pass",
+      "token_vs_decode": 1.87,
+      "token_vs_raw": 2.37
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.787,
+        "min_ms": 0.7274,
+        "ns_per_row": 78.7
+      },
+      "decode": {
+        "median_ms": 0.8102,
+        "min_ms": 0.7949,
+        "ns_per_row": 81.02
+      },
+      "token": {
+        "median_ms": 0.3753,
+        "min_ms": 0.3539,
+        "ns_per_row": 37.53
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 2.16,
+      "token_vs_raw": 2.1
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 1.4001,
+        "min_ms": 1.2535,
+        "ns_per_row": 140.01
+      },
+      "decode": {
+        "median_ms": 1.7932,
+        "min_ms": 1.4094,
+        "ns_per_row": 179.32
+      },
+      "token": {
+        "median_ms": 0.9167,
+        "min_ms": 0.8693,
+        "ns_per_row": 91.67
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.96,
+      "token_vs_raw": 1.53
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 4,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 2.1579,
+        "min_ms": 1.9915,
+        "ns_per_row": 215.79
+      },
+      "decode": {
+        "median_ms": 2.0964,
+        "min_ms": 2.0233,
+        "ns_per_row": 209.64
+      },
+      "token": {
+        "median_ms": 2.5621,
+        "min_ms": 1.8299,
+        "ns_per_row": 256.21
+      },
+      "matches": 2004,
+      "verified": "pass",
+      "token_vs_decode": 0.82,
+      "token_vs_raw": 0.84
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.87,
+        "min_ms": 0.7556,
+        "ns_per_row": 87.0
+      },
+      "decode": {
+        "median_ms": 0.6425,
+        "min_ms": 0.6124,
+        "ns_per_row": 64.25
+      },
+      "token": {
+        "median_ms": 0.345,
+        "min_ms": 0.3374,
+        "ns_per_row": 34.5
+      },
+      "matches": 597,
+      "verified": "pass",
+      "token_vs_decode": 1.86,
+      "token_vs_raw": 2.52
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.6322,
+        "min_ms": 0.5849,
+        "ns_per_row": 63.22
+      },
+      "decode": {
+        "median_ms": 0.7341,
+        "min_ms": 0.7079,
+        "ns_per_row": 73.41
+      },
+      "token": {
+        "median_ms": 0.3448,
+        "min_ms": 0.3084,
+        "ns_per_row": 34.48
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 2.13,
+      "token_vs_raw": 1.83
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.7453,
+        "min_ms": 0.7099,
+        "ns_per_row": 74.53
+      },
+      "decode": {
+        "median_ms": 0.6548,
+        "min_ms": 0.6269,
+        "ns_per_row": 65.48
+      },
+      "token": {
+        "median_ms": 0.4044,
+        "min_ms": 0.3552,
+        "ns_per_row": 40.44
+      },
+      "matches": 62,
+      "verified": "pass",
+      "token_vs_decode": 1.62,
+      "token_vs_raw": 1.84
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.6061,
+        "min_ms": 0.5768,
+        "ns_per_row": 60.61
+      },
+      "decode": {
+        "median_ms": 0.5922,
+        "min_ms": 0.5888,
+        "ns_per_row": 59.22
+      },
+      "token": {
+        "median_ms": 0.3671,
+        "min_ms": 0.3328,
+        "ns_per_row": 36.71
+      },
+      "matches": 68,
+      "verified": "pass",
+      "token_vs_decode": 1.61,
+      "token_vs_raw": 1.65
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.5459,
+        "min_ms": 0.5219,
+        "ns_per_row": 54.59
+      },
+      "decode": {
+        "median_ms": 0.6476,
+        "min_ms": 0.6058,
+        "ns_per_row": 64.76
+      },
+      "token": {
+        "median_ms": 0.501,
+        "min_ms": 0.4643,
+        "ns_per_row": 50.1
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.29,
+      "token_vs_raw": 1.09
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.2278,
+        "min_ms": 1.1499,
+        "ns_per_row": 122.78
+      },
+      "decode": {
+        "median_ms": 1.0621,
+        "min_ms": 1.0018,
+        "ns_per_row": 106.21
+      },
+      "token": {
+        "median_ms": 0.5638,
+        "min_ms": 0.537,
+        "ns_per_row": 56.38
+      },
+      "matches": 672,
+      "verified": "pass",
+      "token_vs_decode": 1.88,
+      "token_vs_raw": 2.18
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.039,
+        "min_ms": 1.0192,
+        "ns_per_row": 103.9
+      },
+      "decode": {
+        "median_ms": 0.8931,
+        "min_ms": 0.8554,
+        "ns_per_row": 89.31
+      },
+      "token": {
+        "median_ms": 0.5301,
+        "min_ms": 0.5034,
+        "ns_per_row": 53.01
+      },
+      "matches": 108,
+      "verified": "pass",
+      "token_vs_decode": 1.68,
+      "token_vs_raw": 1.96
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.6927,
+        "min_ms": 0.6613,
+        "ns_per_row": 69.27
+      },
+      "decode": {
+        "median_ms": 0.6812,
+        "min_ms": 0.6217,
+        "ns_per_row": 68.12
+      },
+      "token": {
+        "median_ms": 0.3798,
+        "min_ms": 0.3603,
+        "ns_per_row": 37.98
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.79,
+      "token_vs_raw": 1.82
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 1.2826,
+        "min_ms": 1.1913,
+        "ns_per_row": 128.26
+      },
+      "decode": {
+        "median_ms": 1.332,
+        "min_ms": 1.2121,
+        "ns_per_row": 133.2
+      },
+      "token": {
+        "median_ms": 0.7669,
+        "min_ms": 0.7265,
+        "ns_per_row": 76.69
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.74,
+      "token_vs_raw": 1.67
+    },
+    {
+      "scale": "10k",
+      "rows": 10000,
+      "threads": 1,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 1.9788,
+        "min_ms": 1.9243,
+        "ns_per_row": 197.88
+      },
+      "decode": {
+        "median_ms": 2.1033,
+        "min_ms": 2.0183,
+        "ns_per_row": 210.33
+      },
+      "token": {
+        "median_ms": 1.7819,
+        "min_ms": 1.629,
+        "ns_per_row": 178.19
+      },
+      "matches": 2004,
+      "verified": "pass",
+      "token_vs_decode": 1.18,
+      "token_vs_raw": 1.11
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.8216,
+        "min_ms": 1.4899,
+        "ns_per_row": 18.216
+      },
+      "decode": {
+        "median_ms": 5.656,
+        "min_ms": 4.9011,
+        "ns_per_row": 56.56
+      },
+      "token": {
+        "median_ms": 1.6382,
+        "min_ms": 1.5064,
+        "ns_per_row": 16.382
+      },
+      "matches": 5055,
+      "verified": "pass",
+      "token_vs_decode": 3.45,
+      "token_vs_raw": 1.11
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.5373,
+        "min_ms": 1.4977,
+        "ns_per_row": 15.373
+      },
+      "decode": {
+        "median_ms": 5.1033,
+        "min_ms": 4.7609,
+        "ns_per_row": 51.033
+      },
+      "token": {
+        "median_ms": 2.0101,
+        "min_ms": 1.7877,
+        "ns_per_row": 20.101
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 2.54,
+      "token_vs_raw": 0.76
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.9496,
+        "min_ms": 0.9112,
+        "ns_per_row": 9.496
+      },
+      "decode": {
+        "median_ms": 5.3242,
+        "min_ms": 5.0392,
+        "ns_per_row": 53.242
+      },
+      "token": {
+        "median_ms": 1.5569,
+        "min_ms": 1.4939,
+        "ns_per_row": 15.569
+      },
+      "matches": 347,
+      "verified": "pass",
+      "token_vs_decode": 3.42,
+      "token_vs_raw": 0.61
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.2302,
+        "min_ms": 1.0952,
+        "ns_per_row": 12.302
+      },
+      "decode": {
+        "median_ms": 5.2781,
+        "min_ms": 4.5209,
+        "ns_per_row": 52.781
+      },
+      "token": {
+        "median_ms": 1.6597,
+        "min_ms": 1.4085,
+        "ns_per_row": 16.597
+      },
+      "matches": 815,
+      "verified": "pass",
+      "token_vs_decode": 3.18,
+      "token_vs_raw": 0.74
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.9982,
+        "min_ms": 0.8967,
+        "ns_per_row": 9.982
+      },
+      "decode": {
+        "median_ms": 5.0778,
+        "min_ms": 4.5944,
+        "ns_per_row": 50.778
+      },
+      "token": {
+        "median_ms": 1.7166,
+        "min_ms": 1.6244,
+        "ns_per_row": 17.166
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 2.96,
+      "token_vs_raw": 0.58
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 3.8446,
+        "min_ms": 3.5498,
+        "ns_per_row": 38.446
+      },
+      "decode": {
+        "median_ms": 8.1276,
+        "min_ms": 7.933,
+        "ns_per_row": 81.276
+      },
+      "token": {
+        "median_ms": 3.9099,
+        "min_ms": 3.5894,
+        "ns_per_row": 39.099
+      },
+      "matches": 6053,
+      "verified": "pass",
+      "token_vs_decode": 2.08,
+      "token_vs_raw": 0.98
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 2.9313,
+        "min_ms": 2.541,
+        "ns_per_row": 29.313
+      },
+      "decode": {
+        "median_ms": 6.4847,
+        "min_ms": 5.6129,
+        "ns_per_row": 64.847
+      },
+      "token": {
+        "median_ms": 3.1315,
+        "min_ms": 2.9737,
+        "ns_per_row": 31.315
+      },
+      "matches": 637,
+      "verified": "pass",
+      "token_vs_decode": 2.07,
+      "token_vs_raw": 0.94
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.7258,
+        "min_ms": 1.6651,
+        "ns_per_row": 17.258
+      },
+      "decode": {
+        "median_ms": 4.8272,
+        "min_ms": 4.7515,
+        "ns_per_row": 48.272
+      },
+      "token": {
+        "median_ms": 1.7095,
+        "min_ms": 1.4921,
+        "ns_per_row": 17.095
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 2.82,
+      "token_vs_raw": 1.01
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 3.9162,
+        "min_ms": 3.6431,
+        "ns_per_row": 39.162
+      },
+      "decode": {
+        "median_ms": 12.3363,
+        "min_ms": 11.3296,
+        "ns_per_row": 123.363
+      },
+      "token": {
+        "median_ms": 6.8126,
+        "min_ms": 6.6246,
+        "ns_per_row": 68.126
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.81,
+      "token_vs_raw": 0.57
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 4,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 10.938,
+        "min_ms": 10.1285,
+        "ns_per_row": 109.38
+      },
+      "decode": {
+        "median_ms": 19.085,
+        "min_ms": 18.4807,
+        "ns_per_row": 190.85
+      },
+      "token": {
+        "median_ms": 15.56,
+        "min_ms": 15.1792,
+        "ns_per_row": 155.6
+      },
+      "matches": 20582,
+      "verified": "pass",
+      "token_vs_decode": 1.23,
+      "token_vs_raw": 0.7
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.7653,
+        "min_ms": 1.5414,
+        "ns_per_row": 17.653
+      },
+      "decode": {
+        "median_ms": 4.7549,
+        "min_ms": 4.1969,
+        "ns_per_row": 47.549
+      },
+      "token": {
+        "median_ms": 1.4762,
+        "min_ms": 1.4126,
+        "ns_per_row": 14.762
+      },
+      "matches": 5055,
+      "verified": "pass",
+      "token_vs_decode": 3.22,
+      "token_vs_raw": 1.2
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.6704,
+        "min_ms": 1.3386,
+        "ns_per_row": 16.704
+      },
+      "decode": {
+        "median_ms": 4.9067,
+        "min_ms": 4.7825,
+        "ns_per_row": 49.067
+      },
+      "token": {
+        "median_ms": 1.6509,
+        "min_ms": 1.6094,
+        "ns_per_row": 16.509
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 2.97,
+      "token_vs_raw": 1.01
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.9836,
+        "min_ms": 0.9383,
+        "ns_per_row": 9.836
+      },
+      "decode": {
+        "median_ms": 4.8178,
+        "min_ms": 4.1088,
+        "ns_per_row": 48.178
+      },
+      "token": {
+        "median_ms": 1.4133,
+        "min_ms": 1.2907,
+        "ns_per_row": 14.133
+      },
+      "matches": 347,
+      "verified": "pass",
+      "token_vs_decode": 3.41,
+      "token_vs_raw": 0.7
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.9272,
+        "min_ms": 0.8923,
+        "ns_per_row": 9.272
+      },
+      "decode": {
+        "median_ms": 5.1779,
+        "min_ms": 4.7333,
+        "ns_per_row": 51.779
+      },
+      "token": {
+        "median_ms": 1.5741,
+        "min_ms": 1.5567,
+        "ns_per_row": 15.741
+      },
+      "matches": 815,
+      "verified": "pass",
+      "token_vs_decode": 3.29,
+      "token_vs_raw": 0.59
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 0.8091,
+        "min_ms": 0.7596,
+        "ns_per_row": 8.091
+      },
+      "decode": {
+        "median_ms": 4.9632,
+        "min_ms": 4.7075,
+        "ns_per_row": 49.632
+      },
+      "token": {
+        "median_ms": 1.6055,
+        "min_ms": 1.4592,
+        "ns_per_row": 16.055
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 3.09,
+      "token_vs_raw": 0.5
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 3.8213,
+        "min_ms": 3.4758,
+        "ns_per_row": 38.213
+      },
+      "decode": {
+        "median_ms": 7.7403,
+        "min_ms": 6.9328,
+        "ns_per_row": 77.403
+      },
+      "token": {
+        "median_ms": 3.4316,
+        "min_ms": 3.2209,
+        "ns_per_row": 34.316
+      },
+      "matches": 6053,
+      "verified": "pass",
+      "token_vs_decode": 2.26,
+      "token_vs_raw": 1.11
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 2.6692,
+        "min_ms": 2.6389,
+        "ns_per_row": 26.692
+      },
+      "decode": {
+        "median_ms": 6.5455,
+        "min_ms": 5.5801,
+        "ns_per_row": 65.455
+      },
+      "token": {
+        "median_ms": 3.0289,
+        "min_ms": 2.683,
+        "ns_per_row": 30.289
+      },
+      "matches": 637,
+      "verified": "pass",
+      "token_vs_decode": 2.16,
+      "token_vs_raw": 0.88
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 1.4645,
+        "min_ms": 1.447,
+        "ns_per_row": 14.645
+      },
+      "decode": {
+        "median_ms": 5.0851,
+        "min_ms": 4.8461,
+        "ns_per_row": 50.851
+      },
+      "token": {
+        "median_ms": 1.4416,
+        "min_ms": 1.3718,
+        "ns_per_row": 14.416
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 3.53,
+      "token_vs_raw": 1.02
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 4.0212,
+        "min_ms": 3.93,
+        "ns_per_row": 40.212
+      },
+      "decode": {
+        "median_ms": 12.1509,
+        "min_ms": 11.3147,
+        "ns_per_row": 121.509
+      },
+      "token": {
+        "median_ms": 6.6083,
+        "min_ms": 5.8699,
+        "ns_per_row": 66.083
+      },
+      "matches": 0,
+      "verified": "pass",
+      "token_vs_decode": 1.84,
+      "token_vs_raw": 0.61
+    },
+    {
+      "scale": "100k",
+      "rows": 100000,
+      "threads": 1,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 10.5982,
+        "min_ms": 9.4323,
+        "ns_per_row": 105.982
+      },
+      "decode": {
+        "median_ms": 18.7178,
+        "min_ms": 17.1642,
+        "ns_per_row": 187.178
+      },
+      "token": {
+        "median_ms": 15.324,
+        "min_ms": 14.2143,
+        "ns_per_row": 153.24
+      },
+      "matches": 20582,
+      "verified": "pass",
+      "token_vs_decode": 1.22,
+      "token_vs_raw": 0.69
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 18.4224,
+        "min_ms": 17.8925,
+        "ns_per_row": 18.422
+      },
+      "decode": {
+        "median_ms": 40.8964,
+        "min_ms": 40.1219,
+        "ns_per_row": 40.896
+      },
+      "token": {
+        "median_ms": 20.6739,
+        "min_ms": 19.3346,
+        "ns_per_row": 20.674
+      },
+      "matches": 517519,
+      "verified": "pass",
+      "token_vs_decode": 1.98,
+      "token_vs_raw": 0.89
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 19.2711,
+        "min_ms": 16.4761,
+        "ns_per_row": 19.271
+      },
+      "decode": {
+        "median_ms": 43.9014,
+        "min_ms": 41.9045,
+        "ns_per_row": 43.901
+      },
+      "token": {
+        "median_ms": 22.087,
+        "min_ms": 21.0791,
+        "ns_per_row": 22.087
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 1.99,
+      "token_vs_raw": 0.87
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 15.3618,
+        "min_ms": 14.9172,
+        "ns_per_row": 15.362
+      },
+      "decode": {
+        "median_ms": 43.1858,
+        "min_ms": 39.9975,
+        "ns_per_row": 43.186
+      },
+      "token": {
+        "median_ms": 20.4346,
+        "min_ms": 18.7177,
+        "ns_per_row": 20.435
+      },
+      "matches": 12714,
+      "verified": "pass",
+      "token_vs_decode": 2.11,
+      "token_vs_raw": 0.75
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 14.9023,
+        "min_ms": 13.76,
+        "ns_per_row": 14.902
+      },
+      "decode": {
+        "median_ms": 42.6325,
+        "min_ms": 39.5815,
+        "ns_per_row": 42.632
+      },
+      "token": {
+        "median_ms": 18.8022,
+        "min_ms": 18.1712,
+        "ns_per_row": 18.802
+      },
+      "matches": 7683,
+      "verified": "pass",
+      "token_vs_decode": 2.27,
+      "token_vs_raw": 0.79
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 14.5324,
+        "min_ms": 14.0683,
+        "ns_per_row": 14.532
+      },
+      "decode": {
+        "median_ms": 43.316,
+        "min_ms": 40.9418,
+        "ns_per_row": 43.316
+      },
+      "token": {
+        "median_ms": 26.5073,
+        "min_ms": 26.0528,
+        "ns_per_row": 26.507
+      },
+      "matches": 58976,
+      "verified": "pass",
+      "token_vs_decode": 1.63,
+      "token_vs_raw": 0.55
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 33.6491,
+        "min_ms": 33.1462,
+        "ns_per_row": 33.649
+      },
+      "decode": {
+        "median_ms": 59.7492,
+        "min_ms": 57.6493,
+        "ns_per_row": 59.749
+      },
+      "token": {
+        "median_ms": 34.0864,
+        "min_ms": 33.0258,
+        "ns_per_row": 34.086
+      },
+      "matches": 49278,
+      "verified": "pass",
+      "token_vs_decode": 1.75,
+      "token_vs_raw": 0.99
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 25.1186,
+        "min_ms": 23.687,
+        "ns_per_row": 25.119
+      },
+      "decode": {
+        "median_ms": 49.5202,
+        "min_ms": 48.8959,
+        "ns_per_row": 49.52
+      },
+      "token": {
+        "median_ms": 29.901,
+        "min_ms": 29.1352,
+        "ns_per_row": 29.901
+      },
+      "matches": 6174,
+      "verified": "pass",
+      "token_vs_decode": 1.66,
+      "token_vs_raw": 0.84
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 21.8583,
+        "min_ms": 20.0859,
+        "ns_per_row": 21.858
+      },
+      "decode": {
+        "median_ms": 44.3205,
+        "min_ms": 42.9349,
+        "ns_per_row": 44.32
+      },
+      "token": {
+        "median_ms": 21.3544,
+        "min_ms": 20.6136,
+        "ns_per_row": 21.354
+      },
+      "matches": 341747,
+      "verified": "pass",
+      "token_vs_decode": 2.08,
+      "token_vs_raw": 1.02
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 34.3105,
+        "min_ms": 33.1602,
+        "ns_per_row": 34.31
+      },
+      "decode": {
+        "median_ms": 84.629,
+        "min_ms": 82.6313,
+        "ns_per_row": 84.629
+      },
+      "token": {
+        "median_ms": 40.2568,
+        "min_ms": 39.3018,
+        "ns_per_row": 40.257
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 2.1,
+      "token_vs_raw": 0.85
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 55.011,
+        "min_ms": 53.5271,
+        "ns_per_row": 55.011
+      },
+      "decode": {
+        "median_ms": 106.3361,
+        "min_ms": 104.1321,
+        "ns_per_row": 106.336
+      },
+      "token": {
+        "median_ms": 71.8848,
+        "min_ms": 71.7145,
+        "ns_per_row": 71.885
+      },
+      "matches": 148394,
+      "verified": "pass",
+      "token_vs_decode": 1.48,
+      "token_vs_raw": 0.77
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 35.0653,
+        "min_ms": 34.3801,
+        "ns_per_row": 35.065
+      },
+      "decode": {
+        "median_ms": 90.4545,
+        "min_ms": 88.7611,
+        "ns_per_row": 90.455
+      },
+      "token": {
+        "median_ms": 40.7119,
+        "min_ms": 38.4369,
+        "ns_per_row": 40.712
+      },
+      "matches": 517519,
+      "verified": "pass",
+      "token_vs_decode": 2.22,
+      "token_vs_raw": 0.86
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 36.5695,
+        "min_ms": 35.9897,
+        "ns_per_row": 36.569
+      },
+      "decode": {
+        "median_ms": 89.6028,
+        "min_ms": 87.2011,
+        "ns_per_row": 89.603
+      },
+      "token": {
+        "median_ms": 44.2063,
+        "min_ms": 41.2863,
+        "ns_per_row": 44.206
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 2.03,
+      "token_vs_raw": 0.83
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 30.1459,
+        "min_ms": 26.7521,
+        "ns_per_row": 30.146
+      },
+      "decode": {
+        "median_ms": 89.4946,
+        "min_ms": 83.4408,
+        "ns_per_row": 89.495
+      },
+      "token": {
+        "median_ms": 38.4936,
+        "min_ms": 36.0087,
+        "ns_per_row": 38.494
+      },
+      "matches": 12714,
+      "verified": "pass",
+      "token_vs_decode": 2.32,
+      "token_vs_raw": 0.78
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 31.8191,
+        "min_ms": 29.6629,
+        "ns_per_row": 31.819
+      },
+      "decode": {
+        "median_ms": 90.3032,
+        "min_ms": 87.8497,
+        "ns_per_row": 90.303
+      },
+      "token": {
+        "median_ms": 38.3281,
+        "min_ms": 36.25,
+        "ns_per_row": 38.328
+      },
+      "matches": 7683,
+      "verified": "pass",
+      "token_vs_decode": 2.36,
+      "token_vs_raw": 0.83
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 28.4534,
+        "min_ms": 28.2368,
+        "ns_per_row": 28.453
+      },
+      "decode": {
+        "median_ms": 86.3235,
+        "min_ms": 83.853,
+        "ns_per_row": 86.324
+      },
+      "token": {
+        "median_ms": 51.0317,
+        "min_ms": 50.4686,
+        "ns_per_row": 51.032
+      },
+      "matches": 58976,
+      "verified": "pass",
+      "token_vs_decode": 1.69,
+      "token_vs_raw": 0.56
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 77.4314,
+        "min_ms": 75.2099,
+        "ns_per_row": 77.431
+      },
+      "decode": {
+        "median_ms": 133.713,
+        "min_ms": 129.5395,
+        "ns_per_row": 133.713
+      },
+      "token": {
+        "median_ms": 76.4861,
+        "min_ms": 75.0544,
+        "ns_per_row": 76.486
+      },
+      "matches": 49278,
+      "verified": "pass",
+      "token_vs_decode": 1.75,
+      "token_vs_raw": 1.01
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 53.7498,
+        "min_ms": 52.0423,
+        "ns_per_row": 53.75
+      },
+      "decode": {
+        "median_ms": 113.723,
+        "min_ms": 109.0853,
+        "ns_per_row": 113.723
+      },
+      "token": {
+        "median_ms": 68.5465,
+        "min_ms": 67.3426,
+        "ns_per_row": 68.546
+      },
+      "matches": 6174,
+      "verified": "pass",
+      "token_vs_decode": 1.66,
+      "token_vs_raw": 0.78
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 45.4334,
+        "min_ms": 44.1026,
+        "ns_per_row": 45.433
+      },
+      "decode": {
+        "median_ms": 92.2861,
+        "min_ms": 91.1598,
+        "ns_per_row": 92.286
+      },
+      "token": {
+        "median_ms": 44.5208,
+        "min_ms": 42.7701,
+        "ns_per_row": 44.521
+      },
+      "matches": 341747,
+      "verified": "pass",
+      "token_vs_decode": 2.07,
+      "token_vs_raw": 1.02
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 72.4576,
+        "min_ms": 71.6745,
+        "ns_per_row": 72.458
+      },
+      "decode": {
+        "median_ms": 178.5557,
+        "min_ms": 174.8703,
+        "ns_per_row": 178.556
+      },
+      "token": {
+        "median_ms": 88.452,
+        "min_ms": 86.3514,
+        "ns_per_row": 88.452
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 2.02,
+      "token_vs_raw": 0.82
+    },
+    {
+      "scale": "1m",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 127.8586,
+        "min_ms": 124.2072,
+        "ns_per_row": 127.859
+      },
+      "decode": {
+        "median_ms": 234.4128,
+        "min_ms": 231.4008,
+        "ns_per_row": 234.413
+      },
+      "token": {
+        "median_ms": 171.7928,
+        "min_ms": 169.5314,
+        "ns_per_row": 171.793
+      },
+      "matches": 148394,
+      "verified": "pass",
+      "token_vs_decode": 1.36,
+      "token_vs_raw": 0.74
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 9.3972,
+        "min_ms": 7.5758,
+        "ns_per_row": 9.397
+      },
+      "decode": {
+        "median_ms": 41.8087,
+        "min_ms": 40.3825,
+        "ns_per_row": 41.809
+      },
+      "token": {
+        "median_ms": 13.2841,
+        "min_ms": 11.9488,
+        "ns_per_row": 13.284
+      },
+      "matches": 517519,
+      "verified": "pass",
+      "token_vs_decode": 3.15,
+      "token_vs_raw": 0.71
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 9.6848,
+        "min_ms": 7.9404,
+        "ns_per_row": 9.685
+      },
+      "decode": {
+        "median_ms": 43.8033,
+        "min_ms": 41.8182,
+        "ns_per_row": 43.803
+      },
+      "token": {
+        "median_ms": 13.2125,
+        "min_ms": 13.0562,
+        "ns_per_row": 13.213
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 3.32,
+      "token_vs_raw": 0.73
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 5.8368,
+        "min_ms": 4.9989,
+        "ns_per_row": 5.837
+      },
+      "decode": {
+        "median_ms": 40.469,
+        "min_ms": 39.6193,
+        "ns_per_row": 40.469
+      },
+      "token": {
+        "median_ms": 10.8021,
+        "min_ms": 10.5296,
+        "ns_per_row": 10.802
+      },
+      "matches": 12714,
+      "verified": "pass",
+      "token_vs_decode": 3.75,
+      "token_vs_raw": 0.54
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 5.6693,
+        "min_ms": 5.1353,
+        "ns_per_row": 5.669
+      },
+      "decode": {
+        "median_ms": 41.1575,
+        "min_ms": 39.9454,
+        "ns_per_row": 41.157
+      },
+      "token": {
+        "median_ms": 10.7663,
+        "min_ms": 10.6657,
+        "ns_per_row": 10.766
+      },
+      "matches": 7683,
+      "verified": "pass",
+      "token_vs_decode": 3.82,
+      "token_vs_raw": 0.53
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 5.664,
+        "min_ms": 4.1488,
+        "ns_per_row": 5.664
+      },
+      "decode": {
+        "median_ms": 40.3938,
+        "min_ms": 39.4302,
+        "ns_per_row": 40.394
+      },
+      "token": {
+        "median_ms": 19.6242,
+        "min_ms": 17.9342,
+        "ns_per_row": 19.624
+      },
+      "matches": 58976,
+      "verified": "pass",
+      "token_vs_decode": 2.06,
+      "token_vs_raw": 0.29
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 31.1884,
+        "min_ms": 30.5693,
+        "ns_per_row": 31.188
+      },
+      "decode": {
+        "median_ms": 75.62,
+        "min_ms": 68.6935,
+        "ns_per_row": 75.62
+      },
+      "token": {
+        "median_ms": 37.9846,
+        "min_ms": 36.8375,
+        "ns_per_row": 37.985
+      },
+      "matches": 49278,
+      "verified": "pass",
+      "token_vs_decode": 1.99,
+      "token_vs_raw": 0.82
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 21.0461,
+        "min_ms": 20.3197,
+        "ns_per_row": 21.046
+      },
+      "decode": {
+        "median_ms": 60.2068,
+        "min_ms": 56.9658,
+        "ns_per_row": 60.207
+      },
+      "token": {
+        "median_ms": 34.218,
+        "min_ms": 31.5829,
+        "ns_per_row": 34.218
+      },
+      "matches": 6174,
+      "verified": "pass",
+      "token_vs_decode": 1.76,
+      "token_vs_raw": 0.62
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 16.6822,
+        "min_ms": 15.6804,
+        "ns_per_row": 16.682
+      },
+      "decode": {
+        "median_ms": 58.3423,
+        "min_ms": 52.63,
+        "ns_per_row": 58.342
+      },
+      "token": {
+        "median_ms": 18.0313,
+        "min_ms": 16.343,
+        "ns_per_row": 18.031
+      },
+      "matches": 341747,
+      "verified": "pass",
+      "token_vs_decode": 3.24,
+      "token_vs_raw": 0.93
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 22.4758,
+        "min_ms": 20.9781,
+        "ns_per_row": 22.476
+      },
+      "decode": {
+        "median_ms": 124.526,
+        "min_ms": 123.0474,
+        "ns_per_row": 124.526
+      },
+      "token": {
+        "median_ms": 27.1822,
+        "min_ms": 25.6878,
+        "ns_per_row": 27.182
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 4.58,
+      "token_vs_raw": 0.83
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 4,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 51.4619,
+        "min_ms": 46.8332,
+        "ns_per_row": 51.462
+      },
+      "decode": {
+        "median_ms": 124.9301,
+        "min_ms": 121.5061,
+        "ns_per_row": 124.93
+      },
+      "token": {
+        "median_ms": 57.415,
+        "min_ms": 56.7825,
+        "ns_per_row": 57.415
+      },
+      "matches": 148394,
+      "verified": "pass",
+      "token_vs_decode": 2.18,
+      "token_vs_raw": 0.9
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "p_http",
+      "class": "prefix",
+      "pattern": "http://%",
+      "concat": false,
+      "raw": {
+        "median_ms": 15.7315,
+        "min_ms": 15.605,
+        "ns_per_row": 15.731
+      },
+      "decode": {
+        "median_ms": 85.137,
+        "min_ms": 83.0599,
+        "ns_per_row": 85.137
+      },
+      "token": {
+        "median_ms": 26.3774,
+        "min_ms": 24.8998,
+        "ns_per_row": 26.377
+      },
+      "matches": 517519,
+      "verified": "pass",
+      "token_vs_decode": 3.23,
+      "token_vs_raw": 0.6
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "p_irr",
+      "class": "prefix",
+      "pattern": "http://irr.ru%",
+      "concat": false,
+      "raw": {
+        "median_ms": 16.7305,
+        "min_ms": 16.3455,
+        "ns_per_row": 16.731
+      },
+      "decode": {
+        "median_ms": 88.9937,
+        "min_ms": 83.5547,
+        "ns_per_row": 88.994
+      },
+      "token": {
+        "median_ms": 29.9563,
+        "min_ms": 28.5214,
+        "ns_per_row": 29.956
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 2.97,
+      "token_vs_raw": 0.56
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "s_php",
+      "class": "suffix",
+      "pattern": "%.php",
+      "concat": false,
+      "raw": {
+        "median_ms": 10.2962,
+        "min_ms": 9.724,
+        "ns_per_row": 10.296
+      },
+      "decode": {
+        "median_ms": 84.2079,
+        "min_ms": 81.7174,
+        "ns_per_row": 84.208
+      },
+      "token": {
+        "median_ms": 23.5701,
+        "min_ms": 22.3673,
+        "ns_per_row": 23.57
+      },
+      "matches": 12714,
+      "verified": "pass",
+      "token_vs_decode": 3.57,
+      "token_vs_raw": 0.44
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "s_html",
+      "class": "suffix",
+      "pattern": "%.html",
+      "concat": false,
+      "raw": {
+        "median_ms": 9.6853,
+        "min_ms": 9.2652,
+        "ns_per_row": 9.685
+      },
+      "decode": {
+        "median_ms": 83.3665,
+        "min_ms": 81.0144,
+        "ns_per_row": 83.366
+      },
+      "token": {
+        "median_ms": 23.5806,
+        "min_ms": 23.0695,
+        "ns_per_row": 23.581
+      },
+      "matches": 7683,
+      "verified": "pass",
+      "token_vs_decode": 3.54,
+      "token_vs_raw": 0.41
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "e_top_url",
+      "class": "exact",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "concat": false,
+      "raw": {
+        "median_ms": 9.1012,
+        "min_ms": 8.8563,
+        "ns_per_row": 9.101
+      },
+      "decode": {
+        "median_ms": 81.5112,
+        "min_ms": 79.6941,
+        "ns_per_row": 81.511
+      },
+      "token": {
+        "median_ms": 38.3742,
+        "min_ms": 36.3209,
+        "ns_per_row": 38.374
+      },
+      "matches": 58976,
+      "verified": "pass",
+      "token_vs_decode": 2.12,
+      "token_vs_raw": 0.24
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "i_search",
+      "class": "contains",
+      "pattern": "%/search%",
+      "concat": false,
+      "raw": {
+        "median_ms": 71.2962,
+        "min_ms": 67.8685,
+        "ns_per_row": 71.296
+      },
+      "decode": {
+        "median_ms": 145.3444,
+        "min_ms": 139.7178,
+        "ns_per_row": 145.344
+      },
+      "token": {
+        "median_ms": 74.22,
+        "min_ms": 72.8665,
+        "ns_per_row": 74.22
+      },
+      "matches": 49278,
+      "verified": "pass",
+      "token_vs_decode": 1.96,
+      "token_vs_raw": 0.96
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "u8_ru_cyr",
+      "class": "contains",
+      "pattern": "%ру%",
+      "concat": false,
+      "raw": {
+        "median_ms": 42.6155,
+        "min_ms": 40.8146,
+        "ns_per_row": 42.616
+      },
+      "decode": {
+        "median_ms": 116.1135,
+        "min_ms": 114.298,
+        "ns_per_row": 116.114
+      },
+      "token": {
+        "median_ms": 63.4385,
+        "min_ms": 61.886,
+        "ns_per_row": 63.438
+      },
+      "matches": 6174,
+      "verified": "pass",
+      "token_vs_decode": 1.83,
+      "token_vs_raw": 0.67
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "w_four_under",
+      "class": "underscore",
+      "pattern": "http://irr.ru/____%",
+      "concat": false,
+      "raw": {
+        "median_ms": 23.6063,
+        "min_ms": 23.0125,
+        "ns_per_row": 23.606
+      },
+      "decode": {
+        "median_ms": 90.5911,
+        "min_ms": 88.3607,
+        "ns_per_row": 90.591
+      },
+      "token": {
+        "median_ms": 31.0381,
+        "min_ms": 30.3463,
+        "ns_per_row": 31.038
+      },
+      "matches": 341747,
+      "verified": "pass",
+      "token_vs_decode": 2.92,
+      "token_vs_raw": 0.76
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "c_irr",
+      "class": "concat",
+      "pattern": "http://irr.ru%",
+      "concat": true,
+      "raw": {
+        "median_ms": 43.4724,
+        "min_ms": 42.5201,
+        "ns_per_row": 43.472
+      },
+      "decode": {
+        "median_ms": 203.7575,
+        "min_ms": 195.2267,
+        "ns_per_row": 203.758
+      },
+      "token": {
+        "median_ms": 44.9239,
+        "min_ms": 42.4542,
+        "ns_per_row": 44.924
+      },
+      "matches": 341755,
+      "verified": "pass",
+      "token_vs_decode": 4.54,
+      "token_vs_raw": 0.97
+    },
+    {
+      "scale": "1m-uncompressed",
+      "rows": 1000000,
+      "threads": 1,
+      "name": "c_yandex",
+      "class": "concat",
+      "pattern": "%yandex%",
+      "concat": true,
+      "raw": {
+        "median_ms": 98.4635,
+        "min_ms": 97.9642,
+        "ns_per_row": 98.464
+      },
+      "decode": {
+        "median_ms": 249.9007,
+        "min_ms": 248.389,
+        "ns_per_row": 249.901
+      },
+      "token": {
+        "median_ms": 124.0756,
+        "min_ms": 123.2397,
+        "ns_per_row": 124.076
+      },
+      "matches": 148394,
+      "verified": "pass",
+      "token_vs_decode": 2.01,
+      "token_vs_raw": 0.79
+    }
+  ],
+  "tokens_read": [
+    {
+      "name": "p_http",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 1.518
+    },
+    {
+      "name": "p_irr",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 3.061
+    },
+    {
+      "name": "s_php",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 1.013
+    },
+    {
+      "name": "s_html",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 1.013
+    },
+    {
+      "name": "e_top_url",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 7.457
+    },
+    {
+      "name": "i_search",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 35.077
+    },
+    {
+      "name": "u8_ru_cyr",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 36.002
+    },
+    {
+      "name": "w_four_under",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 36.136,
+      "tokens_per_row_read": 4.086
+    },
+    {
+      "name": "c_irr",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 69.112,
+      "tokens_per_row_read": 3.061
+    },
+    {
+      "name": "c_yandex",
+      "rows_evaluated": 1000000,
+      "tokens_per_row_present": 69.112,
+      "tokens_per_row_read": 64.754
+    }
+  ],
+  "cli_reference_1m_single_thread": [
+    {
+      "name": "p_http",
+      "pattern": "http://%",
+      "raw": {
+        "ns_per_row": 5.1568,
+        "matches": 517519
+      },
+      "decode": {
+        "ns_per_row": 45.5262,
+        "matches": 517519
+      },
+      "token": {
+        "ns_per_row": 7.7307,
+        "matches": 517519
+      }
+    },
+    {
+      "name": "p_irr",
+      "pattern": "http://irr.ru%",
+      "raw": {
+        "ns_per_row": 6.6559,
+        "matches": 341755
+      },
+      "decode": {
+        "ns_per_row": 43.582,
+        "matches": 341755
+      },
+      "token": {
+        "ns_per_row": 8.5876,
+        "matches": 341755
+      }
+    },
+    {
+      "name": "s_php",
+      "pattern": "%.php",
+      "raw": {
+        "ns_per_row": 6.1133,
+        "matches": 12714
+      },
+      "decode": {
+        "ns_per_row": 46.611,
+        "matches": 12714
+      },
+      "token": {
+        "ns_per_row": 8.5576,
+        "matches": 12714
+      }
+    },
+    {
+      "name": "s_html",
+      "pattern": "%.html",
+      "raw": {
+        "ns_per_row": 7.3157,
+        "matches": 7683
+      },
+      "decode": {
+        "ns_per_row": 48.4739,
+        "matches": 7683
+      },
+      "token": {
+        "ns_per_row": 5.6878,
+        "matches": 7683
+      }
+    },
+    {
+      "name": "e_top_url",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "raw": {
+        "ns_per_row": 2.5602,
+        "matches": 58976
+      },
+      "decode": {
+        "ns_per_row": 57.7167,
+        "matches": 58976
+      },
+      "token": {
+        "ns_per_row": 23.9004,
+        "matches": 58976
+      }
+    },
+    {
+      "name": "i_search",
+      "pattern": "%/search%",
+      "raw": {
+        "ns_per_row": 28.2344,
+        "matches": 49278
+      },
+      "decode": {
+        "ns_per_row": 73.6214,
+        "matches": 49278
+      },
+      "token": {
+        "ns_per_row": 63.5624,
+        "matches": 49278
+      }
+    },
+    {
+      "name": "u8_ru_cyr",
+      "pattern": "%ру%",
+      "raw": {
+        "ns_per_row": 24.0626,
+        "matches": 6174
+      },
+      "decode": {
+        "ns_per_row": 57.6123,
+        "matches": 6174
+      },
+      "token": {
+        "ns_per_row": 43.7852,
+        "matches": 6174
+      }
+    },
+    {
+      "name": "w_four_under",
+      "pattern": "http://irr.ru/____%",
+      "raw": {
+        "ns_per_row": 8.9342,
+        "matches": 341747
+      },
+      "decode": {
+        "ns_per_row": 47.3106,
+        "matches": 341747
+      },
+      "token": {
+        "ns_per_row": 11.1461,
+        "matches": 341747
+      }
+    },
+    {
+      "name": "c_irr",
+      "pattern": "http://irr.ru%",
+      "raw": {
+        "ns_per_row": 20.6764,
+        "matches": 341755
+      },
+      "decode": {
+        "ns_per_row": 76.0898,
+        "matches": 341755
+      },
+      "token": {
+        "ns_per_row": 8.393,
+        "matches": 341755
+      }
+    },
+    {
+      "name": "c_yandex",
+      "pattern": "%yandex%",
+      "raw": {
+        "ns_per_row": 52.374,
+        "matches": 148394
+      },
+      "decode": {
+        "ns_per_row": 112.175,
+        "matches": 148394
+      },
+      "token": {
+        "ns_per_row": 93.1527,
+        "matches": 148394
+      }
+    }
+  ],
+  "cold_start": [
+    {
+      "mode": "raw",
+      "import_ms": 484.7,
+      "connect_ms": 21.2,
+      "load_extension_ms": 4.36,
+      "load_vocab_ms": 11.03,
+      "first_query_1m_ms": 94.16,
+      "total_10_queries_ms": 415.12,
+      "working_set_mb": 138.7,
+      "peak_working_set_mb": 144.3
+    },
+    {
+      "mode": "decode",
+      "import_ms": 263.84,
+      "connect_ms": 11.27,
+      "load_extension_ms": 1.29,
+      "load_vocab_ms": 7.6,
+      "first_query_1m_ms": 137.9,
+      "total_10_queries_ms": 1057.24,
+      "working_set_mb": 133.6,
+      "peak_working_set_mb": 147.6
+    },
+    {
+      "mode": "token",
+      "import_ms": 329.59,
+      "connect_ms": 12.38,
+      "load_extension_ms": 1.44,
+      "load_vocab_ms": 7.65,
+      "first_query_1m_ms": 31.19,
+      "total_10_queries_ms": 533.97,
+      "working_set_mb": 136.4,
+      "peak_working_set_mb": 142.4
+    }
+  ]
+}

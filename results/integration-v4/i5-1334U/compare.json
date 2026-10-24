@@ -1,0 +1,954 @@
+{
+  "meta": {
+    "timestamp_utc": "2026-10-24T22:22:08+00:00",
+    "git_commit": "460400a1aa11df3ca719dc0ce5d264bfa904f7df",
+    "git_dirty": false,
+    "cpu": "13th Gen Intel(R) Core(TM) i5-1334U",
+    "logical_cpus": 12,
+    "os": "Windows-11-10.0.26300-SP0",
+    "pinned_cpu": 2,
+    "runs": 7,
+    "repeats": 3,
+    "tokenlike_build": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_COMPILER": "C:/mingw-w64/mingw64/bin/g++.exe",
+      "CMAKE_CXX_FLAGS": "-O3 -march=native",
+      "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG",
+      "compiler_version": "g++.exe (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 14.2.0"
+    },
+    "fsst_build": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_COMPILER": "C:/mingw-w64/mingw64/bin/g++.exe",
+      "CMAKE_CXX_FLAGS": "-O3 -march=native",
+      "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG",
+      "compiler_version": "g++.exe (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 14.2.0"
+    },
+    "method": "Same-machine comparison of TokenLIKE and FSST-LIKE on identical rows.\n\n    python scripts/bench/compare_modules.py --out results/integration-v4/<cpu>/compare.json\n\nBoth tools scan the same 1,000,000 ClickBench URL rows with the same patterns.\nEvery process is created suspended, pinned to the same logical CPU and then\nresumed (identical, external pinning for both tools). Each (tool, mode,\npattern) runs in --repeats separate processes; every process's row ids must be\nbyte-identical to the DuckDB truth file, or the cell is reported as failed and\nnot timed. Statistics are kept per process:\n\n  tokenlike CLI : median and min (best) over --runs warm scans after 1 warmup\n  fsst_like     : min (best) and mean over --runs scans after 1 warmup\n\nso \"best\" is the like-for-like statistic between the two tools.\nStorage is computed from the files on disk."
+  },
+  "storage": {
+    "rows": 1000000,
+    "raw_text_bytes": 88562192,
+    "raw_text_plus_u64_offsets": 96562200,
+    "token_ids_bytes": 72272106,
+    "token_ids_plus_u64_offsets": 80272114,
+    "token_ids_plus_u64_offsets_plus_vocab": 80902247,
+    "fsst_codes_bytes": 49965040,
+    "fsst_codes_plus_u64_offsets_plus_symbol_table": 57965613,
+    "fsst_with_rev_sidecar": 61965613,
+    "notes": "offsets as stored on disk (uint64, rows+1). vocab.bin is shared by every token column; the FSST symbol table is per column. The .fsst.rev sidecar is only needed by fsst-rev."
+  },
+  "results": [
+    {
+      "name": "p_http",
+      "pattern": "http://%",
+      "class": "prefix",
+      "truth_matches": 517519,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "median_ns_per_row": 6.8889,
+        "best_ns_per_row": 5.7641,
+        "first_scan_ns_per_row": 6.2411,
+        "build_us": 3741.5,
+        "cold_total_ms": 142.041,
+        "units_per_row": 1.51773,
+        "process_median_ns_per_row": [
+          6.8889,
+          8.4104,
+          6.4651
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "median_ns_per_row": 44.7407,
+        "best_ns_per_row": 39.3172,
+        "first_scan_ns_per_row": 61.6088,
+        "build_us": 222.8,
+        "cold_total_ms": 160.61,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          40.7692,
+          84.7634,
+          44.7407
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "median_ns_per_row": 5.6405,
+        "best_ns_per_row": 4.9487,
+        "first_scan_ns_per_row": 5.4852,
+        "build_us": 6.4,
+        "cold_total_ms": 90.6098,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          5.8009,
+          5.4698,
+          5.6405
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "best_ns_per_row": 4.8713,
+        "mean_ns_per_row": 6.361028,
+        "build_us": 123.2,
+        "units_per_row": 2.3514,
+        "table_bytes": 9225,
+        "process_best_ns_per_row": [
+          4.8713,
+          5.3891,
+          5.165
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "best_ns_per_row": 81.4749,
+        "mean_ns_per_row": 85.009357,
+        "build_us": 292.5,
+        "units_per_row": 49.8906,
+        "table_bytes": 19475,
+        "process_best_ns_per_row": [
+          82.5802,
+          81.4749,
+          82.5651
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "best_ns_per_row": 34.9001,
+        "mean_ns_per_row": 36.589614,
+        "build_us": 111.1,
+        "units_per_row": 6.0341,
+        "table_bytes": 4617,
+        "process_best_ns_per_row": [
+          35.1375,
+          34.9001,
+          35.089
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 517519,
+        "processes": 3,
+        "best_ns_per_row": 5.4359,
+        "mean_ns_per_row": 5.6568,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          5.597,
+          5.4702,
+          5.4359
+        ]
+      }
+    },
+    {
+      "name": "p_irr",
+      "pattern": "http://irr.ru%",
+      "class": "prefix",
+      "truth_matches": 341755,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "median_ns_per_row": 8.6072,
+        "best_ns_per_row": 8.1029,
+        "first_scan_ns_per_row": 8.6783,
+        "build_us": 7782.4,
+        "cold_total_ms": 113.309,
+        "units_per_row": 3.06052,
+        "process_median_ns_per_row": [
+          8.6072,
+          8.5897,
+          8.9327
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "median_ns_per_row": 43.1542,
+        "best_ns_per_row": 41.4649,
+        "first_scan_ns_per_row": 42.1389,
+        "build_us": 232.8,
+        "cold_total_ms": 147.064,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          46.6546,
+          42.4406,
+          43.1542
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "median_ns_per_row": 5.9275,
+        "best_ns_per_row": 5.0935,
+        "first_scan_ns_per_row": 6.524,
+        "build_us": 6.3,
+        "cold_total_ms": 89.9126,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          5.1803,
+          5.9275,
+          6.7424
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "best_ns_per_row": 5.0082,
+        "mean_ns_per_row": 5.1534,
+        "build_us": 176.5,
+        "units_per_row": 2.8684,
+        "table_bytes": 15375,
+        "process_best_ns_per_row": [
+          5.4952,
+          5.0844,
+          5.0082
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "best_ns_per_row": 82.8506,
+        "mean_ns_per_row": 85.043857,
+        "build_us": 470.3,
+        "units_per_row": 49.8906,
+        "table_bytes": 31775,
+        "process_best_ns_per_row": [
+          82.8506,
+          83.0261,
+          83.7338
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "best_ns_per_row": 38.0718,
+        "mean_ns_per_row": 41.370685,
+        "build_us": 172.9,
+        "units_per_row": 8.2605,
+        "table_bytes": 7695,
+        "process_best_ns_per_row": [
+          38.8477,
+          38.0718,
+          38.8556
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 341755,
+        "processes": 3,
+        "best_ns_per_row": 10.8139,
+        "mean_ns_per_row": 11.3192,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          10.8668,
+          10.8139,
+          11.0733
+        ]
+      }
+    },
+    {
+      "name": "s_php",
+      "pattern": "%.php",
+      "class": "suffix",
+      "truth_matches": 12714,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "median_ns_per_row": 4.979,
+        "best_ns_per_row": 4.7928,
+        "first_scan_ns_per_row": 5.1011,
+        "build_us": 2434.6,
+        "cold_total_ms": 104.093,
+        "units_per_row": 1.01298,
+        "process_median_ns_per_row": [
+          4.8583,
+          4.979,
+          5.1914
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "median_ns_per_row": 43.8786,
+        "best_ns_per_row": 40.6707,
+        "first_scan_ns_per_row": 43.4084,
+        "build_us": 231.2,
+        "cold_total_ms": 137.42,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          44.336,
+          42.3715,
+          43.8786
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "median_ns_per_row": 5.2369,
+        "best_ns_per_row": 4.9534,
+        "first_scan_ns_per_row": 5.429,
+        "build_us": 7.2,
+        "cold_total_ms": 83.4597,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          5.2369,
+          5.0282,
+          5.4645
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "best_ns_per_row": 60.9,
+        "mean_ns_per_row": 66.205171,
+        "build_us": 160.2,
+        "units_per_row": 49.8906,
+        "table_bytes": 7175,
+        "process_best_ns_per_row": [
+          61.9215,
+          62.0552,
+          60.9
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "best_ns_per_row": 3.7324,
+        "mean_ns_per_row": 4.137528,
+        "build_us": 209.6,
+        "units_per_row": 1.0364,
+        "table_bytes": 13325,
+        "process_best_ns_per_row": [
+          3.9143,
+          3.9114,
+          3.7324
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "best_ns_per_row": 162.5559,
+        "mean_ns_per_row": 169.052071,
+        "build_us": 152.3,
+        "units_per_row": 88.5622,
+        "table_bytes": 3591,
+        "process_best_ns_per_row": [
+          166.5982,
+          162.5559,
+          163.2379
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 12714,
+        "processes": 3,
+        "best_ns_per_row": 5.0815,
+        "mean_ns_per_row": 5.394,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          5.2717,
+          5.2588,
+          5.0815
+        ]
+      }
+    },
+    {
+      "name": "s_html",
+      "pattern": "%.html",
+      "class": "suffix",
+      "truth_matches": 7683,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "median_ns_per_row": 4.9152,
+        "best_ns_per_row": 4.6972,
+        "first_scan_ns_per_row": 4.977,
+        "build_us": 2901.2,
+        "cold_total_ms": 104.61,
+        "units_per_row": 1.01252,
+        "process_median_ns_per_row": [
+          4.9152,
+          4.842,
+          5.1102
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "median_ns_per_row": 43.3105,
+        "best_ns_per_row": 41.7109,
+        "first_scan_ns_per_row": 42.7443,
+        "build_us": 209.9,
+        "cold_total_ms": 143.312,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          46.9843,
+          42.9834,
+          43.3105
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "median_ns_per_row": 5.3774,
+        "best_ns_per_row": 4.9299,
+        "first_scan_ns_per_row": 5.7012,
+        "build_us": 7.2,
+        "cold_total_ms": 85.8815,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          5.3774,
+          5.0894,
+          6.063
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "best_ns_per_row": 62.0214,
+        "mean_ns_per_row": 64.2926,
+        "build_us": 178.1,
+        "units_per_row": 49.8906,
+        "table_bytes": 8200,
+        "process_best_ns_per_row": [
+          62.1036,
+          62.6447,
+          62.0214
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "best_ns_per_row": 3.8142,
+        "mean_ns_per_row": 4.051114,
+        "build_us": 245.1,
+        "units_per_row": 1.0235,
+        "table_bytes": 15375,
+        "process_best_ns_per_row": [
+          3.8142,
+          3.9081,
+          3.8411
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "best_ns_per_row": 162.9928,
+        "mean_ns_per_row": 170.707785,
+        "build_us": 175.0,
+        "units_per_row": 88.5622,
+        "table_bytes": 4104,
+        "process_best_ns_per_row": [
+          162.9928,
+          163.3736,
+          165.3141
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 7683,
+        "processes": 3,
+        "best_ns_per_row": 4.6188,
+        "mean_ns_per_row": 4.804071,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          4.6321,
+          4.6188,
+          4.6541
+        ]
+      }
+    },
+    {
+      "name": "e_top_url",
+      "pattern": "http://irr.ru/index.php?showalbum/login-leniya7777294,938303130",
+      "class": "exact",
+      "truth_matches": 58976,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "median_ns_per_row": 15.8,
+        "best_ns_per_row": 15.1416,
+        "first_scan_ns_per_row": 15.8096,
+        "build_us": 65702.6,
+        "cold_total_ms": 181.42,
+        "units_per_row": 7.45725,
+        "process_median_ns_per_row": [
+          15.4204,
+          16.1415,
+          15.8
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "median_ns_per_row": 42.7607,
+        "best_ns_per_row": 41.5569,
+        "first_scan_ns_per_row": 44.6539,
+        "build_us": 234.2,
+        "cold_total_ms": 148.512,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          42.7607,
+          43.1336,
+          42.3627
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "median_ns_per_row": 2.0256,
+        "best_ns_per_row": 1.9866,
+        "first_scan_ns_per_row": 2.1515,
+        "build_us": 6.4,
+        "cold_total_ms": 76.61,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          2.0256,
+          2.4475,
+          2.0064
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "best_ns_per_row": 10.2161,
+        "mean_ns_per_row": 11.0579,
+        "build_us": 578.2,
+        "units_per_row": 6.2393,
+        "table_bytes": 67650,
+        "process_best_ns_per_row": [
+          10.5103,
+          10.2925,
+          10.2161
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "best_ns_per_row": 6.1793,
+        "mean_ns_per_row": 6.419371,
+        "build_us": 1124.5,
+        "units_per_row": 2.155,
+        "table_bytes": 135300,
+        "process_best_ns_per_row": [
+          6.2065,
+          6.1964,
+          6.1793
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "best_ns_per_row": 57.7304,
+        "mean_ns_per_row": 58.292742,
+        "build_us": 508.0,
+        "units_per_row": 18.7061,
+        "table_bytes": 33858,
+        "process_best_ns_per_row": [
+          57.9986,
+          57.7304,
+          57.8219
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 58976,
+        "processes": 3,
+        "best_ns_per_row": 2.4264,
+        "mean_ns_per_row": 2.582585,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          2.4264,
+          2.4937,
+          2.6168
+        ]
+      }
+    },
+    {
+      "name": "i_yandex",
+      "pattern": "%yandex%",
+      "class": "contains",
+      "truth_matches": 27864,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "median_ns_per_row": 47.8987,
+        "best_ns_per_row": 47.429,
+        "first_scan_ns_per_row": 48.2226,
+        "build_us": 3385.1,
+        "cold_total_ms": 150.729,
+        "units_per_row": 35.5432,
+        "process_median_ns_per_row": [
+          47.8987,
+          47.7801,
+          48.4418
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "median_ns_per_row": 58.8608,
+        "best_ns_per_row": 58.055,
+        "first_scan_ns_per_row": 59.4172,
+        "build_us": 215.8,
+        "cold_total_ms": 157.254,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          59.5215,
+          58.8608,
+          58.5479
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "median_ns_per_row": 21.9865,
+        "best_ns_per_row": 21.8178,
+        "first_scan_ns_per_row": 22.1312,
+        "build_us": 7.1,
+        "cold_total_ms": 95.4289,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          21.9349,
+          22.005,
+          21.9865
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "best_ns_per_row": 60.9827,
+        "mean_ns_per_row": 66.3203,
+        "build_us": 329.9,
+        "units_per_row": 48.9359,
+        "table_bytes": 8200,
+        "process_best_ns_per_row": [
+          60.9877,
+          60.9827,
+          61.299
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "best_ns_per_row": 82.1352,
+        "mean_ns_per_row": 84.689757,
+        "build_us": 634.8,
+        "units_per_row": 48.5884,
+        "table_bytes": 16400,
+        "process_best_ns_per_row": [
+          83.0499,
+          82.5491,
+          82.1352
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "best_ns_per_row": 160.1697,
+        "mean_ns_per_row": 161.191914,
+        "build_us": 336.4,
+        "units_per_row": 87.21,
+        "table_bytes": 4104,
+        "process_best_ns_per_row": [
+          160.1697,
+          160.3394,
+          160.8318
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 27864,
+        "processes": 3,
+        "best_ns_per_row": 43.1329,
+        "mean_ns_per_row": 43.714328,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          43.2538,
+          43.3636,
+          43.1329
+        ]
+      }
+    },
+    {
+      "name": "i_v_under",
+      "pattern": "%/v_/%",
+      "class": "contains + _",
+      "truth_matches": 165,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "median_ns_per_row": 86.9999,
+        "best_ns_per_row": 86.2766,
+        "first_scan_ns_per_row": 88.0034,
+        "build_us": 4277.8,
+        "cold_total_ms": 185.012,
+        "units_per_row": 36.1329,
+        "process_median_ns_per_row": [
+          86.9999,
+          87.1788,
+          86.7477
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "median_ns_per_row": 67.7753,
+        "best_ns_per_row": 66.8708,
+        "first_scan_ns_per_row": 68.9339,
+        "build_us": 211.8,
+        "cold_total_ms": 164.388,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          67.7753,
+          68.2756,
+          67.4599
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "median_ns_per_row": 29.708,
+        "best_ns_per_row": 29.299,
+        "first_scan_ns_per_row": 31.0133,
+        "build_us": 10,
+        "cold_total_ms": 103.561,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          29.4781,
+          29.708,
+          30.0385
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "best_ns_per_row": 61.3722,
+        "mean_ns_per_row": 61.7031,
+        "build_us": 1428.6,
+        "units_per_row": 49.8851,
+        "table_bytes": 14350,
+        "process_best_ns_per_row": [
+          61.3722,
+          61.3822,
+          61.4363
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "best_ns_per_row": 84.1746,
+        "mean_ns_per_row": 86.088328,
+        "build_us": 1986.3,
+        "units_per_row": 49.8793,
+        "table_bytes": 27675,
+        "process_best_ns_per_row": [
+          84.3567,
+          84.1746,
+          84.8733
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "best_ns_per_row": 160.8409,
+        "mean_ns_per_row": 162.361557,
+        "build_us": 1268.9,
+        "units_per_row": 88.5547,
+        "table_bytes": 7182,
+        "process_best_ns_per_row": [
+          161.2156,
+          160.8409,
+          161.4448
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 165,
+        "processes": 3,
+        "best_ns_per_row": 78.7523,
+        "mean_ns_per_row": 85.806185,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          81.7461,
+          81.1004,
+          78.7523
+        ]
+      }
+    },
+    {
+      "name": "u8_sezon",
+      "pattern": "%сезон%",
+      "class": "contains, Cyrillic",
+      "truth_matches": 2116,
+      "tokenlike:token": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "median_ns_per_row": 44.8448,
+        "best_ns_per_row": 43.0735,
+        "first_scan_ns_per_row": 47.09,
+        "build_us": 5298.7,
+        "cold_total_ms": 156.944,
+        "units_per_row": 36.0915,
+        "process_median_ns_per_row": [
+          44.6813,
+          44.8448,
+          46.3195
+        ]
+      },
+      "tokenlike:decode": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "median_ns_per_row": 57.98,
+        "best_ns_per_row": 57.4492,
+        "first_scan_ns_per_row": 59.0827,
+        "build_us": 212,
+        "cold_total_ms": 154.134,
+        "units_per_row": 36.1361,
+        "process_median_ns_per_row": [
+          57.98,
+          57.9172,
+          62.0856
+        ]
+      },
+      "tokenlike:raw": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "median_ns_per_row": 22.9726,
+        "best_ns_per_row": 22.0914,
+        "first_scan_ns_per_row": 25.0602,
+        "build_us": 7.6,
+        "cold_total_ms": 107.677,
+        "units_per_row": 0,
+        "process_median_ns_per_row": [
+          25.0787,
+          22.9708,
+          22.9726
+        ]
+      },
+      "fsst_like:fsst": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "best_ns_per_row": 62.8189,
+        "mean_ns_per_row": 71.816428,
+        "build_us": 570.1,
+        "units_per_row": 49.8138,
+        "table_bytes": 12300,
+        "process_best_ns_per_row": [
+          62.8189,
+          63.4808,
+          67.3156
+        ]
+      },
+      "fsst_like:fsst-rev2": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "best_ns_per_row": 85.145,
+        "mean_ns_per_row": 92.5987,
+        "build_us": 1118.5,
+        "units_per_row": 49.7622,
+        "table_bytes": 24600,
+        "process_best_ns_per_row": [
+          88.6541,
+          85.145,
+          87.4954
+        ]
+      },
+      "fsst_like:decode": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "best_ns_per_row": 163.0336,
+        "mean_ns_per_row": 169.767242,
+        "build_us": 898.6,
+        "units_per_row": 88.4479,
+        "table_bytes": 6156,
+        "process_best_ns_per_row": [
+          165.9508,
+          166.1373,
+          163.0336
+        ]
+      },
+      "fsst_like:raw-opt": {
+        "status": "ok",
+        "matches": 2116,
+        "processes": 3,
+        "best_ns_per_row": 37.1393,
+        "mean_ns_per_row": 38.262028,
+        "build_us": 0.0,
+        "units_per_row": 0.0,
+        "table_bytes": 0,
+        "process_best_ns_per_row": [
+          37.2292,
+          37.5749,
+          37.1393
+        ]
+      }
+    }
+  ]
+}
