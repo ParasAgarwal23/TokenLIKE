@@ -120,6 +120,21 @@ if(TOKENLIKE_WITH_FSST)
     if(MINGW AND TARGET fsst_upstream)
       target_compile_options(fsst_upstream PRIVATE -include intrin.h)
     endif()
+    # Windows: the module's tools take main(int, char**), whose argv is in the ANSI
+    # code page (Cyrillic patterns arrive as '?'). A UTF-8 activeCodePage manifest
+    # makes argv UTF-8 without touching the module's sources. Link statically, like
+    # the core tools, so no MinGW runtime DLL from another toolchain on PATH is used.
+    if(MINGW)
+      enable_language(RC)
+      set(TL_UTF8_MANIFEST ${CMAKE_CURRENT_SOURCE_DIR}/cmake/utf8.manifest)
+      configure_file(cmake/utf8.rc.in ${CMAKE_CURRENT_BINARY_DIR}/utf8_manifest.rc @ONLY)
+      foreach(t fsst_like fsst_encode fsst_liftbench fsst_test_unit)
+        if(TARGET ${t})
+          target_sources(${t} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/utf8_manifest.rc)
+          target_link_options(${t} PRIVATE -static)
+        endif()
+      endforeach()
+    endif()
   else()
     message(FATAL_ERROR "TOKENLIKE_WITH_FSST=ON but integration/fsst/ is not in this tree")
   endif()
