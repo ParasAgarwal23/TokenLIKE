@@ -56,12 +56,23 @@ The build adapts to what is merged. The configure line
 
 ## Data
 
-Produced by Person B (`scripts/encode/`), never committed:
+Produced by Person B's pipeline (`scripts/encode/`), never committed. It is
+byte-deterministic, so each machine regenerates it instead of copying ~800 MB:
 
+```bash
+P=.venv/Scripts/python                    # Linux/macOS: .venv/bin/python
+$P -m pip install 'duckdb==1.5.6'         # version pinned by the ground truth
+$P scripts/encode/build_vocab.py          # data/vocab.bin: 65,536 tokens, 630,133 bytes
+# datasets.clickhouse.com rejects Python's User-Agent (HTTP 403): fetch with curl first
+curl -o data/download/hits_0.parquet \
+  https://datasets.clickhouse.com/hits_compatible/athena_partitioned/hits_0.parquet
+$P scripts/encode/fetch_clickbench.py --rows 1000000 --columns URL,Referer
+$P scripts/encode/encode.py data/clickbench/URL
+$P scripts/encode/encode.py data/clickbench/Referer
 ```
-data/vocab.bin
-data/<dataset>/<column>.{tok,off,raw,rawoff,meta.json,parquet}
-```
+
+Layout: `data/vocab.bin` and `data/<dataset>/<column>.{tok,off,raw,rawoff,meta.json,parquet}`.
+DuckDB ground truth goes to `data/truth/<dataset>/<name>.ids`.
 
 `.tok` uint16, `.off`/`.rawoff` uint64 with `rows + 1` entries starting at 0, `.raw` bytes;
 little-endian. The layout is documented in [include/tokenlike/common.h](include/tokenlike/common.h).
@@ -69,10 +80,14 @@ little-endian. The layout is documented in [include/tokenlike/common.h](include/
 ## CLI
 
 ```bash
-build/tokenlike --mode token|decode|raw --pattern '%.m3u8' --col data/clickbench/url \
+build/tokenlike --mode token|decode|raw --pattern '%.m3u8' --col data/clickbench/URL \
     [--col2 PREFIX] [--vocab data/vocab.bin] [--runs 5] [--warmup 1] \
-    [--rowids results/rowids/example.bin] [--pin-cpu 0] [--pattern-file FILE]
+    [--rowids results/rowids/example.bin] [--stats FILE] [--pin-cpu 0] [--pattern-file FILE]
 ```
+
+`--column`, `--column2` and `--out` are aliases for `--col`, `--col2` and `--rowids`
+(the names Person B's `scripts/verify/check.py` uses). `--col2` (concatenation) is
+supported in token mode only for now; decode/raw exit with code 2.
 
 - Loading is not timed. Matcher construction is timed separately (`build_us`). Each of
   `--runs` scans is timed on its own after `--warmup` untimed scans; `ns_per_row` and
@@ -92,8 +107,12 @@ build/tokenlike --mode token|decode|raw --pattern '%.m3u8' --col data/clickbench
 
 ```bash
 ctest --test-dir build --output-on-failure    # baselines: hand cases + 1.3M fuzz vs. a reference DP
-bash scripts/check_all.sh                     # Person B: DuckDB ground truth on the real data
+python scripts/verify/check.py patterns/core.txt --cli build/tokenlike.exe   # 3 modes vs DuckDB
+bash scripts/check_all.sh                     # Person B's full gate
 ```
+
+On Windows, run `check_all.sh` from Git Bash with
+`TOKENLIKE_PYTHON=.venv/Scripts/python.exe TOKENLIKE_CLI=build/tokenlike.exe`.
 
 `test_baselines` checks the byte matcher against a slow code-point DP reference
 (including targeted fuzzing of every fast path), and raw == decode == reference on a
@@ -105,10 +124,12 @@ synthetic URL column.
 python scripts/bench/run_bench.py patterns/core.txt --runs 5 --out results/final.json
 ```
 
-For each pattern it runs token, decode and raw in separate processes, pinned to CPU 0
+Pattern files use Person B's format, `name<TAB>column<TAB>pattern[<TAB>column2]`.
+It first refreshes DuckDB ground truth (`scripts/verify/ground_truth.py`), then runs
+token, decode and raw for each pattern in separate processes, pinned to CPU 0
 (`--pin-cpu -1` disables pinning; pick a performance core on hybrid CPUs). Mode order
-rotates per pattern. It checks that all modes return identical row ids and runs Person B's
-DuckDB checker (`scripts/verify/check.py`, or `--checker 'cmd {col} {pattern} {rowids}'`).
+rotates per pattern. A pattern is `pass` only if every mode's row ids are byte-identical
+to the DuckDB truth file.
 It prints a comparison table and writes `results/final.json` with the git commit, dirty
 flag, compiler and flags, CPU, data fingerprint and per-pattern verification. It refuses
 a dirty tree unless `--allow-dirty` is passed.
@@ -124,8 +145,8 @@ streamlit run demo/app.py                                  # live: runs the CLI
 streamlit run demo/app.py -- --replay results/final.json   # saved results
 ```
 
-Options after `--`: `--patterns`, `--col`, `--vocab`, `--build`, `--runs`, `--checker`.
-"Verified" is shown only when the DuckDB checker passed for those exact row ids. Replay
+Options after `--`: `--patterns`, `--col`, `--vocab`, `--build`, `--runs`.
+"Verified" is shown only when every mode's row ids equal the DuckDB ground truth. Replay
 mode always shows a banner with the commit, CPU and timestamp of the saved run.
 
 ## Repository ownership
