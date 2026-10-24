@@ -25,8 +25,10 @@ import hashlib
 import json
 import os
 import platform
+import statistics
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -191,13 +193,17 @@ def ensure_truth(pattern_file: Path) -> str | None:
 
 
 def verify(pat: Pattern, modes: dict) -> tuple[str, dict]:
-    """Compare every successful mode's row ids with the DuckDB truth file."""
+    """Compare every requested mode's row ids with the DuckDB truth file.
+
+    "pass" requires EVERY requested mode to have run and to match the truth
+    byte for byte. A mode that did not run (unavailable, error, timeout) makes
+    the pattern "incomplete", never "pass"; a mismatch makes it "fail".
+    """
     ok = {m: r for m, r in modes.items() if r["status"] == "ok"}
+    missing = sorted(m for m, r in modes.items() if r["status"] != "ok")
     truth = ROOT / pat.truth_path
-    if not ok:
-        return "not_run", {"detail": "no mode ran"}
     if not truth.exists():
-        return "not_run", {"detail": f"no ground truth at {pat.truth_path}"}
+        return "not_run", {"detail": f"no ground truth at {pat.truth_path}", "modes": {}, "missing_modes": missing}
     want = sha256(truth)
     count = truth.stat().st_size // 4
     per_mode = {m: r["rowids_sha256"] == want for m, r in ok.items()}
@@ -205,9 +211,14 @@ def verify(pat: Pattern, modes: dict) -> tuple[str, dict]:
         if not good:
             r = ok[m]
             r["verify_detail"] = f"expected {count} matches, got {r['matches']}"
-    status = "pass" if all(per_mode.values()) else "fail"
-    return status, {"truth": pat.truth_path, "truth_matches": count, "truth_sha256": want,
-                    "modes": per_mode}
+    check = {"truth": pat.truth_path, "truth_matches": count, "truth_sha256": want,
+             "modes": per_mode, "missing_modes": missing}
+    if not all(per_mode.values()):
+        return "fail", check
+    if missing:
+        check["detail"] = f"mode(s) did not run: {', '.join(missing)}"
+        return "incomplete", check
+    return "pass", check
 
 
 def fmt(x, spec=".2f") -> str:
@@ -239,12 +250,40 @@ def print_table(results: list[dict]) -> None:
         print(line(row))
 
 
+def run_mode(cli: Path, opts, mode: str, pat: Pattern, rowids: Path) -> dict:
+    """Run one mode in `repeats` separate processes; aggregate warm and cold times.
+
+    ns_per_row is the median of the per-process warm medians; the per-process
+    values, their spread and each process's first (cold) scan are kept too.
+    """
+    repeats = max(1, getattr(opts, "repeats", 1))
+    procs = [run_cli(cli, opts, mode, pat, rowids) for _ in range(repeats)]
+    bad = next((p for p in procs if p["status"] != "ok"), None)
+    if bad is not None:
+        return bad
+    r = dict(procs[0])
+    if len({p["rowids_sha256"] for p in procs}) != 1 or len({p["matches"] for p in procs}) != 1:
+        return {"status": "error", "stderr": "row ids differ between processes"}
+    rows = max(1, r["rows"])
+    per_proc = [p["ns_per_row"] for p in procs]
+    r["ns_per_row"] = statistics.median(per_proc)
+    r["median_ns"] = r["ns_per_row"] * rows
+    r["gbps"] = r["text_bytes"] / r["median_ns"] if r["median_ns"] else 0.0
+    r["process_ns_per_row"] = per_proc
+    r["processes"] = repeats
+    r["build_us"] = statistics.median(p["build_us"] for p in procs)
+    if all("first_scan_ns" in p for p in procs):
+        r["first_scan_ns_per_row"] = [p["first_scan_ns"] / rows for p in procs]
+        r["cold_total_ms"] = [p["cold_total_ms"] for p in procs]
+    return r
+
+
 def run_pattern(cli: Path, opts, modes: list[str], pat: Pattern, idx: int, rowdir: Path) -> dict:
     order = modes[idx % len(modes):] + modes[:idx % len(modes)]
     res: dict = {"name": pat.name, "pattern": pat.pattern, "column": pat.column,
                  "column2": pat.column2, "modes": {}}
     for mode in order:
-        r = run_cli(cli, opts, mode, pat, rowdir / f"{pat.name}.{mode}.ids")
+        r = run_mode(cli, opts, mode, pat, rowdir / f"{pat.name}.{mode}.ids")
         res["modes"][mode] = r
         log(f"    {mode:6s} {r['status']}" + (
             f"  matches={r['matches']} ns/row={r['ns_per_row']:.3f}" if r["status"] == "ok"
@@ -263,7 +302,17 @@ def main() -> int:
     ap.add_argument("patterns", type=Path)
     ap.add_argument("--runs", type=int, default=5)
     ap.add_argument("--warmup", type=int, default=1)
-    ap.add_argument("--out", type=Path, default=Path("results/final.json"))
+    ap.add_argument("--out", type=Path, default=None,
+                    help="results file (default: results/runs/run-<UTC time>.json); never overwritten "
+                         "unless --overwrite is given")
+    ap.add_argument("--overwrite", action="store_true", help="allow replacing an existing --out file")
+    ap.add_argument("--repeats", type=int, default=3,
+                    help="separate CLI processes per (pattern, mode); ns_per_row is their median")
+    ap.add_argument("--cooldown", type=float, default=10.0,
+                    help="seconds to idle after ground-truth generation before timing")
+    ap.add_argument("--record-host", action="store_true", help="store the machine hostname in meta")
+    ap.add_argument("--allow-incomplete", action="store_true",
+                    help="exit 0 even if a requested mode did not run for some pattern")
     ap.add_argument("--col", default="data/clickbench/URL",
                     help="column for bare (untabbed) pattern lines")
     ap.add_argument("--vocab", default="data/vocab.bin")
@@ -278,6 +327,11 @@ def main() -> int:
                     help="logical CPU to pin every run to (-1 = no pinning)")
     args = ap.parse_args()
 
+    if args.out is None:
+        stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        args.out = Path("results/runs") / f"run-{stamp}.json"
+    if (ROOT / args.out).exists() and not args.overwrite:
+        sys.exit(f"error: {args.out} exists; refusing to overwrite recorded results (use --overwrite or a new --out)")
     if args.runs < 5:
         log(f"warning: --runs {args.runs} < 5; not acceptable for final results")
     modes = [m for m in args.modes.split(",") if m]
@@ -298,6 +352,10 @@ def main() -> int:
         truth_error = ensure_truth(args.patterns)
         if truth_error:
             log(f"warning: ground truth generation failed: {truth_error}")
+        # DuckDB just used every core; let clocks and caches settle before timing.
+        if args.cooldown > 0:
+            log(f"cooling down {args.cooldown:.0f}s before measuring ...")
+            time.sleep(args.cooldown)
 
     columns = sorted({c for p in patterns for c in (p.column, p.column2) if c})
     meta = {
@@ -305,7 +363,7 @@ def main() -> int:
         "git_commit": git("rev-parse", "HEAD"),
         "git_branch": git("rev-parse", "--abbrev-ref", "HEAD"),
         "git_dirty": dirty,
-        "host": platform.node(),
+        "host": platform.node() if args.record_host else None,
         "os": platform.platform(),
         "cpu": cpu_name(),
         "logical_cpus": os.cpu_count(),
@@ -315,6 +373,10 @@ def main() -> int:
         "patterns_file": str(args.patterns),
         "patterns_sha256": sha256(args.patterns),
         "runs": args.runs, "warmup": args.warmup, "pin_cpu": args.pin_cpu,
+        "repeats": args.repeats, "cooldown_s": 0 if args.no_truth else args.cooldown,
+        "method": "ns_per_row = median over `repeats` processes of each process's median over `runs` "
+                  "warm scans (after `warmup` scans); first_scan_ns_per_row = each process's first "
+                  "scan; cold_total_ms = load + id validation + matcher build + first scan",
         "vocab": {"path": args.vocab, "sha256": sha256(ROOT / args.vocab)},
         "columns": {c: column_fingerprint(c) for c in columns},
         "ground_truth": "skipped" if args.no_truth else (truth_error or "ok"),
@@ -333,14 +395,18 @@ def main() -> int:
                    + "\n", encoding="utf-8")
 
     print_table(results)
-    summary = {s: sum(r["verified"] == s for r in results) for s in ("pass", "fail", "not_run")}
+    summary = {s: sum(r["verified"] == s for r in results) for s in ("pass", "fail", "incomplete", "not_run")}
     print(f"\nverified vs DuckDB: {summary}")
     print(f"written {args.out}  (commit {str(meta['git_commit'])[:10]}, "
           f"dirty={dirty}, cpu={meta['cpu']})")
     bad = [r["name"] for r in results if not r["agree"] or r["verified"] == "fail"]
+    incomplete = [r["name"] for r in results if r["verified"] == "incomplete"]
     if bad:
         print(f"FAILED patterns: {bad}")
         return 1
+    if incomplete:
+        print(f"INCOMPLETE patterns (a requested mode did not run): {incomplete}")
+        return 0 if args.allow_incomplete else 1
     return 0
 
 
