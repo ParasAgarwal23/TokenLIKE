@@ -250,6 +250,11 @@ def main() -> int:
     con = connect()
     validate_columns(con, source, columns)
 
+    # Hash the download once so the provenance recorded in every meta.json
+    # pins the exact input bytes, not just the URL.
+    source_sha = sha256_file(source)
+    print(f"source sha256: {source_sha}")
+
     os.makedirs(args.out_dir, exist_ok=True)
     canonical = os.path.join(args.out_dir, "canonical.parquet")
     n = build_canonical(con, source, canonical, columns, rows)
@@ -270,7 +275,7 @@ def main() -> int:
                 "kind": "clickbench-partition",
                 "url": PARTITION_URL.format(part=args.part),
                 "path": source,
-                "sha256": None,  # 117 MB; hashed on request, not on every run
+                "sha256": source_sha,
                 "partition": args.part,
                 "row_limit": rows,
             },

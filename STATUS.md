@@ -14,11 +14,13 @@
 data/vocab.bin                   # 65,536 tokens, frozen, 630,133 bytes
 data/clickbench/URL.{tok,off,raw,rawoff,parquet,meta.json}       # 1,000,000 rows
 data/clickbench/Referer.{tok,off,raw,rawoff,parquet,meta.json}   # 1,000,000 rows, row-aligned with URL
+data/tpch/l_comment.*            # 1,000,000 rows, row-aligned with o_comment
+data/tpch/o_comment.*            # for (l_comment || o_comment) LIKE patterns
 data/sample/urls.*               # 1,000-row sample for fast iteration
 data/edge/values.*               # 51 hand-built edge cases
 patterns/core.txt                # 22 mandatory prefix/suffix patterns
 patterns/tier1.txt               # 13 token-boundary and UTF-8 patterns
-patterns/tier2.txt               # 18 optional: '_', interior '%', concatenation
+patterns/tier2.txt               # 23 optional: '_', interior '%', concatenation, TPC-H
 data/truth/<dataset>/*.ids       # DuckDB ground truth, sorted uint32 row ids
 ```
 
@@ -39,8 +41,14 @@ bash scripts/check_all.sh
 |---|---|---|---|---|---|---|
 | ClickBench URL | 1,000,000 | 88,562,192 | 36,136,053 | 2.4508 | 1.2254× | 0 mismatches |
 | ClickBench Referer | 1,000,000 | 79,583,339 | 32,975,876 | 2.4134 | 1.2067× | 0 mismatches |
+| TPC-H l_comment | 1,000,000 | 26,511,095 | 6,584,993 | 4.0268 | 2.0134× | 0 mismatches |
+| TPC-H o_comment | 1,000,000 | 48,529,673 | 11,135,756 | 4.3573 | 2.1787× | 0 mismatches |
 
 Encoding runs at ~215k rows/s, so the full column encodes in under 5 seconds.
+
+The pipeline is **byte-deterministic**: rebuilding from the download produces
+artifacts with identical SHA-256, which is how the ground-truth cache detects
+staleness.
 
 **Read the ratio carefully when writing the report.** At the token-ID level the
 URL column compresses only **1.23×**. That is the honest figure for this
@@ -50,6 +58,13 @@ The paper's strong ratios come from stacking a second-level compressor on top of
 SGTT, which is out of our scope. **Our story is scan reduction, not ratio:**
 TokenLIKE inspects 36.1M tokens instead of 88.6M bytes, i.e. **2.45× fewer units
 per scan**, and for anchored patterns it stops after the first few.
+
+The TPC-H rows above make the same point from the other side and are worth a
+line in the report: the same vocabulary gets **4.03–4.36 bytes/token (≈2.1×)**
+on natural-language comments versus **2.45 on URLs**, because an LLM
+word-piece vocabulary is built for prose, not for URL punctuation. If we want a
+headline compression number, the TPC-H comment columns are the honest place to
+get it; if we want a headline *speed* number, URLs are the right dataset.
 
 ### Interface decisions — PLEASE CONFIRM
 
@@ -98,18 +113,35 @@ Two findings are easy to get wrong:
 
 ### Verification evidence
 
-- **Round-trip: 0 mismatches** on all four datasets, checked independently in
-  Python (`roundtrip.py`) and in C++ (`tests/test_io.cpp`), so a format bug
-  cannot hide behind agreement between one writer and one reader. Confirmed the
-  check has teeth: flipping one bit in `.tok` is detected and reported.
-- **Loaders: 32/32 checks**, including one corruption fixture per validation
-  rule, each proven to be rejected rather than silently accepted.
-- **Patterns: all 53 verified at 1M-row scale** against an independent
-  reference matcher, plus 36 edge patterns × 3 modes = 108/108. Three
-  implementations agree: DuckDB, a naive backtracking matcher, and a regex
-  translation (270 cross-checked cases).
+- **Round-trip: 0 mismatches across 4,002,051 rows** over six columns, checked
+  independently in Python (`roundtrip.py`) and in C++ (`tests/test_io.cpp`), so
+  a format bug cannot hide behind agreement between one writer and one reader.
+  Confirmed the check has teeth: flipping one bit in `.tok` is detected and
+  reported with the row, both byte strings and the token expansion.
+- **Loaders: 32/32 checks on each of the six columns**, including one corruption
+  fixture per validation rule, each proven to be rejected rather than silently
+  accepted.
+- **Patterns, at full 1M-row scale, all three modes:** `core.txt` 66/66,
+  `tier1.txt` 39/39, `tier2.txt` passing, and the 36 edge patterns 108/108 —
+  all against an independent reference matcher, 0 mismatches throughout.
+  Three implementations agree: DuckDB, a naive backtracking matcher, and a
+  regex translation (cross-checked against each other on 270 cases).
 - **Negative control:** `check.py` detects a single wrong row id even when the
   match count is unchanged, because it compares sets, not counts.
+- **Randomized fuzzing:** 300 seeded patterns derived from real ClickBench
+  substrings, reproducible from the printed seed.
+
+### Blocked: I cannot push
+
+```
+remote: Permission to ParasAgarwal23/TokenLIKE.git denied to Prahas-B.
+fatal: ... error: 403
+```
+
+**7 commits are ready on local `b/data`.** Whoever owns the repo needs to add
+`Prahas-B` as a collaborator, then `git push -u origin b/data` goes through. I
+have deliberately not worked around this (no fork, no push elsewhere), since C
+owns the merge path and a fork would complicate it.
 
 ### Bugs found and fixed during preparation
 
@@ -172,13 +204,15 @@ the human-readable text column.
 
 ### Not done / out of scope so far
 
-- **TPC-H concatenation data (`gen_tpch.py`) is not built yet.** Optional scope;
-  deliberately deferred until after the full-scale ClickBench gate. Concatenated
-  matching is already covered on ClickBench via `patterns/tier2.txt`
-  (`URL || Referer`), so A can develop `match_concat` today.
-- Randomized fuzzing exists (`fuzz.py --random`) but has not been run at volume.
-- No pattern has been verified against A's real matcher yet; A's matcher does
-  not exist. Everything above is matcher-independent by design.
+- **No pattern has been verified against A's real matcher**, because A's matcher
+  does not exist yet. Everything above is matcher-independent by design; the
+  moment `build/tokenlike` appears, `bash scripts/check_all.sh` becomes the
+  real H10 gate with no changes needed.
+- The `--stats` output of the CLI is accepted by the contract but not consumed
+  by my tooling; Person C owns the benchmark numbers.
+- `_` and interior `%` are in tier 2 and have verified ground truth, but they
+  are optional scope: do not put them in the demo until they pass against A's
+  matcher.
 
 ---
 
