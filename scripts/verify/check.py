@@ -7,7 +7,9 @@ is reported with enough context to find the bug -- the row id, the raw string,
 the string decoded from the token ids, and the token ids with their textual
 expansion -- because that is what localizing a matcher bug actually needs.
 
-Exits non-zero if any pattern is wrong in any mode.
+Exits non-zero if any pattern is wrong in any mode, if a requested mode did not
+run (unless that mode is listed in --allow-skip, an explicitly expected skip),
+or if the CLI used test-fixture loaders.
 
 Usage:
     python scripts/verify/check.py patterns/core.txt --modes token,decode,raw
@@ -15,6 +17,7 @@ Usage:
 """
 
 import argparse
+import functools
 import json
 import os
 import shutil
@@ -122,16 +125,24 @@ def run_cli(cli: str, pat: Pattern, mode: str, vocab: str, out_path: str, timeou
     return "ok", "", info
 
 
+# Columns are loaded at most once per run, however many mismatches are reported.
+cached_raw_values = functools.lru_cache(maxsize=4)(read_raw_values)
+cached_token_rows = functools.lru_cache(maxsize=4)(read_token_rows)
+
+
 def describe_rows(pat: Pattern, row_ids, vocab_tokens, label: str) -> None:
     """Print the evidence needed to localize a mismatch."""
     if not row_ids:
         return
-    raws = read_raw_values(pat.column)
-    toks = read_token_rows(pat.column)
-    raws2 = read_raw_values(pat.column2) if pat.is_concat else None
+    raws = cached_raw_values(pat.column)
+    toks = cached_token_rows(pat.column)
+    raws2 = cached_raw_values(pat.column2) if pat.is_concat else None
 
     print(f"    first {min(len(row_ids), MAX_REPORTED)} {label}:")
     for row_id in row_ids[:MAX_REPORTED]:
+        if row_id >= len(raws):
+            print(f"      row {row_id}: OUT OF RANGE (column has {len(raws):,} rows)")
+            continue
         raw = raws[row_id]
         decoded = b"".join(vocab_tokens[t] for t in toks[row_id])
         print(f"      row {row_id}")
@@ -170,7 +181,19 @@ def check_pattern(con, pat: Pattern, modes, cli: str, vocab: str, force: bool, t
                 print(f"  CLI FAILED {pat.name} mode={mode}: {detail}")
             continue
 
-        actual = set(read_ids(out_path))
+        try:
+            ids = read_ids(out_path)
+        except ValueError as e:  # e.g. truncated: size not a multiple of 4
+            results[mode] = ("fail", f"unreadable row-id file: {e}")
+            print(f"  CLI FAILED {pat.name} mode={mode}: unreadable row-id file: {e}")
+            continue
+        # The contract is sorted, unique uint32 ids; a set comparison alone
+        # would accept unsorted or duplicated output.
+        if any(ids[i] >= ids[i + 1] for i in range(len(ids) - 1)):
+            results[mode] = ("fail", "row ids are not strictly ascending (unsorted or duplicated)")
+            print(f"  CLI FAILED {pat.name} mode={mode}: row ids are not strictly ascending")
+            continue
+        actual = set(ids)
         missing = sorted(expected - actual)   # truth says match, CLI did not
         extra = sorted(actual - expected)     # CLI says match, truth did not
 
@@ -199,7 +222,16 @@ def main() -> int:
     ap.add_argument("--force", action="store_true", help="regenerate ground truth")
     ap.add_argument("--timeout", type=int, default=600, help="per-invocation CLI timeout")
     ap.add_argument("--runs", type=int, default=1, help="CLI --runs (correctness needs 1)")
+    ap.add_argument("--allow-skip", default="",
+                    help="comma-separated modes whose skips are EXPECTED (reported separately); "
+                         "any other skip fails the run")
+    ap.add_argument("--allow-fixture-loaders", action="store_true",
+                    help="do not fail when the CLI reports test-fixture loaders")
     args = ap.parse_args()
+    # Mismatch evidence contains non-ASCII rows; a cp1252 console must not crash the report.
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8", errors="replace")
+    allowed_skips = {m.strip() for m in args.allow_skip.split(",") if m.strip()}
 
     modes = [m.strip() for m in args.modes.split(",") if m.strip()]
     bad = [m for m in modes if m not in VALID_MODES]
@@ -223,7 +255,7 @@ def main() -> int:
     print(f"  oracle : duckdb against the canonical parquet")
     print()
 
-    tally = {"pass": 0, "fail": 0, "skip": 0}
+    tally = {"pass": 0, "fail": 0, "skip": 0, "expected_skip": 0}
     failed_patterns = []
     skip_reasons = {}
     seen_loaders: set[str] = set()
@@ -238,13 +270,16 @@ def main() -> int:
             cells = []
             for mode in modes:
                 status, detail = results[mode]
+                if status == "skip" and mode in allowed_skips:
+                    status = "expected_skip"
                 tally[status] += 1
                 cells.append(f"{mode}={status.upper()}")
                 if status == "fail" and pat.name not in failed_patterns:
                     failed_patterns.append(pat.name)
-                if status == "skip":
-                    skip_reasons.setdefault(detail, 0)
-                    skip_reasons[detail] += 1
+                if status in ("skip", "expected_skip"):
+                    key = ("expected: " if status == "expected_skip" else "") + detail
+                    skip_reasons.setdefault(key, 0)
+                    skip_reasons[key] += 1
             print(f"  {pat.name:<24} {expected_count:>9,} expected   " + "  ".join(cells))
 
     con.close()
@@ -259,8 +294,8 @@ def main() -> int:
                 "does NOT verify Person B's official loaders or the real datasets.",
                 file=sys.stderr,
             )
-    print(f"{tally['pass']} passed, {tally['fail']} failed, {tally['skip']} skipped "
-          f"in {elapsed:.1f}s")
+    print(f"{tally['pass']} passed, {tally['fail']} failed, {tally['skip']} skipped, "
+          f"{tally['expected_skip']} expected skips in {elapsed:.1f}s")
     for reason, count in skip_reasons.items():
         print(f"  skipped x{count}: {reason}")
 
@@ -271,6 +306,13 @@ def main() -> int:
     if tally["pass"] == 0:
         print("No pattern was actually verified; nothing passed.", file=sys.stderr)
         return 2
+    if tally["skip"]:
+        print(f"INCOMPLETE: {tally['skip']} requested (pattern, mode) checks did not run; "
+              "a mode that did not execute is not verified.", file=sys.stderr)
+        return 1
+    if "fixture" in seen_loaders and not args.allow_fixture_loaders:
+        print("INCOMPLETE: the CLI used test-fixture loaders.", file=sys.stderr)
+        return 1
     print("All patterns passed.")
     print("Total mismatches: 0")
     return 0
