@@ -4,7 +4,13 @@ Every check compares the TokenLIKE SQL result with DuckDB's own LIKE over the or
 check passes only if it ran and produced the expected answer: an exception where a result was
 expected is a failure, and so is a missing error where one was expected.
 
-    .venv/Scripts/python sql/test_sql.py [--quick]
+    .venv/Scripts/python -X utf8 integration/duckdb/python/test_sql.py [--quick | --smoke] [--ext FILE]
+        [--out FILE [--overwrite] | --update-reference]
+
+The full and quick runs write a JSON report: a new build/duckdb/results/test_results-<UTC time>.json
+by default (TOKENLIKE_TEST_RESULTS=<name>.json changes the name); --update-reference replaces the
+committed results/<name>.json. An existing file is never replaced without --overwrite. The smoke run
+writes no report.
 """
 from __future__ import annotations
 
@@ -202,6 +208,10 @@ def test_real_data(con, files, quick):
         "data/tpch/l_comment": ("tpch", "l_comment", "encoded_l"),
         "data/tpch/o_comment": ("tpch", "o_comment", "encoded_o"),
     }
+    # This module's own fixtures (make_fixtures.py): table fuzz_s<N>, column prefix in <data>/duckdb/fixtures.
+    tables = {r[0] for r in con.execute("SELECT table_name FROM duckdb_tables()").fetchall()}
+    for name in sorted(t for t in tables if t.startswith("fuzz_s")):
+        colmap[tlsql.column_key(tlsql.FIXTURES / name / "values")] = (name, "original", "encoded")
     summary = []
     for pf in files:
         for name, col, pat, col2 in tlsql.read_patterns(pf):
@@ -640,7 +650,15 @@ def main() -> int:
     ap.add_argument("--quick", action="store_true", help="real-data patterns on urls_100k instead of 1M rows")
     ap.add_argument("--smoke", action="store_true", help="data-free run: fixtures + error/cache checks only")
     ap.add_argument("--ext", help="extension file to test (default: TOKENLIKE_EXT or build/duckdb)")
+    tlsql.add_output_args(ap, "results/test_results*.json")
     args = ap.parse_args()
+    report = None
+    if not args.smoke:  # checked before the run, which takes minutes
+        name = "test_results_quick.json" if args.quick else os.environ.get("TOKENLIKE_TEST_RESULTS", "test_results.json")
+        report = tlsql.output(args, f"results/{name}")
+    elif args.out is not None or args.update_reference:
+        print("ERROR: --smoke writes no report; --out / --update-reference apply to the full and quick runs")
+        return 2
     if args.ext:
         tlsql.EXT = Path(args.ext).resolve()
     t0 = time.perf_counter()
@@ -672,9 +690,12 @@ def main() -> int:
     if not args.smoke:
         con = tlsql.connect(tlsql.DB, read_only=True)
         files = [tlsql.PATTERNS / f for f in ("core.txt", "tier1.txt", "tier2.txt", "generated_edge.txt", "generated_fuzz.txt")]
-        extra = tlsql.SCRATCH / "fuzz_s7.txt"  # optional: scripts/verify/fuzz.py --random --seed 7 --patterns <this>
-        if extra.exists():
-            files.append(extra)
+        extra = sorted(tlsql.FIXTURES.glob("fuzz_s*.txt"))  # optional: make_fixtures.py --seed 7
+        legacy = tlsql.SCRATCH / "fuzz_s7.txt"  # earlier layout: seed-7 patterns over the data/fuzz column
+        if not extra and legacy.exists():
+            print(f"note: using the earlier {tlsql.rel(legacy)}; make_fixtures.py replaces it", flush=True)
+            extra = [legacy]
+        files += extra
         steps += [
             lambda: real_summary.extend(test_real_data(con, files, args.quick)),
             lambda: test_caching(con), lambda: test_sql_features(con), lambda: test_nulls_and_empty(con),
@@ -702,10 +723,9 @@ def main() -> int:
            "total_pass": total_pass, "total_fail": total_fail, "failures": FAILURES[:200],
            "real_data_patterns": len(real_summary) - len(skipped), "real_data_skipped": skipped,
            "real_data": real_summary}
-    if not args.smoke:
-        tlsql.RESULTS.mkdir(exist_ok=True)
-        name = "test_results_quick.json" if args.quick else os.environ.get("TOKENLIKE_TEST_RESULTS", "test_results.json")
-        (tlsql.RESULTS / name).write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
+    if report is not None:
+        report.write(json.dumps(out, indent=2, ensure_ascii=False))
+        print("wrote", tlsql.rel(report.path))
     print(f"\n{'ALL PASSED' if total_fail == 0 else 'FAILURES'} ({mode}): {total_pass} checks passed, {total_fail} failed, "
           f"{len(real_summary) - len(skipped)} real-data patterns, {len(skipped)} skipped, {out['seconds']} s")
     return 0 if total_fail == 0 else 1

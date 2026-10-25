@@ -88,37 +88,64 @@ cmake -S integration\duckdb -B build\duckdb -G Ninja -DCMAKE_BUILD_TYPE=Release 
 cmake --build build\duckdb                         # -> build\duckdb\tokenlike.duckdb_extension
 ctest --test-dir build\duckdb --output-on-failure  # data-free smoke test (synthetic vocabulary if data\ is absent)
 
-# 3. Data (Person B's scripts; ~125 MB download) -- see the top-level README "Data" section, then
-#    optional fixtures for the full suite:
-.\.venv\Scripts\python.exe scripts\verify\fuzz.py --edge --patterns build\duckdb\scratch\generated_edge.txt
-.\.venv\Scripts\python.exe scripts\encode\encode.py data\edge\values
-.\.venv\Scripts\python.exe scripts\verify\fuzz.py --random --seed 7 --count 300 --patterns build\duckdb\scratch\fuzz_s7.txt
-.\.venv\Scripts\python.exe scripts\encode\encode.py data\fuzz\values
-.\.venv\Scripts\python.exe scripts\encode\gen_tpch.py --scale 1
-.\.venv\Scripts\python.exe scripts\encode\encode.py data\tpch\l_comment
-.\.venv\Scripts\python.exe scripts\encode\encode.py data\tpch\o_comment
+# 3. Data: Person B's pipeline output in data\ (top-level README "Data"; edge, fuzz and TPC-H
+#    fixtures: HANDOFF_B.md section 2 and STATUS.md). This module only reads it. Its own extra
+#    fuzz set (seed 7) goes to data\duckdb\fixtures\, never to data\fuzz or patterns\:
+.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\make_fixtures.py --seed 7 --count 300
 
-# 4. Database, tests, demo, measurements
+# 4. Database, tests, demo, measurements (reports go to new files in build\duckdb\results\)
 .\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\build_db.py        # -> data\duckdb\tokenlike.duckdb
-.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\test_sql.py        # full suite (~2 min)
+.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\test_sql.py        # full suite (~2-4 min)
 .\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\demo_sql.py        # live demo
 .\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\run_sql.py integration\duckdb\examples\judge_demo.sql
 .\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\storage_report.py  # compression accounting
 .\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\bench_sql.py --runs 7   # ~15 min, pinned to P-cores
-.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\report_tables.py   # -> integration\duckdb\RESULTS.md
+.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\report_tables.py   # renders results\ as Markdown
 
 # Optional MSVC build, tested with the same suite
 integration\duckdb\tools\build_msvc.cmd
 $env:TOKENLIKE_EXT = "build\duckdb-msvc\tokenlike.duckdb_extension"; $env:TOKENLIKE_TEST_RESULTS = "test_results_msvc.json"
-.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\test_sql.py
+.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\test_sql.py        # -> build\duckdb\results\test_results_msvc-<UTC>.json
 Remove-Item Env:TOKENLIKE_EXT, Env:TOKENLIKE_TEST_RESULTS
 ```
 
 Use the `-X utf8` flag: the scripts print non-ASCII URLs and patterns.
 
+## Outputs: nothing is replaced implicitly
+
+| Script | Default output (git-ignored, a new file per run) | Committed reference, replaced only with `--update-reference` |
+|---|---|---|
+| `test_sql.py` (full, `--quick`) | `build/duckdb/results/test_results[_quick]-<UTC>.json` | `results/test_results.json` (`TOKENLIKE_TEST_RESULTS` sets the name) |
+| `bench_sql.py` | `build/duckdb/results/bench[_quick][_<tag>]-<UTC>.json` | `results/bench.json` (`bench_<tag>.json` with `TOKENLIKE_BENCH_TAG`) |
+| `storage_report.py` | `build/duckdb/results/storage-<UTC>.json` | `results/storage.json` |
+| `build_db.py` (build report) | `build/duckdb/results/build_db-<UTC>.json` | `results/build_db.json` |
+| `report_tables.py` | `build/duckdb/results/RESULTS-<UTC>.md` | `RESULTS.md` |
+| `make_fixtures.py` | `data/duckdb/fixtures/fuzz_s<seed>/values.*` and `data/duckdb/fixtures/fuzz_s<seed>.txt` | none |
+
+* Every measurement script also takes `--out FILE`. An existing file is refused unless `--overwrite`
+  is given too. `--update-reference` replaces the committed file on purpose, for example
+  `bench_sql.py --runs 7 --update-reference`. The check runs before any work starts, and a file that
+  appears while a script runs is not replaced either. If a default name is taken (two runs in one
+  second), a `-1`, `-2`, … suffix is added.
+* `report_tables.py [BENCH.json ...] [--results-dir DIR]` renders the committed `results/` by
+  default. To render new runs, pass their files.
+* `make_fixtures.py` runs Person B's own `scripts/verify/fuzz.py --random` and
+  `scripts/encode/encode.py`, unchanged, with explicit output paths in `data/duckdb/fixtures/`. It
+  refuses an output directory inside Person B's data or the tracked tree, and an existing fixture
+  without `--overwrite`. Afterwards it checks that every file of Person B's data and of `patterns/` is
+  unchanged (size, mtime, SHA-256). `build_db.py` loads each fixture as table `fuzz_s<seed>`, and
+  `test_sql.py` runs its patterns.
+* Do not run `fuzz.py` without both `--out` and `--patterns`. Its defaults are Person B's official
+  `data/fuzz/values` (seed 1, 20,016 rows) and the tracked `patterns/generated_fuzz.txt`.
+* The database (`data/duckdb/tokenlike.duckdb`) is this module's own derived file. `build_db.py`
+  builds it in a temporary file and then replaces it.
+* `ctest --test-dir build\duckdb` also runs `duckdb_output_safety` (`python/test_outputs.py`), which
+  checks all of the above without data, in a temporary directory.
+
 Environment overrides (all optional): `TOKENLIKE_DATA` (data directory), `TOKENLIKE_EXT` (extension
 file), `TOKENLIKE_DUCKDB` (database file), `TOKENLIKE_CLI` (CLI used as the benchmark reference),
-`TOKENLIKE_BENCH_TAG` (benchmark output suffix), `TOKENLIKE_TEST_RESULTS` (test output file name).
+`TOKENLIKE_BENCH_TAG` (benchmark output suffix), `TOKENLIKE_TEST_RESULTS` (test output file name),
+`TOKENLIKE_RESULTS_DIR` (default output directory, `build/duckdb/results`).
 
 ## Layout
 
@@ -129,12 +156,12 @@ file), `TOKENLIKE_DUCKDB` (database file), `TOKENLIKE_CLI` (CLI used as the benc
 | `tools/append_metadata.py` | Appends DuckDB's 534-byte extension footer (independent implementation; byte-identical output to DuckDB's own tool, checked). |
 | `tools/build_msvc.cmd` | MSVC build. |
 | `third_party/duckdb/` | `duckdb.h`, `duckdb_extension.h` (v1.5.6, unmodified, MIT) and provenance. |
-| `python/` | `tlsql.py` (paths, connection), `build_db.py`, `test_sql.py`, `demo_sql.py`, `run_sql.py`, `bench_sql.py`, `storage_report.py`, `report_tables.py`. |
+| `python/` | `tlsql.py` (paths, connection, output policy), `build_db.py`, `test_sql.py`, `demo_sql.py`, `run_sql.py`, `bench_sql.py`, `storage_report.py`, `report_tables.py`, `make_fixtures.py`, `test_outputs.py`. |
 | `examples/judge_demo.sql` | Plain-SQL demo. |
-| `results/` | JSON measured on the reference machine; `RESULTS.md` renders them. |
+| `results/` | Committed reference JSON from the reference machine; `RESULTS.md` renders them. Scripts replace them only with `--update-reference`. |
 
-Generated files go to git-ignored places only: `build/duckdb*` (binaries, scratch),
-`data/duckdb/` (databases), `.venv/`.
+Generated files go to git-ignored places only: `build/duckdb*` (binaries, scratch, script outputs in
+`build/duckdb/results/`), `data/duckdb/` (databases, `fixtures/`), `.venv/`.
 
 ## Database schema (`data/duckdb/tokenlike.duckdb`)
 
@@ -142,7 +169,8 @@ Generated files go to git-ignored places only: `build/duckdb*` (binaries, scratc
 VARCHAR` (raw text, for truth and baselines only), `encoded_url BLOB`, `encoded_referer BLOB`
 (Person B's token encoding, loaded zero-copy from `.tok`/`.off`), `traffic_source_id SMALLINT` (the
 real ClickBench column `TraficSourceID`, row-aligned and verified against the canonical URL/Referer).
-Also `urls_1k/10k/100k` (prefixes), `edge`, `fuzz`, `tpch` (optional). After loading, every encoded
+Also `urls_1k/10k/100k` (prefixes), `edge`, `fuzz`, `tpch` (Person B's fixtures, optional) and
+`fuzz_s<seed>` (this module's `make_fixtures.py` output, optional). After loading, every encoded
 column is checked with `detokenize(encoded) IS DISTINCT FROM original` (0 rows).
 
 Storage note: DuckDB compresses **both** the VARCHAR and the BLOB columns itself (Dictionary and FSST

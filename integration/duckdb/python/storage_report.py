@@ -6,10 +6,14 @@
      default compression and with force_compression='uncompressed', measured as used blocks
      (PRAGMA database_size), plus the per-segment compression mix from pragma_storage_info.
 
-    .venv/Scripts/python -X utf8 integration/duckdb/python/storage_report.py   -> results/storage.json
+    .venv/Scripts/python -X utf8 integration/duckdb/python/storage_report.py [--out FILE [--overwrite] | --update-reference]
+
+Output: a new build/duckdb/results/storage-<UTC time>.json by default; --update-reference replaces the
+committed results/storage.json. An existing file is never replaced without --overwrite.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -89,6 +93,9 @@ def main_table_mix() -> list[dict]:
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser(description="Compression accounting and DuckDB storage inspection")
+    tlsql.add_output_args(ap, "results/storage.json")
+    out = tlsql.output(ap.parse_args(), "results/storage.json")
     for f in (tlsql.DB, tlsql.VOCAB):
         if not f.exists():
             print(f"ERROR: {tlsql.rel(f)} not found")
@@ -102,15 +109,14 @@ def main() -> int:
         rep["logical"][col]["duckdb_default_text_mb"] = ph[f"{raw}/default"]["used_mb"]
         rep["logical"][col]["duckdb_default_tokens_mb"] = ph[f"{enc}/default"]["used_mb"]
         rep["logical"][col]["duckdb_default_ratio_tokens_to_text"] = round(ph[f"{enc}/default"]["used_bytes"] / ph[f"{raw}/default"]["used_bytes"], 4)
-    tlsql.RESULTS.mkdir(exist_ok=True)
-    (tlsql.RESULTS / "storage.json").write_text(json.dumps(rep, indent=2), encoding="utf-8")
+    out.write(json.dumps(rep, indent=2))
     for col, *_ in COLUMNS:
         L = rep["logical"][col]
         print(f"{col}: text {L['text_bytes']:,} B, tokens {L['token_bytes']:,} B ({L['ratio_tokens_to_text']}x); "
               f"with uint64 offsets {L['ratio_with_offsets']}x; + vocabulary {L['ratio_with_offsets_and_vocab']}x; "
               f"DuckDB default storage: text {L['duckdb_default_text_mb']} MB vs tokens {L['duckdb_default_tokens_mb']} MB "
               f"({L['duckdb_default_ratio_tokens_to_text']}x); Person B files consistent: {L['files_consistent']}")
-    print("wrote", tlsql.rel(tlsql.RESULTS / "storage.json"))
+    print("wrote", tlsql.rel(out.path))
     return 0
 
 

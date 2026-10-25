@@ -8,7 +8,7 @@ Compares, inside the same DuckDB process and through the same SQL front end:
   decode  detokenize(encoded_url) LIKE p   token BLOB column, full decode, then native LIKE
   token   token_like(encoded_url, p)       TokenLIKE matcher on the token ids, no decoding
 
-Sections (results/bench.json):
+Sections (one JSON report; the committed reference is results/bench.json):
   grid             COUNT(*) per pattern x mode x scale (1k..1M) x threads (P-cores, 1); plus a
                    1M-row table stored with force_compression='uncompressed'
   cold_warm        per pattern on 1M rows: matcher build + first execution vs cached executions
@@ -25,6 +25,11 @@ count or the cell is marked FAIL. The process pins itself to the highest-efficie
 (P-cores on hybrid Intel CPUs) and opts out of Windows power throttling.
 
     .venv/Scripts/python -X utf8 integration/duckdb/python/bench_sql.py [--runs 7] [--quick]
+        [--out FILE [--overwrite] | --update-reference]
+
+Output: a new build/duckdb/results/bench-<UTC time>.json by default (git-ignored). An existing file
+is never replaced without --overwrite; --update-reference replaces the committed results/bench.json
+(results/bench_<tag>.json with TOKENLIKE_BENCH_TAG, results/bench_quick*.json with --quick).
 """
 from __future__ import annotations
 
@@ -334,7 +339,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, default=7)
     ap.add_argument("--quick", action="store_true", help="100k and 1M only, fewer sections")
+    tag = os.environ.get("TOKENLIKE_BENCH_TAG", "")
+    tlsql.add_output_args(ap, "results/bench*.json")
     args = ap.parse_args()
+    stem = ("bench_quick" if args.quick else "bench") + (f"_{tag}" if tag else "")
+    out = tlsql.output(args, f"results/{stem}.json")  # checked now, before ~15 minutes of measurement
     for f in (tlsql.DB, tlsql.EXT, tlsql.VOCAB):
         if not f.exists():
             print(f"ERROR: {tlsql.rel(f)} not found (see integration/duckdb/README.md)")
@@ -361,14 +370,11 @@ def main() -> int:
         "cold_start": bench_cold_start(),
     }
     report["meta"]["seconds"] = round(time.perf_counter() - t0, 1)
-    tlsql.RESULTS.mkdir(exist_ok=True)
-    tag = os.environ.get("TOKENLIKE_BENCH_TAG", "")
-    out = tlsql.RESULTS / (("bench_quick" if args.quick else "bench") + (f"_{tag}" if tag else "") + ".json")
-    out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    out.write(json.dumps(report, indent=2, ensure_ascii=False))
     bad = ([c for c in report["grid"] if c["verified"] != "pass"] + [c for c in report["cold_warm"] if c["verified"] != "pass"]
            + [c for c in report["scan_floor"] if c.get("verified", "pass") != "pass"]
            + ([1] if report["decode_selected"]["verified"] != "pass" else []))
-    print(f"wrote {tlsql.rel(out)}; {len(report['grid'])} grid cells, {len(bad)} unverified")
+    print(f"wrote {tlsql.rel(out.path)}; {len(report['grid'])} grid cells, {len(bad)} unverified")
     return 0 if not bad else 1
 
 
