@@ -111,7 +111,8 @@ integration/fsst/
   THIRD_PARTY.md                        FSST pin, licence, prior art
   FINAL_REPORT.md                       results (v2)
   demo_fsst.py                          runnable end-to-end demonstration
-  docs/REPRODUCE.md                     every command, macOS
+  docs/REPRODUCE.md                     every command, macOS, integrated layout
+  docs/MACOS_V4_VERIFICATION.md         macOS re-verification of main @ 0eab88d
   include/fsstlike/
     common.h  pattern.h  dfa.h  fsstcol.h  lift.h  rawopt.h  scan.h
   src/
@@ -145,7 +146,8 @@ test name is reused or shadowed.**
 | **macOS arm64 (Apple Silicon)** | **fully tested** — Apple clang 21.0.0, CMake 4.4.4 + Ninja, Release and ASan/UBSan |
 | macOS x86_64 | expected to work; `fsst_avx512.cpp` would take its AVX-512 path only on hardware that has it, and FSST's own runtime check handles that. Not tested here. |
 | Linux x86_64 / arm64 | expected to work. `memmem` is used under `_GNU_SOURCE` (libstdc++ defines it); a portable fallback is compiled otherwise. Not tested here. |
-| **Windows / MSVC** | **not tested.** See §9. |
+| **Windows, mingw-w64 GCC 14.2** | **tested by Person C** at `0eab88d`, after four portability fixes (two in this module, two in the root hook). Reviewed and re-run on macOS: `docs/MACOS_V4_VERIFICATION.md` §6. |
+| Windows / MSVC | **not tested.** See §9. |
 
 C++17, no dependencies beyond the standard library and the FSST snapshot.
 Python tooling needs only `duckdb==1.5.6` and is used for ground truth and
@@ -195,6 +197,13 @@ Exit codes: 0 ok, 1 error, **2 = this build does not support the request** (neve
 a silent fallback to decoding).
 
 ## 7. Tests and results
+
+Measured on `feature/fsst-like` (`99accef`). The same suites were re-run on the
+integrated `main` (`0eab88d`) on macOS, with the DuckDB oracle re-derived rather
+than reused, and on Windows by Person C — see `docs/MACOS_V4_VERIFICATION.md`
+and `../../FINAL_INTEGRATION_REPORT.md`. The ctest counts below grew on `main`
+(16 without the module, 17 with it, given the datasets); everything else is
+unchanged.
 
 | | |
 |---|---|
