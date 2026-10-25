@@ -2,8 +2,11 @@
 
 Integration of the core TokenLIKE project (`v3-freeze`, `c58d066`) with Person A's DuckDB
 extension and Person B's FSST-LIKE module, plus fixes for the v3-freeze master audit.
-Branch `integration/sql-fsst-v4`. Every number below was measured on the machine named next
-to it; numbers from different machines are never mixed in one table.
+Integrated on `integration/sql-fsst-v4` (tag `v4-integrated` → `0eab88d`), then stabilized on
+`integration/v4-stabilize` with A's and B's follow-up fixes and B's macOS verification
+(section 2.1). Every number below was measured on the machine named next to it; numbers from
+different machines are never mixed in one table. The tag `v4-integrated` is unchanged and
+does not include the stabilization; `main` does.
 
 ## 1. Outcome
 
@@ -13,16 +16,19 @@ to it; numbers from different machines are never mixed in one table.
 | Person A's SQL gate (Windows, GCC 14.2) | **1,116/1,116** checks, 694 real-data patterns, 0 skipped |
 | Person B's FSST gate (Windows, GCC 14.2) | unit **6,429/0**; patterns **3,367 passed, 0 failed**, 33 documented skips; **15/15** patterns identical to the TokenLIKE CLI |
 | FSST columns, macOS (B) vs Windows (C) | **9/9 byte-identical** (FNV-64 of codes, offsets, symbol table) |
+| macOS re-verification of the integrated tree (B, Apple M2, at `0eab88d`) | core CTest **16/16**, core gate **282/282**, 0 skipped; FSST CTest **17/17**, unit **6,429/0**, gate **3,367 passed, 0 failed**, 33 documented skips, oracle re-derived; **15/15** identical to TokenLIKE; ASan + UBSan clean (section 6). C's four `[B-patch by C]` commits reviewed and confirmed |
 | Audit defects | every item listed for this integration addressed or documented (section 4); regression tests added |
-| `v3-freeze` | untouched (`c58d066`); all earlier tags unchanged |
+| Follow-up fixes (section 2.1) | A: DuckDB scripts never overwrite committed results or B's data (CTest `duckdb_output_safety`, **74/74**). B: two gate defects, no evidence overwrites, reproduction docs |
+| Tags | `v3-freeze` (`7fa32c5` → `c58d066`) and `v4-integrated` (`bd03c47` → `0eab88d`) untouched; all earlier tags unchanged |
 
 Platform support, as actually built and executed:
 
-| Component | Windows 11 x86-64 (mingw-w64 GCC 14.2) | macOS arm64 | Linux |
+| Component | Windows 11 x86-64 (mingw-w64 GCC 14.2) | macOS arm64 (Apple clang 21, Person B) | Linux |
 |---|---|---|---|
-| Core TokenLIKE | built, all gates pass (C) | not tested by C | not tested |
-| DuckDB extension | built, smoke + full SQL suite pass (C); also GCC 16.2 and MSVC (A) | not supported (extension built for `windows_amd64`) | not tested |
-| FSST-LIKE | built, unit + full gate pass (C), **after 4 Windows fixes** (section 5) | verified by B at `99accef`; **C's portability patches not yet re-run on macOS** (B to confirm) | not tested |
+| Core TokenLIKE | built, all gates pass (C) | built, CTest 16/16, core gate 282/282 (B) | not tested |
+| DuckDB extension | built, smoke + output safety + full SQL suite pass (C); also GCC 16.2 and MSVC (A) | not built (the extension targets `windows_amd64`) | not tested |
+| FSST-LIKE | built, unit + full gate pass (C), after 4 Windows fixes (section 5) | built and fully verified **with C's Windows patches** at `0eab88d` (B, `integration/fsst/docs/MACOS_V4_VERIFICATION.md`) | not tested |
+| Demo menu | all six entries run (C, section 3) | entry 6 runs to completion (B) | not tested |
 
 ## 2. What was merged
 
@@ -33,7 +39,19 @@ Platform support, as actually built and executed:
 
 Both branches were based on `c58d066` and merged with `--no-ff` without conflicts. No
 algorithm in either module was changed by C. Changes C made inside A/B-owned paths are
-separate commits titled `[B-patch by C]`, listed in section 5, for the owner's review.
+separate commits titled `[B-patch by C]`, listed in section 5; B has since reviewed and
+confirmed all four (section 2.1).
+
+### 2.1 Stabilization (after `v4-integrated`)
+
+| Branch | Head | Owner | Content | Shared files touched |
+|---|---|---|---|---|
+| `fix/duckdb-safe-outputs` | `a5627da` | A | `build_db.py`, `storage_report.py`, `bench_sql.py`, `test_sql.py`, `report_tables.py` write a new git-ignored `build/duckdb/results/<name>-<UTC>` file by default; refuse an existing `--out` without `--overwrite`; replace committed references only with `--update-reference`. New `make_fixtures.py` generates the seed-7 SQL fixture into `data/duckdb/fixtures/` with B's generator unchanged and verifies afterwards that B's data and `patterns/` are unchanged. New data-free CTest `duckdb_output_safety` (74 checks) | none |
+| `b/fsst-macos-verify` | `3fc18ff` | B | macOS verification of `0eab88d` (`integration/fsst/docs/MACOS_V4_VERIFICATION.md`); `scripts/check_all.sh` probe uses the same DuckDB resolver as the checker (it reported FAIL for a working backend on a fresh clone); `check.py` out-of-range guard covers every indexed array (completes C's B-5 fix); FSST gate writes its cross-check to git-ignored `bench/latest/` instead of rewriting recorded evidence; `REPRODUCE.md` rewritten for the integrated tree; macOS smoke numbers in `bench/v3-macos-v4/` | `.gitignore` (+1 line: `integration/fsst/bench/latest/`) |
+| C | this branch | C | `demo/menu.py`: one FSST build directory for both the prerequisite check and the demo (section 3); README: the direct FSST demo command sets `FSSTLIKE_BUILD`; this report | none outside C's files |
+
+Both were based on `0eab88d` and merged with `--no-ff` without conflicts. The reruns in section 3
+are on the merged tree.
 
 Build modules:
 
@@ -52,8 +70,14 @@ raises a SQL error for patterns over the state limit.
 
 ## 3. Test matrix (Windows 11, Intel Core i5-1334U, mingw-w64 GCC 14.2.0, Python 3.13.0, DuckDB 1.5.6)
 
+Re-run on the stabilized tree (A's and B's fixes merged), every build from `--clean-first`.
+No compiled source changed since `0eab88d`; the changes are in Python scripts, CMake tests and
+documentation. Results are identical to the `0eab88d` run unless a row says otherwise.
+
 | Gate | Configuration | Result |
 |---|---|---|
+| DuckDB module CTest (stabilized) | GCC 14.2, Release | **2/2**: `duckdb_sql_smoke`, `duckdb_output_safety` (74 checks, 0 failed) |
+| A's seed-7 fixture (`make_fixtures.py`) | | 5,016 rows, 300 patterns into `data/duckdb/fixtures/`; 481 files of B's data and tracked patterns verified unchanged |
 | Core CTest | Release `-O3 -march=native` | 16/16 |
 | Core CTest | Debug + `_GLIBCXX_ASSERTIONS` | 16/16 |
 | Core CTest | UBSan (trap mode) + `_GLIBCXX_ASSERTIONS` | 16/16 |
@@ -68,15 +92,35 @@ raises a SQL error for patterns over the state limit.
 | Combined build core + FSST | Release | CTest 17/17 |
 | FSST unit suite | Release | 6,429 checks, 0 failures |
 | FSST unit suite | UBSan trap + assertions, upstream FSST not sanitized | 6,429/0 (CTest 17/17) |
-| FSST unit suite | UBSan trap on everything incl. upstream | **traps inside upstream `libfsst.cpp`** (see section 6) |
+| FSST unit suite | UBSan trap on everything incl. upstream | **traps in upstream FSST**, check `builtin` only (`__builtin_ctzl` on LLP64); every other check alone passes 6,429/0 (section 6) |
 | FSST gate (`integration/fsst/scripts/check_all.sh`) | Release | ALL CHECKS PASSED: structural validation of 9 columns, DuckDB semantics probes, 3,367 pattern checks passed, 0 failed, 33 documented skips (`--col2` with three reverse/compact modes, exit 2), 15/15 patterns identical to TokenLIKE |
 | CLI regression tests (new) | | invalid UTF-8 pattern (3 modes), out-of-range token id (token, decode), `--help`, repeated option: exact exit codes; all fail on the old `v3-freeze` binary |
 | Checker regression (test double corrupting the real CLI's output) | | dropped / added / unsorted / duplicated / truncated / byte-swapped ids and a missing mode all fail; an uncorrupted run passes 22/22 |
-| Streamlit, real browser (Edge 155 via Playwright) | replay, live, concat, error paths | 36/36 checks; localhost-only binding confirmed; no temp files left behind |
-| Demo menu | demos 1-6 | all run (demos 1-2 via the browser suite, 3-6 directly) |
+| Streamlit, real browser (Edge 155 via Playwright) | replay, live, concat, error paths | 36/36 checks; localhost-only binding confirmed; no temp files left behind. Stabilized rerun: 36/36 after fixing the harness's "idle" test (it looked for the text "Running", which this Streamlit's status widget no longer shows, so 4 error-path pages were read before their first run finished; the app itself showed the right error each time) |
+| Demo menu (stabilized) | `python demo/menu.py N` | see the demo table below |
 
-NOT TESTED: macOS and Linux builds by C; AddressSanitizer (no ASan runtime in either MinGW
-toolchain); MSVC build of the core and FSST; the DuckDB extension inside an MSVC-built DuckDB
+Demo menu, run through `demo/menu.py` on the stabilized tree:
+
+| # | Demo | Result |
+|---|---|---|
+| 1 | Streamlit replay | launched by `menu.py 1`, driven in Edge: REPLAY banner, "Verified against DuckDB", 3 tiles, no exception; not reachable on the machine's LAN address |
+| 2 | Streamlit live | launched by `menu.py 2`, driven in Edge: ran `%.php` live, "Verified against DuckDB", 12,714 matches in all three modes, no exception |
+| 3 | CLI `%.php` | exit 0; 12,714 matches, ids validated, `loaders: official` |
+| 4 | DuckDB `demo_sql.py` | exit 0; all 9 sections; `token_like` result identical to plain `LIKE` on the text column |
+| 5 | DuckDB `judge_demo.sql` | exit 0; no SQL errors |
+| 6 | FSST end to end, 100,000 rows | exit 0; compressed in this run (1.92x on codes), round trip 0 mismatches; all 5 modes returned identical row-id sets on all 8 patterns (40 scans) and agreed with DuckDB on all 8 |
+
+`FSSTLIKE_BUILD` fix: B's scripts look for `fsst_like` in `$FSSTLIKE_BUILD`, else `build/fsst`,
+`build`, `integration/fsst/build/rel`, but the README builds the module in `build-fsst`. The
+menu exported `FSSTLIKE_BUILD=build-fsst`, yet its prerequisite check was hard-coded to
+`build-fsst` even when the user set another directory. It now uses one resolved directory
+(the user's `FSSTLIKE_BUILD`, relative to the repository root, else `build-fsst`) for both.
+Tested: default → ready; `FSSTLIKE_BUILD=nowhere` → "needs …\nowhere\fsst_like.exe", exit 1
+with no traceback; absolute path → ready. The README's direct command for demo 6 failed
+("`build\fsst\fsst_like` is not built") because it set no `FSSTLIKE_BUILD`; it now does.
+
+NOT TESTED: macOS and Linux builds by C (macOS: see Person B's verification); AddressSanitizer
+on Windows (no ASan runtime in either MinGW toolchain); MSVC build of the core and FSST; the DuckDB extension inside an MSVC-built DuckDB
 with a GCC-built DLL under out-of-memory conditions (A's caveat).
 
 ## 4. Audit fixes
@@ -123,8 +167,9 @@ change; none alters an algorithm, a data format or a test expectation.
 | `src/encode.cpp` | paths written unescaped into JSON; `C:\...` made `.fsst.meta.json` invalid | JSON-escape the paths | B (patched by C) |
 | `scripts/*.py`, `demo_fsst.py` | subprocess output decoded as cp1252; `.exe` not found; Cyrillic printing crashed | decode as UTF-8; `resolve_cli`; UTF-8 console streams | B (patched by C) |
 
-**Person B: please re-run `bash scripts/check_all.sh` on macOS** on this branch to confirm the
-patched files behave as before there.
+**Confirmed on macOS by Person B** (`MACOS_V4_VERIFICATION.md` §6): every patch was read and
+re-run on Apple M2; none changes macOS behaviour, both `if(MINGW)` blocks are inert there, and
+re-encoding after the encoder patch reproduces all twelve column artifacts byte for byte.
 
 ## 6. Robustness and sanitizers
 
@@ -132,11 +177,30 @@ patched files behave as before there.
   builds pass all tests.
 - FSST-LIKE (B's code): passes the unit suite under UBSan (trap) + assertions when the
   upstream FSST files are compiled without the sanitizer.
-- Upstream FSST: with the sanitizer also applied to it, GCC's UBSan traps inside
-  `libfsst.cpp:220` (`buildSymbolTable`), and still does with `-fno-sanitize=alignment`.
-  B's macOS run suppresses one upstream class (`alignment:*third_party/fsst/*`) with Clang's
-  runtime; GCC flags at least one more check there. The upstream code is used unmodified, as
-  B intends; this is recorded, not fixed.
+- Upstream FSST (`third_party/fsst` @ `e638d4c`, used unmodified; recorded, not patched).
+  The two platforms report **different** upstream issues:
+
+  | | macOS arm64, Apple clang 21 (Person B) | Windows x86-64, mingw-w64 GCC 14.2 (C) |
+  |---|---|---|
+  | check that fires | `alignment` only | `builtin` only |
+  | where | `fsst.h`, 10 sites, all expansions of `FSST_UNALIGNED_STORE` (`fsst.h:156`) in `fsst_decompress` | `libfsst.hpp:404`/`:418`, `Counters::count1GetNext`/`count2GetNext`, inlined into `buildSymbolTable` (reported as `libfsst.cpp:220`) |
+  | what it is | `memcpy` through an `unsigned long long*` cast of an unaligned destination: formally UB, correct on arm64 and x86-64 | `__builtin_ctzl(u64)`: `unsigned long` is 32 bits on Windows (LLP64), so a counter mask whose low 32 bits are zero is truncated to 0, and `ctz(0)` is undefined |
+  | handling | `tests/ubsan.supp` suppresses `alignment:*third_party/fsst/*` (Clang only; GCC trap mode has no suppression file) | none needed for results, see below |
+
+  Method on Windows: one build per GCC UBSan check, trap mode, upstream sanitized too, running
+  `fsst_test_unit`. `-fsanitize=undefined` traps; `builtin` alone traps; each of the other 18
+  checks alone, `alignment` included, passes 6,429/0.
+
+  Effect of the Windows `ctzl` issue: it occurs only while building the symbol table, never
+  in decoding or matching (`fsst_decompress` passes a 32-bit mask, which is not truncated).
+  GCC emits `tzcnt` (BMI1, every x86-64 CPU since about 2013), which returns 32 for 0. The
+  helper then advances 4 (or 8) counters, reads the next one, and returns 0 if it is empty,
+  and the caller continues from the following counter. So no counter is skipped and the table
+  equals the LP64 result. This is consistent with the 9/9 FSST columns that are byte-identical
+  between B's macOS and C's Windows encodings. On a CPU without BMI1, `bsf` leaves the result
+  undefined, which could change the symbol table (compression ratio) but not round-trip or
+  `LIKE` correctness, because the table is stored with the column. NOT TESTED: no such CPU here.
+  Reported for upstream; fixing it means `__builtin_ctzll` in `libfsst.hpp`.
 
 ## 7. Performance and compression
 
@@ -232,8 +296,15 @@ in the audit for raw numbers, and less than 16% across processes within one sess
 Not tracked: `data/` (incl. `data/duckdb/`), `integration/fsst/data/`,
 `integration/fsst/third_party/`, every `build*/` directory, `.venv/`. New tracked results are
 JSON/Markdown only (`results/integration-v4/`, about 330 KB) and contain no hostname or user
-path. A's and B's committed results were restored after every run that rewrote them (their
-scripts write into their tracked results directories; noted for A and B).
+path. Before the stabilization, A's and B's scripts rewrote their tracked results and C
+restored them after every run. After it, the full Windows reruns in section 3 (A's
+`make_fixtures.py`, `build_db.py`, `test_sql.py`, both CTest suites; B's FSST gate) left
+`git status` clean: outputs went to `build/duckdb/results/`, `data/duckdb/fixtures/` and
+`integration/fsst/bench/latest/`, all git-ignored, and B's `data/fuzz/values` still has its
+20,016 rows. B's macOS evidence adds `integration/fsst/bench/v3-macos-v4/` (JSON/Markdown,
+about 150 KB); its `bench_smoke.json` records absolute paths under B's macOS home directory
+(as B's earlier results and `integration/fsst/scripts/common.py` already did). That is a
+username, not a secret, and recorded evidence is left as B committed it.
 
 ## 9. Reproduce
 
@@ -241,12 +312,13 @@ scripts write into their tracked results directories; noted for A and B).
 python -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt
 cmake --preset mingw-release && cmake --build build -j && ctest --test-dir build
 TOKENLIKE_PYTHON=.venv/Scripts/python.exe TOKENLIKE_CLI=build/tokenlike bash scripts/check_all.sh
-.venv/Scripts/python scripts/verify/check.py patterns/generated_fuzz.txt --cli build/tokenlike
+.venv/Scripts/python scripts/verify/check.py patterns/generated_fuzz.txt --cli "$(cygpath -w $PWD/build/tokenlike.exe)"
 
 cmake -S integration/duckdb -B build/duckdb -G Ninja -DCMAKE_BUILD_TYPE=Release \
       "-DCMAKE_CXX_FLAGS=-O3 -march=native" -DCMAKE_CXX_COMPILER=C:/mingw-w64/mingw64/bin/g++.exe \
       -DPython3_EXECUTABLE=$PWD/.venv/Scripts/python.exe
 cmake --build build/duckdb && ctest --test-dir build/duckdb
+.venv/Scripts/python -X utf8 integration/duckdb/python/make_fixtures.py --seed 7 --count 300
 .venv/Scripts/python -X utf8 integration/duckdb/python/build_db.py
 .venv/Scripts/python -X utf8 integration/duckdb/python/test_sql.py
 
@@ -261,14 +333,47 @@ python scripts/bench/compare_modules.py --out results/runs/compare.json
 python demo/menu.py
 ```
 
+`--cli` takes a Windows path: with `MSYS_NO_PATHCONV=1` set, a `/c/...` path reaches Python
+unconverted, every mode is skipped, and the checker correctly exits non-zero.
+
+### 9.1 Demos on a Windows laptop (PowerShell, repository root)
+
+Assumes the venv and B's datasets in `data/` already exist (README "Data"). Use Ninja so the
+binaries land where the menu looks (`build\tokenlike.exe`, `build\duckdb\…`, `build-fsst\…`),
+and build FSST with mingw-w64 GCC: its Windows fixes (UTF-8 argv manifest, static runtime)
+are applied only to MinGW builds, and an MSVC build of the module is not tested.
+
+```powershell
+git pull origin main
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_FLAGS=-O3 -march=native"; cmake --build build -j
+cmake -S integration/duckdb -B build/duckdb -G Ninja -DCMAKE_BUILD_TYPE=Release "-DPython3_EXECUTABLE=$PWD\.venv\Scripts\python.exe"; cmake --build build/duckdb
+.\.venv\Scripts\python.exe -X utf8 integration\duckdb\python\build_db.py
+cmake -S . -B build-fsst -G Ninja -DCMAKE_BUILD_TYPE=Release -DTOKENLIKE_WITH_FSST=ON; cmake --build build-fsst -j
+.\.venv\Scripts\python.exe demo\menu.py      # lists all six, each "ready" or what it needs
+.\.venv\Scripts\python.exe demo\menu.py 2    # live Streamlit -> http://127.0.0.1:8501 (Ctrl+C to stop)
+.\.venv\Scripts\python.exe demo\menu.py 4    # DuckDB token_like() demo
+.\.venv\Scripts\python.exe demo\menu.py 6    # FSST-LIKE end to end
+```
+
+Run the menu with the venv's Python: it launches every demo with the interpreter that started it.
+
 ## 10. Open items for the owners
 
-- **Person B:** review the four `[B-patch by C]` commits; re-run the FSST gate on macOS.
-  Note that `integration/fsst/scripts/check_all.sh` and `compare_tokenlike.py` rewrite the
-  tracked `bench/v2-integration/vs_tokenlike.json` on every run.
-- **Person A:** `build_db.py`, `storage_report.py` and `bench_sql.py` (untagged) rewrite the
-  tracked files in `integration/duckdb/results/`; the README's
-  `fuzz.py --random --seed 7 ...` step without `--out` overwrites `data/fuzz/values`, the
-  dataset the original 900-check gate uses. C reproduced the 1,116-check suite by generating
-  the seed-7 patterns into `build/duckdb/scratch` instead.
+Closed by the stabilization: B's review of the `[B-patch by C]` commits and the macOS re-run
+(done, section 2.1); the FSST gate rewriting `bench/v2-integration/vs_tokenlike.json` (B,
+`f9b7375`); A's scripts rewriting `integration/duckdb/results/` and the README step that
+overwrote `data/fuzz/values` (A, `a5627da`).
+
+Still open, none blocking:
+
 - **Person A (matcher):** token-mode limits and the long-literal build time (A-1, A-2).
+- **Person B:** `analyze.py` and `storage.py` still write to the tracked `bench/v2-integration/`
+  by default (deliberate, so FINAL_REPORT's paths stay valid; `FSSTLIKE_BENCH_DIR=latest`
+  redirects them). The build-directory resolver in `scripts/common.py` could also look in
+  `build-fsst`, the directory the root README uses; the menu and README set `FSSTLIKE_BUILD`
+  meanwhile.
+- **Upstream FSST:** `__builtin_ctzl` on a 64-bit value in `libfsst.hpp` (section 6), formally
+  undefined on Windows; harmless on BMI1 CPUs.
+- **Not tested anywhere:** Linux; MSVC build of the core and FSST; ASan on Windows; the DuckDB
+  extension on macOS (not built for it).
