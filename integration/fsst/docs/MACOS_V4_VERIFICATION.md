@@ -36,6 +36,8 @@ Timings from the two machines are not comparable; the pass/fail counts are.
 | `-DTOKENLIKE_WITH_FSST=OFF` (default) | configures and builds clean; `nm -gU` finds **0 FSST symbols** in `libtokenlike.a` and in the `tokenlike` CLI; **ctest 16/16** |
 | `-DTOKENLIKE_WITH_FSST=ON`, Release | **0 warnings**; uses the local snapshot at `third_party/fsst` @ `e638d4c`; **ctest 17/17** (adds `fsst_unit`) |
 | ASan + UBSan (`Debug` + `-fsanitize=address,undefined`) | builds clean; see §4 |
+| cold clone of the pushed branch, `-DTOKENLIKE_WITH_FSST=ON` | clones the pinned FSST itself, builds with **0 warnings**, **ctest 16/16**, `fsst_test_unit` **6,429/0**. 68 tracked files under `integration/fsst`, **0 bytes of FSST source committed**, `.git` 772 KB |
+| `demo/menu.py` entry 6, tree built as `-B build-fsst` | runs the FSST demo to completion, exit 0 |
 
 `ctest` counts depend on the datasets: `io_clickbench_url` only registers when
 `data/vocab.bin` and `data/clickbench/URL.tok` exist. Without them the counts
