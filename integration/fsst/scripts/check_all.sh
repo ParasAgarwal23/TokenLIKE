@@ -75,7 +75,11 @@ printf '  total: %d checks passed, %d skipped\n' "$total_pass" "$total_skip"
 
 step "cross-check against the original TokenLIKE (different implementation, same rows)"
 if [ -x "$BUILD/tokenlike" ] && [ -f "$ORIG/data/vocab.bin" ]; then
-   if "$PY" scripts/compare_tokenlike.py --out bench/v2-integration/vs_tokenlike.json 2>&1 | tail -3; then
+   # Writes to a scratch path: bench/v1-* and bench/v2-* are recorded evidence,
+   # and a gate that overwrites them on every run destroys what it documents.
+   OUT="${FSSTLIKE_COMPARE_OUT:-bench/latest/vs_tokenlike.json}"
+   mkdir -p "$(dirname "$OUT")"
+   if "$PY" scripts/compare_tokenlike.py --out "$OUT" 2>&1 | tail -3; then
       ok "both systems return identical row ids"
    else
       bad "the two systems disagree"

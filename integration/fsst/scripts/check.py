@@ -83,7 +83,8 @@ def main() -> int:
             raise SystemExit(f"unknown mode {m!r}; known: {', '.join(ALL_MODES)}")
     cli = resolve_cli(args.cli) if args.cli else resolve_cli()
     if not Path(cli).is_file():
-        raise SystemExit(f"no CLI at {cli}; build build/rel/fsst_like")
+        raise SystemExit(f"no CLI at {cli}; configure the repository with "
+                         "-DTOKENLIKE_WITH_FSST=ON and build fsst_like, or set FSSTLIKE_BUILD")
 
     specs = parse_pattern_file(args.patterns)
     manifest = ensure_truth(specs, force=args.force, quiet=True)

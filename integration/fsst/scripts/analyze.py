@@ -8,6 +8,7 @@ process run here; nothing is transcribed by hand.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -118,7 +119,10 @@ def main() -> int:
     md.append("")
 
     # ---- peak RSS -----------------------------------------------------------
-    bj = ROOT / "bench" / "v2-integration" / "bench.json"
+    # FSSTLIKE_BENCH_DIR lets a new campaign write beside the recorded sets
+    # instead of overwriting them; the default keeps the reported paths.
+    bench_dir = ROOT / "bench" / os.environ.get("FSSTLIKE_BENCH_DIR", "v2-integration")
+    bj = bench_dir / "bench.json"
     if bj.exists():
         rows = json.loads(bj.read_text())["rows"]
         per_mode: dict[str, list[int]] = {}
@@ -141,7 +145,7 @@ def main() -> int:
             out["peak_rss_kb"] = per_mode
             md.append("")
 
-    dest = ROOT / "bench" / "v2-integration"
+    dest = bench_dir
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "tables.md").write_text("\n".join(md) + "\n")
     (dest / "analysis.json").write_text(json.dumps(out, indent=1) + "\n")
