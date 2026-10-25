@@ -71,3 +71,7 @@ enable_testing()
 add_test(NAME duckdb_sql_smoke
   COMMAND ${Python3_EXECUTABLE} -X utf8 ${CMAKE_CURRENT_SOURCE_DIR}/python/test_sql.py --smoke
           --ext ${TOKENLIKE_EXT_FILE})
+# Data-free output-safety regression test: scripts never replace existing results implicitly, and
+# fixture generation never writes Person B's data or tracked files (runs in a temporary directory).
+add_test(NAME duckdb_output_safety
+  COMMAND ${Python3_EXECUTABLE} -X utf8 ${CMAKE_CURRENT_SOURCE_DIR}/python/test_outputs.py)
