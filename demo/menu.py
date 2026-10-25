@@ -18,6 +18,9 @@ ROOT = Path(__file__).resolve().parents[1]
 EXE = ".exe" if os.name == "nt" else ""
 PY = sys.executable
 STREAMLIT = [PY, "-m", "streamlit", "run", "demo/app.py", "--server.address", "127.0.0.1"]
+# One FSST build directory for both the prerequisite check and the demo's own lookup
+# (integration/fsst/scripts/common.py never searches build-fsst unless told to).
+FSST_BUILD = ROOT / os.environ.get("FSSTLIKE_BUILD", "build-fsst")
 
 # (title, platform verified on, command, files that must exist)
 DEMOS = [
@@ -36,7 +39,7 @@ DEMOS = [
      ["build/duckdb/tokenlike.duckdb_extension", "data/duckdb/tokenlike.duckdb"]),
     ("FSST-LIKE: LIKE on FSST-compressed strings (integration/fsst)", "macOS (Person B), Windows (Person C)",
      [PY, "integration/fsst/demo_fsst.py", "--rows", "100000", "--tokenlike", str(ROOT)],
-     [f"build-fsst/fsst_like{EXE}", f"build-fsst/fsst_encode{EXE}", "data/clickbench/URL.raw"]),
+     [str(FSST_BUILD / f"fsst_like{EXE}"), str(FSST_BUILD / f"fsst_encode{EXE}"), "data/clickbench/URL.raw"]),
 ]
 
 
@@ -67,8 +70,7 @@ def main() -> int:
         sys.exit(f"cannot run '{title}': missing {', '.join(gone)} (see README 'Demonstrations')")
     if not Path(cmd[0]).is_absolute():  # Windows cannot launch a relative path with '/'
         cmd = [str(ROOT / cmd[0])] + cmd[1:]
-    env = dict(os.environ, MSYS_NO_PATHCONV="1", TOKENLIKE_DIR=str(ROOT),
-               FSSTLIKE_BUILD=os.environ.get("FSSTLIKE_BUILD", str(ROOT / "build-fsst")))
+    env = dict(os.environ, MSYS_NO_PATHCONV="1", TOKENLIKE_DIR=str(ROOT), FSSTLIKE_BUILD=str(FSST_BUILD))
     return subprocess.call(cmd, cwd=ROOT, env=env)
 
 

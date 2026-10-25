@@ -208,7 +208,12 @@ python demo/menu.py 1        # runs one
 | 3 | TokenLIKE CLI | `build/tokenlike --mode token --pattern '%.php' --col data/clickbench/URL` | Windows |
 | 4 | DuckDB `token_like()` in SQL | `python -X utf8 integration/duckdb/python/demo_sql.py` | Windows |
 | 5 | DuckDB plain-SQL script | `python -X utf8 integration/duckdb/python/run_sql.py integration/duckdb/examples/judge_demo.sql` | Windows |
-| 6 | FSST-LIKE end to end | `python integration/fsst/demo_fsst.py --rows 100000 --tokenlike .` | macOS (B), Windows (C) |
+| 6 | FSST-LIKE end to end | `FSSTLIKE_BUILD=build-fsst python integration/fsst/demo_fsst.py --rows 100000 --tokenlike .` | macOS (B), Windows (C) |
+
+The FSST scripts look for their binaries in `$FSSTLIKE_BUILD`, else `build/fsst`, `build`,
+`integration/fsst/build/rel`, never `build-fsst`; the menu sets `FSSTLIKE_BUILD` to `build-fsst`
+(or keeps yours, relative to the repository root) and checks that directory. In PowerShell:
+`$env:FSSTLIKE_BUILD = "build-fsst"`.
 
 Streamlit binds to **127.0.0.1** only (`.streamlit/config.toml`; the menu also passes
 `--server.address 127.0.0.1`), so live mode is not reachable from a venue network.
