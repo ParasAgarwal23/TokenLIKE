@@ -34,8 +34,12 @@ printf '  python : %s (%s)\n' "$PY" "$("$PY" -V 2>&1)"
 printf '  cli    : %s%s\n' "$CLI" "$([ -x "$CLI" ] || printf ' (not built -- pattern checks will be skipped)')"
 if "$PY" -c 'import duckdb' 2>/dev/null; then
    printf '  duckdb : python module %s\n' "$("$PY" -c 'import duckdb;print(duckdb.__version__)')"
-elif [ -x tools/duckdb ]; then
-   printf '  duckdb : pinned CLI %s\n' "$(tools/duckdb --version 2>/dev/null | head -1)"
+elif CLI_DUCKDB=$("$PY" -c 'import sys; sys.path.insert(0, "scripts/verify"); import common; print(common.find_duckdb_cli() or "")' 2>/dev/null) \
+     && [ -n "$CLI_DUCKDB" ]; then
+   # Ask the resolver the verification scripts themselves use, so the probe
+   # cannot report "no backend" for a CLI that check.py then goes on to use
+   # (TOKENLIKE_DUCKDB, tools/duckdb, or one on PATH).
+   printf '  duckdb : CLI %s (%s)\n' "$CLI_DUCKDB" "$("$CLI_DUCKDB" --version 2>/dev/null | head -1)"
 else
    bad "no DuckDB backend available; see scripts/verify/common.py for setup"
 fi
