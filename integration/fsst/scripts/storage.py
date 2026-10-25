@@ -121,7 +121,8 @@ def main() -> int:
               f"{len(out['columns'])} columns.")
     md.append("")
 
-    dest = ROOT / "bench" / "v2-integration"
+    # FSSTLIKE_BENCH_DIR: see analyze.py. Default keeps the reported paths.
+    dest = ROOT / "bench" / os.environ.get("FSSTLIKE_BENCH_DIR", "v2-integration")
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "storage.md").write_text("\n".join(md) + "\n")
     (dest / "storage.json").write_text(json.dumps(out, indent=1) + "\n")

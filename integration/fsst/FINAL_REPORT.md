@@ -141,7 +141,11 @@ implementation to be measured and cross-checked against.
 
 ## D. Test results
 
-From the final run of `bash integration/fsst/scripts/check_all.sh`.
+From the final run of `bash integration/fsst/scripts/check_all.sh` on `feature/fsst-like`
+(`99accef`). Every suite here was re-run on the integrated `main` (`0eab88d`)
+with the DuckDB oracle re-derived rather than reused: same counts, with the
+CTest totals grown to 16 without the module and 17 with it. See
+`docs/MACOS_V4_VERIFICATION.md`.
 
 ### The repository without the module
 

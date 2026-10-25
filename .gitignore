@@ -26,3 +26,4 @@ Thumbs.db
 # Optional FSST module: upstream snapshot and generated columns are never committed.
 integration/fsst/third_party/
 integration/fsst/data/
+integration/fsst/bench/latest/

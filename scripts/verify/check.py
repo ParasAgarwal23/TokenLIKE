@@ -137,11 +137,15 @@ def describe_rows(pat: Pattern, row_ids, vocab_tokens, label: str) -> None:
     raws = cached_raw_values(pat.column)
     toks = cached_token_rows(pat.column)
     raws2 = cached_raw_values(pat.column2) if pat.is_concat else None
+    # Every array indexed below must cover the row, not just the raw values:
+    # a bogus row id is evidence of the bug being reported and must not turn
+    # the report itself into an IndexError.
+    describable = min(len(raws), len(toks), len(raws2) if raws2 is not None else len(raws))
 
     print(f"    first {min(len(row_ids), MAX_REPORTED)} {label}:")
     for row_id in row_ids[:MAX_REPORTED]:
-        if row_id >= len(raws):
-            print(f"      row {row_id}: OUT OF RANGE (column has {len(raws):,} rows)")
+        if row_id >= describable:
+            print(f"      row {row_id}: OUT OF RANGE (column has {describable:,} describable rows)")
             continue
         raw = raws[row_id]
         decoded = b"".join(vocab_tokens[t] for t in toks[row_id])
